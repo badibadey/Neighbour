@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -138,48 +139,57 @@ const SeniorPanel = () => {
     document.head.appendChild(style);
 
     const script = document.createElement('script');
-    script.src = 'https://elevenlabs.io/convai-widget/index.js';
+    script.src = 'https://api.us.elevenlabs.io/convai-widget/index.js';
     script.async = true;
-    script.onload = () => {
-      if (widgetContainer.current) {
-        const widget = document.createElement('elevenlabs-convai');
-        widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
-        widget.className = 'convai-widget';
-        
-        // Widget configuration matching the curl example format
-        widget.setAttribute('data-variant', 'full');
-        widget.setAttribute('data-feedback-mode', 'during');
-        widget.setAttribute('data-avatar-type', 'url');
-        widget.setAttribute('data-bg-color', '#FFFFFF');
-        widget.setAttribute('data-text-color', '#2D3648');
-        widget.setAttribute('data-btn-text-color', '#FFFFFF');
-        widget.setAttribute('data-btn-color', '#FF9F6B');
-        widget.setAttribute('data-border-color', '#FFE4D6');
-        widget.setAttribute('data-border-radius', '16');
-        widget.setAttribute('data-btn-radius', '50');
-        widget.setAttribute('data-focus-color', '#FF9F6B');
-        
-        // English messages with family member name integration
-        widget.setAttribute('data-start-call-text', `Hello ${primaryFamilyMember}! Click to start our conversation`);
-        widget.setAttribute('data-speaking-text', 'I\'m listening...');
-        widget.setAttribute('data-listening-text', 'I hear you...');
-        widget.setAttribute('data-action-text', 'Click to start talking');
-        widget.setAttribute('data-end-call-text', 'Goodbye! Take care!');
-        widget.setAttribute('data-expand-text', '');
-        widget.setAttribute('data-shareable-page-text', '');
-        widget.setAttribute('data-terms-text', '');
-        widget.setAttribute('data-terms-html', '');
-        widget.setAttribute('data-language-selector', 'false');
-        widget.setAttribute('data-custom-avatar-path', '');
+    script.crossOrigin = 'anonymous';
+    
+    script.onerror = (error) => {
+      console.error('Error loading ElevenLabs widget script:', error);
+    };
 
-        widgetContainer.current.appendChild(widget);
+    script.onload = () => {
+      try {
+        if (widgetContainer.current) {
+          const widget = document.createElement('elevenlabs-convai');
+          widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
+          widget.className = 'convai-widget';
+          
+          widget.setAttribute('data-variant', 'full');
+          widget.setAttribute('data-feedback-mode', 'during');
+          widget.setAttribute('data-avatar-type', 'url');
+          widget.setAttribute('data-bg-color', '#FFFFFF');
+          widget.setAttribute('data-text-color', '#2D3648');
+          widget.setAttribute('data-btn-text-color', '#FFFFFF');
+          widget.setAttribute('data-btn-color', '#FF9F6B');
+          widget.setAttribute('data-border-color', '#FFE4D6');
+          widget.setAttribute('data-border-radius', '16');
+          widget.setAttribute('data-btn-radius', '50');
+          widget.setAttribute('data-focus-color', '#FF9F6B');
+          
+          widget.setAttribute('data-start-call-text', `Hello ${primaryFamilyMember}! Click to start our conversation`);
+          widget.setAttribute('data-speaking-text', 'I\'m listening...');
+          widget.setAttribute('data-listening-text', 'I hear you...');
+          widget.setAttribute('data-action-text', 'Click to start talking');
+          widget.setAttribute('data-end-call-text', 'Goodbye! Take care!');
+          widget.setAttribute('data-expand-text', '');
+          widget.setAttribute('data-shareable-page-text', '');
+          widget.setAttribute('data-terms-text', '');
+          widget.setAttribute('data-terms-html', '');
+          widget.setAttribute('data-language-selector', 'false');
+          widget.setAttribute('data-custom-avatar-path', '');
+
+          widgetContainer.current.appendChild(widget);
+        }
+      } catch (error) {
+        console.error('Error initializing ElevenLabs widget:', error);
       }
     };
+
     document.body.appendChild(script);
 
     return () => {
       document.head.removeChild(style);
-      const existingScript = document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]');
+      const existingScript = document.querySelector('script[src*="convai-widget/index.js"]');
       if (existingScript) {
         document.body.removeChild(existingScript);
       }
