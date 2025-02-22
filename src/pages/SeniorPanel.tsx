@@ -16,12 +16,6 @@ interface PanelData {
   agent_id: string;
 }
 
-declare global {
-  interface Window {
-    ElevenLabs: any;
-  }
-}
-
 const SeniorPanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,22 +24,19 @@ const SeniorPanel = () => {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   useEffect(() => {
-    if (document.querySelector('script[src="https://elevenlabs.io/js/widgets.v1.js"]')) {
+    if (document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
       setIsScriptLoaded(true);
       return;
     }
 
     const script = document.createElement('script');
-    script.src = 'https://elevenlabs.io/js/widgets.v1.js';
+    script.src = 'https://elevenlabs.io/convai-widget/index.js';
     script.async = true;
+    script.type = 'text/javascript';
     
     script.onload = () => {
       console.log('ElevenLabs script loaded successfully');
       setIsScriptLoaded(true);
-    };
-
-    script.onerror = (error) => {
-      console.error('Error loading ElevenLabs script:', error);
     };
 
     document.head.appendChild(script);
@@ -86,26 +77,6 @@ const SeniorPanel = () => {
     fetchPanelData();
   }, [id, location.state]);
 
-  useEffect(() => {
-    if (panelData?.agent_id && isScriptLoaded) {
-      console.log('Ready to initialize widget with agent_id:', panelData.agent_id);
-      
-      // Dodaj małe opóźnienie, aby upewnić się, że skrypt jest w pełni zainicjalizowany
-      const timer = setTimeout(() => {
-        try {
-          const container = document.querySelector('elevenlabs-convai');
-          if (container) {
-            console.log('Widget container found and ready');
-          }
-        } catch (error) {
-          console.error('Error checking widget container:', error);
-        }
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [panelData?.agent_id, isScriptLoaded]);
-
   const familyMemberName = panelData?.family_member || 'there';
 
   const renderAssistant = () => {
@@ -117,13 +88,10 @@ const SeniorPanel = () => {
       );
     }
 
-    console.log('Rendering ElevenLabs widget component');
+    console.log('Rendering ElevenLabs widget with agent_id:', panelData.agent_id);
     return (
-      <div className="h-[600px] bg-white rounded-lg overflow-hidden shadow-lg relative">
-        <elevenlabs-convai 
-          agent-id={panelData.agent_id}
-          className="w-full h-full absolute inset-0"
-        ></elevenlabs-convai>
+      <div className="h-[600px] bg-white rounded-lg overflow-hidden shadow-lg">
+        <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
       </div>
     );
   };
