@@ -10,7 +10,7 @@ import {
   Info,
   Trash2,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import PanelSummaryDialog from '@/components/PanelSummaryDialog';
@@ -34,6 +34,7 @@ interface Panel {
   assistant_prompt: string;
   voice_type: string;
   family_member: string;
+  agent_id?: string | null;
 }
 
 interface PanelWithDetails extends Panel {
@@ -56,6 +57,7 @@ const Neighbours = () => {
 
   const fetchPanels = async () => {
     try {
+      setLoading(true);
       const { data: panels, error } = await supabase
         .from('panels')
         .select('*')
@@ -94,6 +96,14 @@ const Neighbours = () => {
       console.error('Error fetching panel details:', error);
       toast.error('Failed to load neighbour details');
     }
+  };
+
+  const handleEditPanel = (panel: Panel) => {
+    navigate(`/bot-settings?panel=${panel.id}`, { 
+      state: { 
+        panelData: panel 
+      }
+    });
   };
 
   const handleDeletePanel = async (panelId: string) => {
@@ -136,8 +146,8 @@ const Neighbours = () => {
             <Card key={panel.id} className="p-6 flex flex-col min-h-[200px]">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-medium">Adam</h3>
-                  <p className="text-sm text-muted-foreground">Neighbour for John</p>
+                  <h3 className="text-xl font-medium">{panel.name}</h3>
+                  <p className="text-sm text-muted-foreground">Neighbour for {panel.family_member}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -150,7 +160,7 @@ const Neighbours = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => navigate(`/bot-settings?panel=${panel.id}`)}
+                    onClick={() => handleEditPanel(panel)}
                   >
                     <Settings2 className="h-5 w-5 text-muted-foreground hover:text-accent" />
                   </Button>
@@ -199,7 +209,7 @@ const Neighbours = () => {
                 <Button 
                   variant="outline" 
                   className="flex-1"
-                  onClick={() => navigate(`/bot-settings?panel=${panel.id}`)}
+                  onClick={() => handleEditPanel(panel)}
                 >
                   Settings
                 </Button>
