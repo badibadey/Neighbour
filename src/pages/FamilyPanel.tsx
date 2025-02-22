@@ -9,7 +9,8 @@ import {
   ExternalLink, 
   LogOut,
   Home,
-  Menu
+  Menu,
+  Trash2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
@@ -21,6 +22,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Panel {
   id: string;
@@ -34,6 +46,7 @@ const FamilyPanel = () => {
   const navigate = useNavigate();
   const [panels, setPanels] = useState<Panel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [panelToDelete, setPanelToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPanels();
@@ -74,52 +87,22 @@ const FamilyPanel = () => {
     }
   };
 
-  const createSeniorPanel = async () => {
+  const handleDeletePanel = async (panelId: string) => {
     try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) {
-        console.error('User error:', userError);
-        throw userError;
-      }
-
-      if (!user) {
-        console.log('No user found, redirecting to login');
-        navigate('/');
-        return;
-      }
-
-      console.log('Creating panel for user:', user.id);
-      const newPanel = {
-        user_id: user.id,
-        name: 'New Senior Panel',
-        welcome_message: 'Hi! How can I help you today?',
-        assistant_prompt: 'You are an empathetic and patient assistant for seniors...',
-        voice_type: 'sarah'
-      };
-
-      console.log('Inserting new panel:', newPanel);
-      const { data: panel, error } = await supabase
+      const { error } = await supabase
         .from('panels')
-        .insert([newPanel])
-        .select()
-        .single();
+        .delete()
+        .eq('id', panelId);
 
-      if (error) {
-        console.error('Create panel error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log('Created panel:', panel);
-      setPanels([...panels, panel]);
-      toast.success('Senior panel created successfully');
-      navigate('/bot-settings');
+      setPanels(panels.filter(panel => panel.id !== panelId));
+      toast.success('Panel deleted successfully');
     } catch (error) {
-      console.error('Error creating panel:', error);
-      if (error instanceof Error) {
-        toast.error(`Failed to create panel: ${error.message}`);
-      } else {
-        toast.error('Failed to create panel');
-      }
+      console.error('Error deleting panel:', error);
+      toast.error('Failed to delete panel');
+    } finally {
+      setPanelToDelete(null);
     }
   };
 
@@ -163,7 +146,7 @@ const FamilyPanel = () => {
           <Button
             variant="ghost"
             className="w-full justify-start text-primary"
-            onClick={createSeniorPanel}
+            onClick={() => navigate('/bot-settings')}
           >
             <Plus className="mr-2 h-4 w-4" />
             Create Panel
@@ -210,7 +193,7 @@ const FamilyPanel = () => {
             <Button
               variant="ghost"
               className="w-full justify-start text-primary"
-              onClick={createSeniorPanel}
+              onClick={() => navigate('/bot-settings')}
             >
               <Plus className="mr-2 h-4 w-4" />
               Create Panel
@@ -238,7 +221,7 @@ const FamilyPanel = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card 
                 className="p-6 flex flex-col items-center justify-center min-h-[200px] cursor-pointer hover:border-accent"
-                onClick={createSeniorPanel}
+                onClick={() => navigate('/bot-settings')}
               >
                 <Plus className="h-12 w-12 text-accent mb-4" />
                 <h3 className="text-xl font-medium">Create New Senior Panel</h3>
@@ -251,10 +234,44 @@ const FamilyPanel = () => {
                 <Card key={panel.id} className="p-6 flex flex-col min-h-[200px]">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-xl font-medium">{panel.name}</h3>
-                    <Settings2 
-                      className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-accent"
-                      onClick={() => navigate('/bot-settings')}
-                    />
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate(`/bot-settings?panel=${panel.id}`)}
+                      >
+                        <Settings2 className="h-5 w-5 text-muted-foreground hover:text-accent" />
+                      </Button>
+                      <AlertDialog open={panelToDelete === panel.id} onOpenChange={(open) => !open && setPanelToDelete(null)}>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setPanelToDelete(panel.id)}
+                          >
+                            <Trash2 className="h-5 w-5 text-destructive hover:text-destructive/80" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure you want to delete this panel?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the panel
+                              and all its associated data.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              onClick={() => handleDeletePanel(panel.id)}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-muted-foreground mb-4">
@@ -273,7 +290,7 @@ const FamilyPanel = () => {
                     <Button 
                       variant="outline" 
                       className="flex-1"
-                      onClick={() => navigate('/bot-settings')}
+                      onClick={() => navigate(`/bot-settings?panel=${panel.id}`)}
                     >
                       Settings
                     </Button>
