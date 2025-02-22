@@ -10,7 +10,7 @@ interface AgentCreationModalProps {
 export const AgentCreationModal = ({ isOpen, familyMember }: AgentCreationModalProps) => {
   return (
     <Dialog open={isOpen}>
-      <DialogContent className="sm:max-w-md" hideClose>
+      <DialogContent className="sm:max-w-md">
         <div className="flex flex-col items-center justify-center space-y-4 py-8">
           <div className="relative">
             <Bot className="w-12 h-12 text-primary animate-pulse" />
