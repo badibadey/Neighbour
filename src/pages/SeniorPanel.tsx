@@ -75,6 +75,33 @@ const SeniorPanel = () => {
         const widget = document.createElement('elevenlabs-convai');
         widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
         widget.className = 'convai-widget';
+        
+        // Customize widget appearance and behavior
+        const widgetConfig = {
+          variant: "full",
+          bg_color: "#FFFFFF",
+          text_color: "#2D3648", // using our app's text color
+          btn_color: "#FF9F6B", // using our primary color
+          btn_text_color: "#FFFFFF",
+          border_color: "#FFE4D6", // using our secondary color
+          border_radius: "16",
+          btn_radius: "50",
+          focus_color: "#FF9F6B",
+          start_call_text: "Porozmawiaj ze mną",
+          speaking_text: "Słucham...",
+          listening_text: "Słucham Cię...",
+          action_text: "Kliknij aby rozpocząć rozmowę",
+          end_call_text: "Do zobaczenia!",
+          avatar: {
+            type: "url"
+          }
+        };
+
+        // Apply configuration
+        Object.entries(widgetConfig).forEach(([key, value]) => {
+          widget.setAttribute(`data-${key}`, String(value));
+        });
+
         widgetContainer.current.appendChild(widget);
       }
     };
