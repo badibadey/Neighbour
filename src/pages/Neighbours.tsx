@@ -10,7 +10,7 @@ import {
   Info,
   Trash2,
 } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import PanelSummaryDialog from '@/components/PanelSummaryDialog';
@@ -125,6 +125,11 @@ const Neighbours = () => {
     }
   };
 
+  const handleOpenInterface = (panel: Panel) => {
+    console.log('Opening interface for panel:', panel.id);
+    navigate(`/senior/${panel.id}`);
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">
       <p>Loading...</p>
@@ -202,7 +207,10 @@ const Neighbours = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button className="flex-1" onClick={() => navigate('/senior')}>
+                <Button 
+                  className="flex-1" 
+                  onClick={() => handleOpenInterface(panel)}
+                >
                   Open Interface
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
