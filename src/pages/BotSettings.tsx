@@ -318,7 +318,7 @@ const BotSettings = () => {
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
           panel_id: currentPanelId,
           name: member.name,
-          birth_date: member.birthDate,
+          birth_date: new Date(member.birthDate).toISOString().split('T')[0],
           photo_url: member.photoUrl || null
         }));
 
@@ -326,24 +326,35 @@ const BotSettings = () => {
           .from('family_members')
           .insert(familyMembersToInsert);
 
-        if (familyError) throw familyError;
+        if (familyError) {
+          console.error('Error saving family members:', familyError);
+          throw familyError;
+        }
       }
 
       // Save events
       if (setupData.events.length > 0) {
         console.log('Saving events:', setupData.events);
-        const eventsToInsert = setupData.events.map(event => ({
-          panel_id: currentPanelId,
-          title: event.title,
-          date: new Date(event.date).toISOString(),
-          description: event.description || ''
-        }));
+        const eventsToInsert = setupData.events.map(event => {
+          const eventDate = new Date(event.date);
+          return {
+            panel_id: currentPanelId,
+            title: event.title,
+            date: eventDate.toISOString(),
+            description: event.description || ''
+          };
+        });
+
+        console.log('Events to insert:', eventsToInsert);
 
         const { error: eventsError } = await supabase
           .from('events')
           .insert(eventsToInsert);
 
-        if (eventsError) throw eventsError;
+        if (eventsError) {
+          console.error('Error saving events:', eventsError);
+          throw eventsError;
+        }
       }
 
       // Save drugs
@@ -360,7 +371,10 @@ const BotSettings = () => {
           .from('drugs')
           .insert(drugsToInsert);
 
-        if (drugsError) throw drugsError;
+        if (drugsError) {
+          console.error('Error saving drugs:', drugsError);
+          throw drugsError;
+        }
       }
 
       console.log('All data saved successfully!');
