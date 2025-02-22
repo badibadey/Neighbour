@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import FamilyPanel from "./pages/FamilyPanel";
 import SeniorPanel from "./pages/SeniorPanel";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/family" element={<FamilyPanel />} />
           <Route path="/senior" element={<SeniorPanel />} />
           <Route path="*" element={<NotFound />} />

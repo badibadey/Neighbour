@@ -7,18 +7,18 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
-const Login = () => {
+const Signup = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
       });
@@ -26,8 +26,8 @@ const Login = () => {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success("Logged in successfully!");
-        navigate('/family'); // or wherever you want to redirect after login
+        toast.success("Account created successfully! Please check your email to confirm your account.");
+        navigate('/login');
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
@@ -40,10 +40,10 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-secondary/20 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
-          <h2 className="text-3xl font-bold">Welcome back</h2>
-          <p className="text-muted-foreground">Sign in to your Neighbour account</p>
+          <h2 className="text-3xl font-bold">Create an account</h2>
+          <p className="text-muted-foreground">Sign up to Neighbour to get started</p>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Input
@@ -61,6 +61,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
             </div>
           </CardContent>
@@ -70,16 +71,16 @@ const Login = () => {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
             <div className="text-center text-sm">
-              <span className="text-muted-foreground">Don't have an account? </span>
+              <span className="text-muted-foreground">Already have an account? </span>
               <Button
                 variant="link"
                 className="p-0 h-auto font-normal"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/login")}
               >
-                Sign up
+                Log in
               </Button>
             </div>
           </CardFooter>
@@ -89,4 +90,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
