@@ -518,46 +518,37 @@ const BotSettings = () => {
           supabase.from('events').delete().eq('panel_id', panelId)
         ]);
 
+        const familyMembersToInsert = setupData.familyMembers.map(member => ({
+          panel_id: panelId,
+          name: member.name,
+          birth_date: member.birthDate,
+          photo_url: member.photoUrl
+        }));
+
+        const drugsToInsert = setupData.drugs.map(drug => ({
+          panel_id: panelId,
+          name: drug.name,
+          dosage: drug.dosage,
+          frequency: drug.schedule.frequency,
+          time: drug.schedule.time
+        }));
+
+        const eventsToInsert = setupData.events.map(event => ({
+          panel_id: panelId,
+          title: event.title,
+          date: event.date,
+          description: event.description
+        }));
+
         const promises = [];
-
-        if (setupData.familyMembers.length > 0) {
-          promises.push(
-            supabase
-              .from('family_members')
-              .insert(setupData.familyMembers.map(member => ({
-                panel_id: panelId,
-                name: member.name,
-                birth_date: member.birthDate,
-                photo_url: member.photoUrl
-              }))
-          );
+        if (familyMembersToInsert.length > 0) {
+          promises.push(supabase.from('family_members').insert(familyMembersToInsert));
         }
-
-        if (setupData.drugs.length > 0) {
-          promises.push(
-            supabase
-              .from('drugs')
-              .insert(setupData.drugs.map(drug => ({
-                panel_id: panelId,
-                name: drug.name,
-                dosage: drug.dosage,
-                frequency: drug.schedule.frequency,
-                time: drug.schedule.time
-              }))
-          );
+        if (drugsToInsert.length > 0) {
+          promises.push(supabase.from('drugs').insert(drugsToInsert));
         }
-
-        if (setupData.events.length > 0) {
-          promises.push(
-            supabase
-              .from('events')
-              .insert(setupData.events.map(event => ({
-                panel_id: panelId,
-                title: event.title,
-                date: event.date,
-                description: event.description
-              }))
-          );
+        if (eventsToInsert.length > 0) {
+          promises.push(supabase.from('events').insert(eventsToInsert));
         }
 
         await Promise.all(promises);
@@ -574,46 +565,37 @@ const BotSettings = () => {
 
         if (panelError) throw panelError;
 
+        const familyMembersToInsert = setupData.familyMembers.map(member => ({
+          panel_id: panel.id,
+          name: member.name,
+          birth_date: member.birthDate,
+          photo_url: member.photoUrl
+        }));
+
+        const drugsToInsert = setupData.drugs.map(drug => ({
+          panel_id: panel.id,
+          name: drug.name,
+          dosage: drug.dosage,
+          frequency: drug.schedule.frequency,
+          time: drug.schedule.time
+        }));
+
+        const eventsToInsert = setupData.events.map(event => ({
+          panel_id: panel.id,
+          title: event.title,
+          date: event.date,
+          description: event.description
+        }));
+
         const promises = [];
-
-        if (setupData.familyMembers.length > 0) {
-          promises.push(
-            supabase
-              .from('family_members')
-              .insert(setupData.familyMembers.map(member => ({
-                panel_id: panel.id,
-                name: member.name,
-                birth_date: member.birthDate,
-                photo_url: member.photoUrl
-              }))
-          );
+        if (familyMembersToInsert.length > 0) {
+          promises.push(supabase.from('family_members').insert(familyMembersToInsert));
         }
-
-        if (setupData.drugs.length > 0) {
-          promises.push(
-            supabase
-              .from('drugs')
-              .insert(setupData.drugs.map(drug => ({
-                panel_id: panel.id,
-                name: drug.name,
-                dosage: drug.dosage,
-                frequency: drug.schedule.frequency,
-                time: drug.schedule.time
-              }))
-          );
+        if (drugsToInsert.length > 0) {
+          promises.push(supabase.from('drugs').insert(drugsToInsert));
         }
-
-        if (setupData.events.length > 0) {
-          promises.push(
-            supabase
-              .from('events')
-              .insert(setupData.events.map(event => ({
-                panel_id: panel.id,
-                title: event.title,
-                date: event.date,
-                description: event.description
-              }))
-          );
+        if (eventsToInsert.length > 0) {
+          promises.push(supabase.from('events').insert(eventsToInsert));
         }
 
         await Promise.all(promises);
