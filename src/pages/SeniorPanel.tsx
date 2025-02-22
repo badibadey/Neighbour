@@ -16,27 +16,44 @@ interface PanelData {
   agent_id: string;
 }
 
+declare global {
+  interface Window {
+    ElevenLabs: any;
+  }
+}
+
 const SeniorPanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const [panelData, setPanelData] = useState<PanelData | null>(null);
-  const [widgetLoaded, setWidgetLoaded] = useState(false);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   useEffect(() => {
-    // Dodaj skrypt ElevenLabs do strony
+    if (document.querySelector('script[src="https://api.elevenlabs.io/v1/widgets.js"]')) {
+      setIsScriptLoaded(true);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://api.elevenlabs.io/v1/widgets.js';
     script.async = true;
+    
     script.onload = () => {
-      console.log('ElevenLabs widget script loaded');
-      setWidgetLoaded(true);
+      console.log('ElevenLabs script loaded successfully');
+      setIsScriptLoaded(true);
     };
+
+    script.onerror = (error) => {
+      console.error('Error loading ElevenLabs script:', error);
+    };
+
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup przy odmontowaniu komponentu
-      document.head.removeChild(script);
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
     };
   }, []);
 
@@ -70,30 +87,15 @@ const SeniorPanel = () => {
   }, [id, location.state]);
 
   useEffect(() => {
-    if (panelData?.agent_id && widgetLoaded) {
-      console.log('Widget loaded and agent_id available:', panelData.agent_id);
-      
-      // Daj czas na załadowanie skryptu i inicjalizację
-      const timer = setTimeout(() => {
-        try {
-          const widgetContainer = document.getElementById('elevenlabs-widget-container');
-          if (widgetContainer) {
-            console.log('Widget container found, initializing widget');
-          }
-        } catch (error) {
-          console.error('Error initializing widget:', error);
-        }
-      }, 1000);
-
-      return () => clearTimeout(timer);
+    if (panelData?.agent_id && isScriptLoaded) {
+      console.log('Ready to initialize widget with agent_id:', panelData.agent_id);
     }
-  }, [panelData?.agent_id, widgetLoaded]);
+  }, [panelData?.agent_id, isScriptLoaded]);
 
   const familyMemberName = panelData?.family_member || 'there';
 
   const renderAssistant = () => {
-    if (!widgetLoaded || !panelData?.agent_id) {
-      console.log('Widget not ready, showing loading state');
+    if (!isScriptLoaded || !panelData?.agent_id) {
       return (
         <div className="flex items-center justify-center h-[600px] bg-gray-100 rounded-lg">
           <p className="text-gray-500">Loading assistant...</p>
@@ -101,12 +103,12 @@ const SeniorPanel = () => {
       );
     }
 
-    console.log('Rendering ElevenLabs widget with agent_id:', panelData.agent_id);
+    console.log('Rendering ElevenLabs widget component');
     return (
-      <div id="elevenlabs-widget-container" className="h-[600px] rounded-lg overflow-hidden">
+      <div className="h-[600px] bg-white rounded-lg overflow-hidden shadow-lg">
         <elevenlabs-convai 
           agent-id={panelData.agent_id}
-          style={{ width: '100%', height: '100%', border: 'none' }}
+          className="w-full h-full"
         ></elevenlabs-convai>
       </div>
     );
@@ -117,10 +119,7 @@ const SeniorPanel = () => {
       <Button 
         variant="ghost" 
         className="fixed top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10 pointer-events-auto"
-        onClick={() => {
-          console.log('Back button clicked');
-          navigate('/neighbours');
-        }}
+        onClick={() => navigate('/neighbours')}
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Neighbours
