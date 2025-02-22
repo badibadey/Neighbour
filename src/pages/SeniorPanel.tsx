@@ -30,6 +30,8 @@ const SeniorPanel = () => {
         console.error('No panel ID provided in params or state');
         return;
       }
+
+      console.log('Fetching panel data for ID:', panelId);
       
       const { data, error } = await supabase
         .from('panels')
@@ -42,11 +44,25 @@ const SeniorPanel = () => {
         return;
       }
 
+      console.log('Panel data fetched:', data);
       setPanelData(data);
     };
 
     fetchPanelData();
   }, [id, location.state]);
+
+  useEffect(() => {
+    // Load ElevenLabs script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://elevenlabs.io/convai-widget/index.js';
+    script.async = true;
+    script.type = 'text/javascript';
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const familyMemberName = panelData?.family_member || 'there';
 
@@ -82,10 +98,7 @@ const SeniorPanel = () => {
 
         <div className="order-1 md:order-2">
           {panelData?.agent_id && (
-            <>
-              <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
-              <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-            </>
+            <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
           )}
         </div>
       </div>
