@@ -22,6 +22,7 @@ const SeniorPanel = () => {
   const { id } = useParams<{ id: string }>();
   const [panelData, setPanelData] = useState<PanelData | null>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [widgetVisible, setWidgetVisible] = useState(false);
 
   useEffect(() => {
     const fetchPanelData = async () => {
@@ -82,10 +83,21 @@ const SeniorPanel = () => {
     };
   }, []);
 
+  const toggleWidget = () => {
+    setWidgetVisible(!widgetVisible);
+    
+    const widget = document.querySelector('elevenlabs-convai');
+    if (widget) {
+      if (!widgetVisible) {
+        (widget as any).click();
+      }
+    }
+  };
+
   const familyMemberName = panelData?.family_member || 'there';
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] to-[#0006]">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] to-[#0006] overflow-hidden">
       <Button 
         variant="ghost" 
         className="absolute top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10"
@@ -95,43 +107,49 @@ const SeniorPanel = () => {
         Back to Neighbours
       </Button>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
-        <h1 
-          className={cn(
-            "text-4xl md:text-6xl font-bold text-white mb-8 text-center",
-            "opacity-0 animate-fade-in"
-          )}
-          style={{ 
-            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-            animationDelay: '0.4s',
-            animationFillMode: 'forwards'
-          }}
-        >
-          Welcome {familyMemberName},
-          <br />
-          <span className="text-orange-200">I'm your neighbour</span>
-        </h1>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="text-center mb-8">
+          <h1 
+            className={cn(
+              "text-4xl md:text-6xl font-bold text-white",
+              "opacity-0 animate-fade-in"
+            )}
+            style={{ 
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              animationDelay: '0.4s',
+              animationFillMode: 'forwards'
+            }}
+          >
+            Welcome {familyMemberName},
+            <br />
+            <span className="text-orange-200">I'm your neighbour</span>
+          </h1>
+        </div>
 
         {scriptLoaded && panelData?.agent_id && (
-          <div className="absolute inset-0 flex justify-center items-center">
-            <div className="relative inline-flex items-center justify-center gap-2">
-              <button 
-                className="relative inline-flex items-center justify-center whitespace-nowrap text-sm font-medium w-36 z-[1] group backdrop-blur-md bg-background/80 p-1.5 h-auto border-none shadow-lg rounded-full hover:bg-background/70 active:bg-background/70 transition-all duration-300"
-              >
-                <span className="me-1.5 w-8 h-8 bg-foreground rounded-full text-background flex items-center justify-center transition-all duration-300">
-                  <AudioWaveform className="w-4 h-4" />
-                </span>
-                <span className="pe-2.5 mx-auto">
-                  Call AI agent
-                </span>
-              </button>
-            </div>
+          <div className="relative">
+            <button 
+              onClick={toggleWidget}
+              className="relative inline-flex items-center justify-center whitespace-nowrap text-sm font-medium w-36 z-[1] group backdrop-blur-md bg-background/80 p-1.5 h-auto border-none shadow-lg rounded-full hover:bg-background/70 active:bg-background/70 transition-all duration-300"
+            >
+              <span className="me-1.5 w-8 h-8 bg-foreground rounded-full text-background flex items-center justify-center transition-all duration-300">
+                <AudioWaveform className="w-4 h-4" />
+              </span>
+              <span className="pe-2.5 mx-auto">
+                Call AI agent
+              </span>
+            </button>
             <elevenlabs-convai 
               agent-id={panelData.agent_id}
               style={{
                 position: 'absolute',
-                opacity: 0,
-                pointerEvents: 'none'
+                top: '100%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                marginTop: '1rem',
+                opacity: widgetVisible ? 1 : 0,
+                pointerEvents: widgetVisible ? 'auto' : 'none',
+                transition: 'opacity 0.3s ease'
               } as React.CSSProperties}
             ></elevenlabs-convai>
           </div>
