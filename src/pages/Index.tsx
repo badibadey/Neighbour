@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
@@ -37,12 +36,6 @@ const Index = () => {
             >
               Log in
             </Button>
-            <Button 
-              onClick={() => navigate('/signup')}
-              className="bg-white text-primary hover:bg-white/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300 rounded-full"
-            >
-              Get Started
-            </Button>
           </div>
         </nav>
 
@@ -66,7 +59,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/demo')}
-                  className="h-14 px-8 text-lg border-2 border-white text-white hover:bg-white/10 rounded-full"
+                  className="h-14 px-8 text-lg bg-primary text-white hover:bg-primary/90 rounded-full"
                 >
                   Watch Demo
                 </Button>
@@ -79,6 +72,11 @@ const Index = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/20 rounded-full blur-2xl animate-pulse" />
                   <div className="absolute inset-8 bg-gradient-to-br from-white/60 to-white/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
                   <div className="absolute inset-16 bg-gradient-to-br from-white/80 to-white/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <h2 className="text-4xl font-bold text-white" style={{ fontFamily: 'Crimson Text, serif' }}>
+                      Hi, neighbour
+                    </h2>
+                  </div>
                 </div>
               </div>
             </div>
