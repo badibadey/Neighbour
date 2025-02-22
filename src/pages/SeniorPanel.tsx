@@ -78,7 +78,7 @@ const SeniorPanel = () => {
       </Button>
 
       <div className="container mx-auto px-4 min-h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="text-center md:text-left order-2 md:order-1">
+        <div className="text-center md:text-left order-2 md:order-1 flex flex-col justify-center h-full">
           <h1 
             className={cn(
               "text-4xl md:text-6xl font-bold text-white",
@@ -96,7 +96,7 @@ const SeniorPanel = () => {
           </h1>
         </div>
 
-        <div className="order-1 md:order-2">
+        <div className="order-1 md:order-2 flex items-center justify-center h-full">
           {panelData?.agent_id && (
             <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
           )}
