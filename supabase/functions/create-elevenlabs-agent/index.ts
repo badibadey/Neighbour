@@ -30,9 +30,24 @@ ${eventData.map((event: any) => `- ${event.title} on ${new Date(event.date).toLo
 
 Always be supportive and patient. If there's any emergency, suggest contacting family or emergency services.`
 
-    console.log('Creating agent with prompt length:', prompt.length);
+    console.log('Creating agent with prompt:', prompt);
 
-    // Create the agent using the required configuration structure
+    // Updated payload structure to match the API requirements
+    const payload = {
+      conversation_config: {
+        agent: {
+          prompt: {
+            llm: "gpt-4o", // Using the specified model
+            prompt: prompt
+          }
+        }
+      },
+      name: `Assistant for ${familyMember || 'Family'}`,
+      description: `Personal assistant configured for ${familyMember || 'the family'}`
+    };
+
+    console.log('Sending payload to ElevenLabs:', JSON.stringify(payload, null, 2));
+
     const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
       method: 'POST',
       headers: {
@@ -40,24 +55,7 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
         'Content-Type': 'application/json',
         'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
       },
-      body: JSON.stringify({
-        conversation_config: {
-          agent: {
-            prompt: {
-              tools: [
-                {
-                  type: "system",
-                  name: "end_call",
-                  description: "End the current conversation"
-                }
-              ],
-              system_prompt: prompt
-            }
-          }
-        },
-        name: `Assistant for ${familyMember || 'Family'}`,
-        description: `Personal assistant configured for ${familyMember || 'the family'}`
-      }),
+      body: JSON.stringify(payload),
     });
 
     console.log('Agent creation status:', agentResponse.status);
