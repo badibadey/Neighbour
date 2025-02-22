@@ -21,32 +21,6 @@ const SeniorPanel = () => {
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const [panelData, setPanelData] = useState<PanelData | null>(null);
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
-
-  useEffect(() => {
-    if (document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
-      setIsScriptLoaded(true);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://elevenlabs.io/convai-widget/index.js';
-    script.async = true;
-    script.type = 'text/javascript';
-    
-    script.onload = () => {
-      console.log('ElevenLabs script loaded successfully');
-      setIsScriptLoaded(true);
-    };
-
-    document.head.appendChild(script);
-
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     const fetchPanelData = async () => {
@@ -56,8 +30,6 @@ const SeniorPanel = () => {
         console.error('No panel ID provided in params or state');
         return;
       }
-
-      console.log('Fetching panel data for ID:', panelId);
       
       const { data, error } = await supabase
         .from('panels')
@@ -70,7 +42,6 @@ const SeniorPanel = () => {
         return;
       }
 
-      console.log('Successfully fetched panel data:', data);
       setPanelData(data);
     };
 
@@ -79,69 +50,43 @@ const SeniorPanel = () => {
 
   const familyMemberName = panelData?.family_member || 'there';
 
-  const renderAssistant = () => {
-    if (!isScriptLoaded || !panelData?.agent_id) {
-      return (
-        <div className="flex items-center justify-center h-[600px] bg-gray-100 rounded-lg">
-          <p className="text-gray-500">Loading assistant...</p>
-        </div>
-      );
-    }
-
-    console.log('Rendering ElevenLabs widget with agent_id:', panelData.agent_id);
-    return (
-      <div className="h-[600px] bg-white rounded-lg overflow-hidden shadow-lg">
-        <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
-      </div>
-    );
-  };
-
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] to-[#0006]">
       <Button 
         variant="ghost" 
-        className="fixed top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10 pointer-events-auto"
+        className="fixed top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10"
         onClick={() => navigate('/neighbours')}
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Neighbours
       </Button>
 
-      <div className="min-h-screen relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-[#F97316] to-[#0006] animate-gradient"
-          style={{
-            backgroundSize: '200% 200%',
-            animation: 'gradient 15s ease infinite',
-          }}
-        />
-        
-        <div className="relative z-20">
-          <div className="container mx-auto px-4 h-[calc(100vh-2rem)] flex items-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full">
-              <div className="text-center md:text-left order-2 md:order-1">
-                <h1 
-                  className={cn(
-                    "text-4xl md:text-6xl font-bold text-white",
-                    "opacity-0 animate-fade-in"
-                  )}
-                  style={{ 
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                    animationDelay: '0.4s',
-                    animationFillMode: 'forwards'
-                  }}
-                >
-                  Welcome {familyMemberName},
-                  <br />
-                  <span className="text-orange-200">I'm your neighbor</span>
-                </h1>
-              </div>
+      <div className="container mx-auto px-4 min-h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="text-center md:text-left order-2 md:order-1">
+          <h1 
+            className={cn(
+              "text-4xl md:text-6xl font-bold text-white",
+              "opacity-0 animate-fade-in"
+            )}
+            style={{ 
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              animationDelay: '0.4s',
+              animationFillMode: 'forwards'
+            }}
+          >
+            Welcome {familyMemberName},
+            <br />
+            <span className="text-orange-200">I'm your neighbor</span>
+          </h1>
+        </div>
 
-              <div className="animate-fade-in order-1 md:order-2 relative z-20" style={{ animationDelay: '0.2s' }}>
-                {renderAssistant()}
-              </div>
-            </div>
-          </div>
+        <div className="order-1 md:order-2">
+          {panelData?.agent_id && (
+            <>
+              <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
+              <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+            </>
+          )}
         </div>
       </div>
     </div>
