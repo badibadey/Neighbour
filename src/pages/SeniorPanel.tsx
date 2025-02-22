@@ -85,7 +85,7 @@ const SeniorPanel = () => {
   const familyMemberName = panelData?.family_member || 'there';
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] to-[#0006]">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412]">
       <Button 
         variant="ghost" 
         className="absolute top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10"
@@ -99,7 +99,7 @@ const SeniorPanel = () => {
         <div className="order-1">
           <h1 
             className={cn(
-              "text-4xl md:text-6xl font-bold text-white",
+              "text-6xl md:text-8xl font-bold text-white mb-4",
               "opacity-0 animate-fade-in"
             )}
             style={{ 
@@ -109,9 +109,20 @@ const SeniorPanel = () => {
             }}
           >
             Welcome {familyMemberName},
-            <br />
-            <span className="text-orange-200">I'm your neighbour</span>
           </h1>
+          <h2 
+            className={cn(
+              "text-5xl md:text-7xl font-bold text-orange-200",
+              "opacity-0 animate-fade-in"
+            )}
+            style={{ 
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+              animationDelay: '0.6s',
+              animationFillMode: 'forwards'
+            }}
+          >
+            I'm your neighbour
+          </h2>
         </div>
 
         <div className="order-2">
@@ -120,7 +131,9 @@ const SeniorPanel = () => {
               agent-id={panelData.agent_id}
               style={{
                 width: '100%',
-                height: '500px'
+                height: '600px',
+                borderRadius: '12px',
+                overflow: 'hidden'
               } as React.CSSProperties}
             ></elevenlabs-convai>
           )}
