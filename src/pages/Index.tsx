@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
@@ -27,18 +26,16 @@ const Index = () => {
       <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412] overflow-hidden">
         <div className="container mx-auto px-4">
           <nav className="flex justify-between pt-8">
-            <div className="flex items-center gap-4">
-              <h2 className="text-3xl font-semibold text-white -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
-                neighbour
-              </h2>
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/login')}
-                className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in rounded-full"
-              >
-                Log in
-              </Button>
-            </div>
+            <h2 className="text-3xl font-semibold text-white -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
+              neighbour
+            </h2>
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/login')}
+              className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in rounded-full"
+            >
+              Log in
+            </Button>
           </nav>
         </div>
 
