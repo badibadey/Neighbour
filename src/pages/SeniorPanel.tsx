@@ -96,19 +96,7 @@ const SeniorPanel = () => {
       </Button>
 
       <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="order-2 md:order-1">
-          {scriptLoaded && panelData?.agent_id && (
-            <elevenlabs-convai 
-              agent-id={panelData.agent_id}
-              style={{
-                width: '100%',
-                height: '500px'
-              } as React.CSSProperties}
-            ></elevenlabs-convai>
-          )}
-        </div>
-
-        <div className="order-1 md:order-2">
+        <div className="order-1">
           <h1 
             className={cn(
               "text-4xl md:text-6xl font-bold text-white",
@@ -124,6 +112,18 @@ const SeniorPanel = () => {
             <br />
             <span className="text-orange-200">I'm your neighbour</span>
           </h1>
+        </div>
+
+        <div className="order-2">
+          {scriptLoaded && panelData?.agent_id && (
+            <elevenlabs-convai 
+              agent-id={panelData.agent_id}
+              style={{
+                width: '100%',
+                height: '500px'
+              } as React.CSSProperties}
+            ></elevenlabs-convai>
+          )}
         </div>
       </div>
     </div>
