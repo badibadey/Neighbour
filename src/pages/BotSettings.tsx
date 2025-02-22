@@ -241,6 +241,25 @@ const BotSettings = () => {
     });
   };
 
+  const handleAddMedication = (medication: { id: string; name: string; defaultDosage: string }) => {
+    setSetupData(prevData => ({
+      ...prevData,
+      drugs: [
+        ...prevData.drugs,
+        {
+          id: medication.id,
+          name: medication.name,
+          dosage: medication.defaultDosage,
+          schedule: {
+            frequency: 'daily',
+            time: '09:00'
+          }
+        }
+      ]
+    }));
+    toast.success(`${medication.name} added successfully!`);
+  };
+
   const saveToSupabase = async () => {
     try {
       console.log('Starting to save data to Supabase...', setupData);
