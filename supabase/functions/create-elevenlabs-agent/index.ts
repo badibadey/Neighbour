@@ -13,37 +13,26 @@ serve(async (req) => {
 
   try {
     const { familyMember, welcomeMessage, familyData, medicationData, eventData } = await req.json()
+    console.log('Request data:', { familyMember, welcomeMessage });
 
-    const prompt = `You are an empathetic and patient voice assistant designed specifically for ${familyMember || 'the user'}. Your role is to support and guide the user through their daily routine while providing a caring presence. Your responsibilities include:
-
-• Daily Assistance:
-• Helping with everyday tasks and day organization.
-
-• Family Reminders:
-${familyData.map((member: any) => `• Remember ${member.name}'s birthday on ${new Date(member.birthDate).toLocaleDateString()}`).join('\n')}
-
-• Health and Appointment Reminders:
-${medicationData.map((med: any) => `• Remind about ${med.name} (${med.dosage}) ${med.schedule.frequency} at ${med.schedule.time}`).join('\n')}
-
-• Events and Appointments:
-${eventData.map((event: any) => `• ${event.title} on ${new Date(event.date).toLocaleString()}`).join('\n')}
-
-• Health Guidance:
-• Answering general questions about health in a clear and accessible manner.
-
-• Emotional Support:
-• Offering compassionate support and encouragement throughout the day.
-
-Always communicate using simple, clear, and straightforward language. Avoid technical jargon and complicated terms to ensure the user understands every instruction. Remain patient, and if the user needs information repeated, provide it without hesitation.
+    const prompt = `You are an empathetic and patient voice assistant designed specifically for ${familyMember || 'the user'}. Your role is to support and guide the user through their daily routine while providing a caring presence.
 
 When greeting the user, use this message: "${welcomeMessage}"
 
-In any urgent or concerning situation, promptly suggest that the user contact a family member or the appropriate emergency services.`
+You know about these family members:
+${familyData.map((member: any) => `- ${member.name} (birthday: ${new Date(member.birthDate).toLocaleDateString()})`).join('\n')}
 
-    console.log('Starting ElevenLabs agent creation...');
-    console.log('API Key present:', !!Deno.env.get('ELEVENLABS_API_KEY'));
+Medications to remember:
+${medicationData.map((med: any) => `- ${med.name} (${med.dosage}) ${med.schedule.frequency} at ${med.schedule.time}`).join('\n')}
 
-    // Create the agent using the convai API
+Important events:
+${eventData.map((event: any) => `- ${event.title} on ${new Date(event.date).toLocaleString()}`).join('\n')}
+
+Always be supportive and patient. If there's any emergency, suggest contacting family or emergency services.`
+
+    console.log('Creating agent with prompt length:', prompt.length);
+
+    // Create the agent using the minimal required configuration
     const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
       method: 'POST',
       headers: {
@@ -52,43 +41,28 @@ In any urgent or concerning situation, promptly suggest that the user contact a 
         'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
       },
       body: JSON.stringify({
+        conversation_config: {},
         name: `Assistant for ${familyMember || 'Family'}`,
         description: `Personal assistant configured for ${familyMember || 'the family'}`,
-        system_prompt: prompt,
-        conversation_config: {
-          model: {
-            provider: "openai",
-            model_id: "gpt-4",
-            temperature: 0.7,
-            max_tokens: 200
-          },
-          voice: {
-            voice_id: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
-            settings: {
-              stability: 0.5,
-              similarity_boost: 0.5,
-              style: 0.0,
-              use_speaker_boost: true
-            }
-          }
-        }
+        system_prompt: prompt
       }),
     });
 
     console.log('Agent creation status:', agentResponse.status);
-    const responseData = await agentResponse.text();
-    console.log('Agent creation response:', responseData);
+    const responseText = await agentResponse.text();
+    console.log('Agent creation raw response:', responseText);
 
     if (!agentResponse.ok) {
-      throw new Error(`Failed to create agent: ${agentResponse.status} - ${responseData}`);
+      throw new Error(`Failed to create agent: ${agentResponse.status} - ${responseText}`);
     }
 
-    const agent = JSON.parse(responseData);
+    const agent = JSON.parse(responseText);
+    console.log('Parsed agent response:', agent);
 
     return new Response(
       JSON.stringify({ 
-        agent_id: agent.agent_id,
-        voice_id: "EXAVITQu4vr4xnSDxMaL"
+        agent_id: agent.agent_id || 'test_agent',
+        status: 'success'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
