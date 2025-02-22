@@ -400,7 +400,7 @@ const BotSettings = () => {
     {
       title: 'Name & Greeting',
       subtitle: 'Personalize your virtual neighbour',
-      description: 'Choose how your assistant will be called and how they'll greet your family member. This helps create a more personal and welcoming experience.',
+      description: 'Choose how your assistant will be called and how they will greet your family member. This helps create a more personal and welcoming experience.',
       component: (
         <div className="space-y-6">
           <div className="space-y-2">
