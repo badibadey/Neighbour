@@ -318,8 +318,7 @@ const BotSettings = () => {
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
           panel_id: currentPanelId,
           name: member.name,
-          birth_date: new Date(member.birthDate).toISOString().split('T')[0],
-          photo_url: member.photoUrl || null
+          birth_date: new Date(member.birthDate).toISOString().split('T')[0]
         }));
 
         const { error: familyError } = await supabase
@@ -359,13 +358,16 @@ const BotSettings = () => {
 
       // Save drugs
       if (setupData.drugs.length > 0) {
+        console.log('Saving drugs:', setupData.drugs);
         const drugsToInsert = setupData.drugs.map(drug => ({
           panel_id: currentPanelId,
           name: drug.name,
           dosage: drug.dosage,
-          frequency: drug.schedule.frequency,
-          time: drug.schedule.time
+          frequency: drug.schedule.frequency || 'daily',
+          time: drug.schedule.time || '09:00'
         }));
+
+        console.log('Drugs to insert:', drugsToInsert);
 
         const { error: drugsError } = await supabase
           .from('drugs')
