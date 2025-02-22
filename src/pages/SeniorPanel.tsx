@@ -51,7 +51,32 @@ const SeniorPanel = () => {
     fetchPanelData();
   }, [id, location.state]);
 
+  useEffect(() => {
+    if (panelData?.agent_id) {
+      console.log('Initializing ElevenLabs widget with agent_id:', panelData.agent_id);
+    }
+  }, [panelData?.agent_id]);
+
   const familyMemberName = panelData?.family_member || 'there';
+
+  const renderAssistant = () => {
+    if (!panelData?.agent_id) {
+      console.log('No agent_id available, showing loading state');
+      return (
+        <div className="flex items-center justify-center h-[600px] bg-gray-100 rounded-lg">
+          <p className="text-gray-500">Loading assistant...</p>
+        </div>
+      );
+    }
+
+    console.log('Rendering ElevenLabs widget with agent_id:', panelData.agent_id);
+    return (
+      <elevenlabs-convai 
+        agent-id={panelData.agent_id}
+        style={{ width: '100%', height: '600px', border: 'none' }}
+      ></elevenlabs-convai>
+    );
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -98,16 +123,7 @@ const SeniorPanel = () => {
               </div>
 
               <div className="animate-fade-in order-1 md:order-2 relative z-20" style={{ animationDelay: '0.2s' }}>
-                {panelData?.agent_id ? (
-                  <elevenlabs-convai 
-                    agent-id={panelData.agent_id}
-                    style={{ width: '100%', height: '600px' }}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-[600px] bg-gray-100 rounded-lg">
-                    <p className="text-gray-500">Loading assistant...</p>
-                  </div>
-                )}
+                {renderAssistant()}
               </div>
             </div>
           </div>
