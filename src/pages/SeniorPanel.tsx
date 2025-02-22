@@ -112,7 +112,7 @@ const SeniorPanel = () => {
             >
               Welcome {familyMemberName},
               <br />
-              <span className="text-orange-200">I'm your neighbor</span>
+              <span className="text-orange-200">I'm your neighbour</span>
             </h1>
           </div>
 

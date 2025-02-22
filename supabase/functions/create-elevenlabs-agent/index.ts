@@ -49,7 +49,7 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
           text_color: "#ffffff", // White text for contrast
           btn_text_color: "#ffffff",
           start_call_text: "Start conversation",
-          action_text: "Chat with neighbor",
+          action_text: "Chat with neighbour",
           end_call_text: "End conversation",
           speaking_text: "I'm listening...",
           listening_text: "Speaking...",
