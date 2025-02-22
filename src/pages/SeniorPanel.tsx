@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, AudioWaveform } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
@@ -22,7 +22,6 @@ const SeniorPanel = () => {
   const { id } = useParams<{ id: string }>();
   const [panelData, setPanelData] = useState<PanelData | null>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  const [widgetVisible, setWidgetVisible] = useState(false);
 
   useEffect(() => {
     const fetchPanelData = async () => {
@@ -83,21 +82,10 @@ const SeniorPanel = () => {
     };
   }, []);
 
-  const toggleWidget = () => {
-    setWidgetVisible(!widgetVisible);
-    
-    const widget = document.querySelector('elevenlabs-convai');
-    if (widget) {
-      if (!widgetVisible) {
-        (widget as any).click();
-      }
-    }
-  };
-
   const familyMemberName = panelData?.family_member || 'there';
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] to-[#0006] overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] to-[#0006]">
       <Button 
         variant="ghost" 
         className="absolute top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10"
@@ -107,8 +95,20 @@ const SeniorPanel = () => {
         Back to Neighbours
       </Button>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-center mb-8">
+      <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="order-2 md:order-1">
+          {scriptLoaded && panelData?.agent_id && (
+            <elevenlabs-convai 
+              agent-id={panelData.agent_id}
+              style={{
+                width: '100%',
+                height: '500px'
+              } as React.CSSProperties}
+            ></elevenlabs-convai>
+          )}
+        </div>
+
+        <div className="order-1 md:order-2">
           <h1 
             className={cn(
               "text-4xl md:text-6xl font-bold text-white",
@@ -125,35 +125,6 @@ const SeniorPanel = () => {
             <span className="text-orange-200">I'm your neighbour</span>
           </h1>
         </div>
-
-        {scriptLoaded && panelData?.agent_id && (
-          <div className="relative">
-            <button 
-              onClick={toggleWidget}
-              className="relative inline-flex items-center justify-center whitespace-nowrap text-sm font-medium w-36 z-[1] group backdrop-blur-md bg-background/80 p-1.5 h-auto border-none shadow-lg rounded-full hover:bg-background/70 active:bg-background/70 transition-all duration-300"
-            >
-              <span className="me-1.5 w-8 h-8 bg-foreground rounded-full text-background flex items-center justify-center transition-all duration-300">
-                <AudioWaveform className="w-4 h-4" />
-              </span>
-              <span className="pe-2.5 mx-auto">
-                Call AI agent
-              </span>
-            </button>
-            <elevenlabs-convai 
-              agent-id={panelData.agent_id}
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                marginTop: '1rem',
-                opacity: widgetVisible ? 1 : 0,
-                pointerEvents: widgetVisible ? 'auto' : 'none',
-                transition: 'opacity 0.3s ease'
-              } as React.CSSProperties}
-            ></elevenlabs-convai>
-          </div>
-        )}
       </div>
     </div>
   );
