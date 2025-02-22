@@ -73,7 +73,7 @@ const Index = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/20 rounded-full blur-2xl animate-pulse" />
                   <div className="absolute inset-8 bg-gradient-to-br from-white/60 to-white/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
                   <div className="absolute inset-16 bg-gradient-to-br from-white/80 to-white/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center pl-20">
                     <h2 className="text-2xl font-medium text-[#F97316]" style={{ fontFamily: 'Crimson Text, serif' }}>
                       Hi, neighbour
                     </h2>

@@ -37,6 +37,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-secondary/20 p-4">
+      <div className="text-center mb-8 absolute top-8">
+        <h2 className="text-3xl font-semibold text-primary -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
+          neighbour
+        </h2>
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-2 text-center">
           <h2 className="text-3xl font-bold">Welcome back</h2>
