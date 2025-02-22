@@ -284,21 +284,28 @@ const BotSettings = () => {
         return;
       }
 
-      // Create ElevenLabs agent
-      console.log('Creating ElevenLabs agent...');
-      const { data: agentData, error: agentError } = await supabase.functions.invoke('create-elevenlabs-agent', {
-        body: {
-          familyMember: setupData.basic.familyMember,
-          welcomeMessage: setupData.basic.welcomeMessage,
-          familyData: setupData.familyMembers,
-          medicationData: setupData.drugs,
-          eventData: setupData.events,
-        },
-      });
+      let agentId = null;
+      try {
+        console.log('Creating ElevenLabs agent...');
+        const { data: agentData, error: agentError } = await supabase.functions.invoke('create-elevenlabs-agent', {
+          body: {
+            familyMember: setupData.basic.familyMember,
+            welcomeMessage: setupData.basic.welcomeMessage,
+            familyData: setupData.familyMembers,
+            medicationData: setupData.drugs,
+            eventData: setupData.events,
+          },
+        });
 
-      if (agentError) {
-        console.error('Error creating ElevenLabs agent:', agentError);
-        throw new Error('Failed to create assistant');
+        if (agentError) {
+          console.error('Error creating ElevenLabs agent:', agentError);
+          toast.error('Warning: Voice assistant setup failed, but panel will be saved');
+        } else {
+          agentId = agentData.agent_id;
+        }
+      } catch (error) {
+        console.error('Failed to create ElevenLabs agent:', error);
+        toast.error('Warning: Voice assistant setup failed, but panel will be saved');
       }
 
       const panelData = {
@@ -308,7 +315,7 @@ const BotSettings = () => {
         family_member: setupData.basic.familyMember || '',
         assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
         voice_type: 'sarah',
-        agent_id: agentData.agent_id
+        agent_id: agentId
       };
 
       console.log('Panel data to save:', panelData);
@@ -323,7 +330,6 @@ const BotSettings = () => {
 
         if (updateError) throw updateError;
 
-        // Delete old data
         await Promise.all([
           supabase.from('family_members').delete().eq('panel_id', panelId),
           supabase.from('drugs').delete().eq('panel_id', panelId),
@@ -342,7 +348,6 @@ const BotSettings = () => {
         currentPanelId = newPanel.id;
       }
 
-      // Save family members
       if (setupData.familyMembers.length > 0) {
         console.log('Saving family members:', setupData.familyMembers);
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
@@ -362,7 +367,6 @@ const BotSettings = () => {
         }
       }
 
-      // Save events
       if (setupData.events.length > 0) {
         console.log('Saving events:', setupData.events);
         const eventsToInsert = setupData.events.map(event => ({
@@ -382,7 +386,6 @@ const BotSettings = () => {
         }
       }
 
-      // Save drugs
       if (setupData.drugs.length > 0) {
         console.log('Saving drugs:', setupData.drugs);
         const drugsToInsert = setupData.drugs.map(drug => ({
