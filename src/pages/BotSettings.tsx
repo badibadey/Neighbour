@@ -398,7 +398,9 @@ const BotSettings = () => {
 
   const steps = [
     {
-      title: 'Basic Settings',
+      title: 'Name & Greeting',
+      subtitle: 'Personalize your virtual neighbour',
+      description: 'Choose how your assistant will be called and how they'll greet your family member. This helps create a more personal and welcoming experience.',
       component: (
         <div className="space-y-6">
           <div className="space-y-2">
@@ -411,6 +413,7 @@ const BotSettings = () => {
               })}
               placeholder="My Neighbour"
             />
+            <p className="text-sm text-muted-foreground">This name will be used throughout the interface</p>
           </div>
 
           <div className="space-y-2">
@@ -423,6 +426,7 @@ const BotSettings = () => {
               })}
               placeholder="Primary family member"
             />
+            <p className="text-sm text-muted-foreground">The person who will be primarily using the assistant</p>
           </div>
 
           <div className="space-y-2">
@@ -445,12 +449,15 @@ const BotSettings = () => {
                 ))}
               </SelectContent>
             </Select>
+            <p className="text-sm text-muted-foreground">This message will be displayed when the assistant starts</p>
           </div>
         </div>
       )
     },
     {
       title: 'Family Members',
+      subtitle: 'Add people to remember',
+      description: 'Add family members that your assistant should know about. This helps create a more personalized experience with important dates and relationships.',
       component: (
         <div className="space-y-6">
           {setupData.familyMembers.map((member, index) => (
@@ -543,6 +550,8 @@ const BotSettings = () => {
     },
     {
       title: 'Medications',
+      subtitle: 'Set up medication reminders',
+      description: 'Add medications and their schedules to help your family member stay on track with their health routine. The assistant will provide timely reminders.',
       component: (
         <div className="space-y-6">
           {setupData.drugs.map((drug, index) => (
@@ -639,7 +648,9 @@ const BotSettings = () => {
       )
     },
     {
-      title: 'Events',
+      title: 'Important Events',
+      subtitle: 'Never miss important dates',
+      description: 'Add birthdays, appointments, or any other important events. Your assistant will help remember and remind about upcoming events.',
       component: (
         <div className="space-y-6">
           {setupData.events.map((event, index) => (
@@ -711,7 +722,9 @@ const BotSettings = () => {
       )
     },
     {
-      title: 'Summary',
+      title: 'Review & Complete',
+      subtitle: 'Almost there!',
+      description: 'Review all the information you\'ve provided. Make sure everything is correct before finishing the setup.',
       component: (
         <div className="space-y-6">
           <Card className="p-4">
@@ -839,12 +852,21 @@ const BotSettings = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-center">
-            {panelId ? 'Edit' : 'Setup'} Neighbour - Step {currentStep + 1} of {steps.length}
-          </h1>
-          <p className="text-center text-muted-foreground mt-2">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-900">
+              {currentStep + 1}
+            </span>
+            <span className="text-sm text-muted-foreground">of {steps.length}</span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {steps[currentStep].title}
+          </h1>
+          <p className="text-lg font-medium text-gray-600 mb-1">
+            {steps[currentStep].subtitle}
+          </p>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            {steps[currentStep].description}
           </p>
         </div>
         
