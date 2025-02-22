@@ -12,47 +12,83 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Settings2, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Settings2, Plus, Trash2, ArrowLeft, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-interface TabConfig {
+interface FamilyMember {
   id: string;
-  label: string;
-  content?: string;
+  name: string;
+  birthDate: string;
+}
+
+interface Drug {
+  id: string;
+  name: string;
+  dosage: string;
+  schedule: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  description: string;
 }
 
 const BotSettings = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("podstawowe");
-  const [tabs, setTabs] = useState<TabConfig[]>([
-    { id: "rodzina", label: "Rodzina" },
-    { id: "leki", label: "Leki" },
-    { id: "wydarzenia", label: "Wydarzenia" }
-  ]);
-  const [newTabName, setNewTabName] = useState("");
-  const [showAddTab, setShowAddTab] = useState(false);
+  const [activeTab, setActiveTab] = useState("basic");
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [drugs, setDrugs] = useState<Drug[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  
+  // Family Members Form
+  const [newMember, setNewMember] = useState({ name: '', birthDate: '' });
+  
+  // Drugs Form
+  const [newDrug, setNewDrug] = useState({ name: '', dosage: '', schedule: '' });
+  
+  // Events Form
+  const [newEvent, setNewEvent] = useState({ title: '', date: '', description: '' });
 
-  const handleAddTab = () => {
-    if (newTabName.trim()) {
-      const newTabId = newTabName.toLowerCase().replace(/\s+/g, '-');
-      if (tabs.some(tab => tab.id === newTabId)) {
-        toast.error("Zakładka o takiej nazwie już istnieje");
-        return;
-      }
-      setTabs([...tabs, { id: newTabId, label: newTabName.trim() }]);
-      setNewTabName("");
-      setShowAddTab(false);
-      toast.success("Dodano nową zakładkę");
+  const handleAddFamilyMember = () => {
+    if (newMember.name && newMember.birthDate) {
+      setFamilyMembers([...familyMembers, { ...newMember, id: Date.now().toString() }]);
+      setNewMember({ name: '', birthDate: '' });
+      toast.success("Family member added successfully");
     }
   };
 
-  const handleDeleteTab = (tabId: string) => {
-    setTabs(tabs.filter(tab => tab.id !== tabId));
-    if (activeTab === tabId) {
-      setActiveTab("podstawowe");
+  const handleAddDrug = () => {
+    if (newDrug.name && newDrug.dosage && newDrug.schedule) {
+      setDrugs([...drugs, { ...newDrug, id: Date.now().toString() }]);
+      setNewDrug({ name: '', dosage: '', schedule: '' });
+      toast.success("Drug added successfully");
     }
-    toast.success("Usunięto zakładkę");
+  };
+
+  const handleAddEvent = () => {
+    if (newEvent.title && newEvent.date) {
+      setEvents([...events, { ...newEvent, id: Date.now().toString() }]);
+      setNewEvent({ title: '', date: '', description: '' });
+      toast.success("Event added successfully");
+    }
+  };
+
+  const handleDelete = (id: string, type: 'family' | 'drug' | 'event') => {
+    switch (type) {
+      case 'family':
+        setFamilyMembers(familyMembers.filter(m => m.id !== id));
+        break;
+      case 'drug':
+        setDrugs(drugs.filter(d => d.id !== id));
+        break;
+      case 'event':
+        setEvents(events.filter(e => e.id !== id));
+        break;
+    }
+    toast.success("Item deleted successfully");
   };
 
   return (
@@ -66,7 +102,7 @@ const BotSettings = () => {
               onClick={() => navigate('/family')}
             >
               <ArrowLeft className="w-4 h-4" />
-              Powrót
+              Back
             </Button>
           </div>
         </div>
@@ -76,129 +112,207 @@ const BotSettings = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-center flex items-center justify-center gap-2">
             <Settings2 className="w-8 h-8" />
-            Ustawienia Asystenta
+            Setup Neighbour
           </h1>
         </div>
         
         <Card className="p-6 shadow-lg border-primary/10">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex items-center gap-4 mb-4">
-              <TabsList className="grid flex-1 grid-cols-4 gap-4 bg-secondary/20 p-1">
-                <TabsTrigger value="podstawowe">Podstawowe</TabsTrigger>
-                {tabs.map(tab => (
-                  <TabsTrigger key={tab.id} value={tab.id} className="group relative">
-                    {tab.label}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTab(tab.id);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setShowAddTab(true)}
-                className="shrink-0"
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
+            <TabsList className="grid w-full grid-cols-4 gap-4 bg-secondary/20 p-1">
+              <TabsTrigger value="basic">Basic</TabsTrigger>
+              <TabsTrigger value="family">Family Members</TabsTrigger>
+              <TabsTrigger value="drugs">Drugs</TabsTrigger>
+              <TabsTrigger value="events">Events</TabsTrigger>
+            </TabsList>
 
-            {showAddTab && (
-              <div className="flex items-center gap-2 mb-4">
-                <Input
-                  placeholder="Nazwa nowej zakładki"
-                  value={newTabName}
-                  onChange={(e) => setNewTabName(e.target.value)}
-                />
-                <Button onClick={handleAddTab}>Dodaj</Button>
-                <Button variant="ghost" onClick={() => setShowAddTab(false)}>Anuluj</Button>
-              </div>
-            )}
-
-            <TabsContent value="podstawowe" className="mt-6 space-y-6">
+            <TabsContent value="basic" className="mt-6 space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium block text-gray-700">Nazwa asystenta</label>
-                  <Input placeholder="Asystent Seniora" />
+                  <label className="text-sm font-medium block text-gray-700">Assistant Name</label>
+                  <Input placeholder="Senior Assistant" />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium block text-gray-700">Wiadomość powitalna</label>
-                  <Input placeholder="Cześć! Jak mogę ci dzisiaj pomóc?" />
+                  <label className="text-sm font-medium block text-gray-700">Welcome Message</label>
+                  <Input placeholder="Hi! How can I help you today?" />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium block text-gray-700">Główny prompt asystenta</label>
+                  <label className="text-sm font-medium block text-gray-700">Main Assistant Prompt</label>
                   <Textarea 
                     className="min-h-[200px]"
-                    placeholder="Jesteś empatycznym i cierpliwym asystentem dla osób starszych. Twoim zadaniem jest:
-
-1. Pomagać w codziennych czynnościach
-2. Przypominać o lekach i wizytach lekarskich
-3. Utrzymywać kontakt z rodziną
-4. Odpowiadać na pytania dotyczące zdrowia
-5. Oferować wsparcie emocjonalne
-6. Pomagać w organizacji dnia
-
-Zawsze mów prostym, zrozumiałym językiem. Unikaj skomplikowanych terminów.
-Bądź cierpliwy i gotowy do powtórzenia informacji.
-W sytuacjach nagłych lub niepokojących, sugeruj kontakt z rodziną lub odpowiednimi służbami."
+                    placeholder="You are an empathetic and patient assistant for seniors..."
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium block text-gray-700">Głos asystenta</label>
+                  <label className="text-sm font-medium block text-gray-700">Assistant Voice</label>
                   <Select defaultValue="sarah">
                     <SelectTrigger>
-                      <SelectValue placeholder="Wybierz głos" />
+                      <SelectValue placeholder="Select voice" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="sarah">Sarah</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div className="flex justify-end gap-4 pt-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => navigate('/family')}
-                    className="hover:bg-primary/10"
-                  >
-                    Anuluj
-                  </Button>
-                  <Button 
-                    onClick={() => {
-                      toast.success("Zapisano zmiany");
-                      navigate('/family');
-                    }}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    Zapisz zmiany
-                  </Button>
-                </div>
               </div>
             </TabsContent>
             
-            {tabs.map(tab => (
-              <TabsContent key={tab.id} value={tab.id}>
-                <div className="min-h-[400px] space-y-4">
-                  <div className="text-center text-muted-foreground">
-                    Konfiguracja sekcji {tab.label.toLowerCase()}
+            <TabsContent value="family" className="mt-6">
+              <div className="space-y-6">
+                <div className="grid gap-4">
+                  <h3 className="text-lg font-semibold">Add Family Member</h3>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input
+                      placeholder="Name"
+                      value={newMember.name}
+                      onChange={(e) => setNewMember({...newMember, name: e.target.value})}
+                    />
+                    <Input
+                      type="date"
+                      value={newMember.birthDate}
+                      onChange={(e) => setNewMember({...newMember, birthDate: e.target.value})}
+                    />
                   </div>
-                  {/* Tu będzie formularz konfiguracji dla danej zakładki */}
+                  <Button onClick={handleAddFamilyMember}>Add Family Member</Button>
                 </div>
-              </TabsContent>
-            ))}
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Family Members List</h3>
+                  {familyMembers.map((member) => (
+                    <Card key={member.id} className="p-4 flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">{member.name}</p>
+                        <p className="text-sm text-muted-foreground">Born: {member.birthDate}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(member.id, 'family')}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="drugs" className="mt-6">
+              <div className="space-y-6">
+                <div className="grid gap-4">
+                  <h3 className="text-lg font-semibold">Add Drug</h3>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <Input
+                      placeholder="Drug name"
+                      value={newDrug.name}
+                      onChange={(e) => setNewDrug({...newDrug, name: e.target.value})}
+                    />
+                    <Input
+                      placeholder="Dosage"
+                      value={newDrug.dosage}
+                      onChange={(e) => setNewDrug({...newDrug, dosage: e.target.value})}
+                    />
+                    <Input
+                      placeholder="Schedule"
+                      value={newDrug.schedule}
+                      onChange={(e) => setNewDrug({...newDrug, schedule: e.target.value})}
+                    />
+                  </div>
+                  <Button onClick={handleAddDrug}>Add Drug</Button>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Drugs List</h3>
+                  {drugs.map((drug) => (
+                    <Card key={drug.id} className="p-4 flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">{drug.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Dosage: {drug.dosage} | Schedule: {drug.schedule}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(drug.id, 'drug')}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="events" className="mt-6">
+              <div className="space-y-6">
+                <div className="grid gap-4">
+                  <h3 className="text-lg font-semibold">Add Event</h3>
+                  <div className="grid gap-4">
+                    <Input
+                      placeholder="Event title"
+                      value={newEvent.title}
+                      onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
+                    />
+                    <Input
+                      type="datetime-local"
+                      value={newEvent.date}
+                      onChange={(e) => setNewEvent({...newEvent, date: e.target.value})}
+                    />
+                    <Textarea
+                      placeholder="Event description"
+                      value={newEvent.description}
+                      onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
+                    />
+                  </div>
+                  <Button onClick={handleAddEvent}>Add Event</Button>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Events List</h3>
+                  {events.map((event) => (
+                    <Card key={event.id} className="p-4 flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">{event.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Date: {event.date}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(event.id, 'event')}
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
+
+          <div className="flex justify-end gap-4 mt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/family')}
+              className="hover:bg-primary/10"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                toast.success("Changes saved successfully");
+                navigate('/family');
+              }}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Save Changes
+            </Button>
+          </div>
         </Card>
       </div>
     </main>
