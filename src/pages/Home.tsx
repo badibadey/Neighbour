@@ -28,9 +28,9 @@ const Home = () => {
         </div>
         
         <div className="grid gap-6 md:grid-cols-2 animate-fade-in">
-          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border-2">
-            <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
-              <Video className="h-6 w-6 text-white" />
+          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border">
+            <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+              <Video className="h-6 w-6 text-purple-600" />
             </div>
             <h3 className="text-xl font-medium text-gray-900">Voice Control</h3>
             <p className="text-gray-600">
@@ -38,9 +38,9 @@ const Home = () => {
             </p>
           </Card>
           
-          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border-2">
-            <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
-              <UserRound className="h-6 w-6 text-white" />
+          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border">
+            <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+              <UserRound className="h-6 w-6 text-green-600" />
             </div>
             <h3 className="text-xl font-medium text-gray-900">Personalized Assistant</h3>
             <p className="text-gray-600">
@@ -48,9 +48,9 @@ const Home = () => {
             </p>
           </Card>
           
-          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border-2">
-            <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
-              <MessageCircle className="h-6 w-6 text-white" />
+          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border">
+            <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+              <MessageCircle className="h-6 w-6 text-orange-600" />
             </div>
             <h3 className="text-xl font-medium text-gray-900">Natural Conversations</h3>
             <p className="text-gray-600">
@@ -58,9 +58,9 @@ const Home = () => {
             </p>
           </Card>
           
-          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border-2">
-            <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center">
-              <MicOff className="h-6 w-6 text-white" />
+          <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 border">
+            <div className="h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center">
+              <MicOff className="h-6 w-6 text-rose-600" />
             </div>
             <h3 className="text-xl font-medium text-gray-900">Offline Mode</h3>
             <p className="text-gray-600">
@@ -72,7 +72,7 @@ const Home = () => {
         <div className="space-y-6 animate-fade-in">
           <h2 className="text-2xl font-semibold text-gray-900">Quick Setup</h2>
           
-          <Card className="border-2">
+          <Card className="border">
             <div className="p-6 space-y-6">
               <div className="flex items-center justify-between border-b pb-6">
                 <div className="space-y-1">
@@ -81,7 +81,7 @@ const Home = () => {
                 </div>
                 <Button 
                   onClick={() => navigate('/bot-settings')}
-                  className="group transition-all duration-300 hover:pr-8 bg-blue-600 hover:bg-blue-700"
+                  className="group transition-all duration-300 hover:pr-8 bg-gray-900 hover:bg-gray-800"
                 >
                   Get Started
                   <ArrowRight className="ml-2 h-4 w-4 transition-all duration-300 group-hover:translate-x-2" />
@@ -96,7 +96,7 @@ const Home = () => {
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/neighbours')}
-                  className="group transition-all duration-300 hover:pr-8 border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  className="group transition-all duration-300 hover:pr-8 border border-gray-200 text-gray-900 hover:bg-gray-50"
                 >
                   View All
                   <ArrowRight className="ml-2 h-4 w-4 transition-all duration-300 group-hover:translate-x-2" />
