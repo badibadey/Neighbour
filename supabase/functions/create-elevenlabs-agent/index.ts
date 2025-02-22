@@ -45,8 +45,8 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
       platform_settings: {
         widget: {
           variant: "expandable",
-          bg_color: "#F97316", // Orange to match our theme
-          text_color: "#ffffff", // White text for contrast
+          bg_color: "#F97316",
+          text_color: "#ffffff",
           btn_text_color: "#ffffff",
           start_call_text: "Start conversation",
           action_text: "Chat with neighbour",
@@ -54,7 +54,12 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
           speaking_text: "I'm listening...",
           listening_text: "Speaking...",
           language_selector: true,
-          custom_avatar_path: "https://media.istockphoto.com/id/1180453857/photo/blur-orange-texture-background.jpg?s=612x612&w=0&k=20&c=bpaBJRK2hep0m7JTCCs29MIHeo4jOFDgp9QH30cnRDk="
+          custom_avatar_path: "https://media.istockphoto.com/id/1180453857/photo/blur-orange-texture-background.jpg?s=612x612&w=0&k=20&c=bpaBJRK2hep0m7JTCCs29MIHeo4jOFDgp9QH30cnRDk=",
+          avatar: {
+            type: "orb",
+            color_1: "#F97316", // Jasny pomarańczowy
+            color_2: "#FEC6A1"  // Ciemniejszy pomarańczowy
+          }
         }
       },
       name: `Assistant for ${familyMember || 'Family'}`,
