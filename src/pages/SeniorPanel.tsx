@@ -55,17 +55,20 @@ const SeniorPanel = () => {
         }}
       />
       
-      {/* Content */}
-      <div className="relative z-10 min-h-screen">
+      {/* Back button */}
+      <div className="fixed top-0 left-0 z-50">
         <Button 
           variant="ghost" 
-          className="text-white flex items-center gap-2 m-4 hover:bg-white/10 fixed top-0 left-0"
+          className="text-white flex items-center gap-2 m-4 hover:bg-white/10"
           onClick={() => navigate('/family')}
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Family Panel
         </Button>
-
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4 h-[calc(100vh-2rem)] flex items-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full">
             {/* Left column - Welcome text */}
