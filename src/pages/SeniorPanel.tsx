@@ -9,13 +9,17 @@ const SeniorPanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const panelData = location.state?.panelData;
+  
+  // Pobieramy imię z konfiguracji panelu
   const primaryFamilyName = panelData?.family_member || 'there';
 
+  console.log('Panel data:', panelData); // Debugging
+
   useEffect(() => {
+    // Najpierw usuwamy istniejący skrypt, jeśli istnieje
     const existingScript = document.querySelector('script[src*="convai-widget"]');
     if (existingScript) {
-      console.log('ElevenLabs script already exists:', existingScript);
-      return;
+      existingScript.remove();
     }
 
     console.log('Adding ElevenLabs script...');
@@ -38,7 +42,6 @@ const SeniorPanel = () => {
     return () => {
       const scriptToRemove = document.querySelector('script[src*="convai-widget"]');
       if (scriptToRemove) {
-        console.log('Removing ElevenLabs script');
         scriptToRemove.remove();
       }
     };
@@ -46,26 +49,24 @@ const SeniorPanel = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Back button - moved outside gradient and increased z-index */}
+      <Button 
+        variant="ghost" 
+        className="fixed top-4 left-4 z-[100] text-white flex items-center gap-2 hover:bg-white/10"
+        onClick={() => navigate('/family')}
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Family Panel
+      </Button>
+
       {/* Animated gradient background */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-[#F97316] to-[#0006] animate-gradient"
+        className="absolute inset-0 bg-gradient-to-br from-[#F97316] to-[#0006] animate-gradient z-0"
         style={{
           backgroundSize: '200% 200%',
           animation: 'gradient 15s ease infinite',
         }}
       />
-      
-      {/* Back button */}
-      <div className="fixed top-0 left-0 z-50">
-        <Button 
-          variant="ghost" 
-          className="text-white flex items-center gap-2 m-4 hover:bg-white/10"
-          onClick={() => navigate('/family')}
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Family Panel
-        </Button>
-      </div>
       
       {/* Content */}
       <div className="relative z-10 min-h-screen">
