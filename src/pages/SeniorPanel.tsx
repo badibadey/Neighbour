@@ -1,28 +1,38 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 
 const SeniorPanel = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const [panelData, setPanelData] = useState<any>(null);
 
+  // Debug logs
+  console.log('Route params:', useParams());
+  console.log('Location state:', location.state);
+  console.log('Panel ID:', id);
+
   useEffect(() => {
     const fetchPanelData = async () => {
-      if (!id) {
-        console.error('No panel ID provided');
+      // Check both params and state for panel ID
+      const panelId = id || location.state?.panelId;
+      
+      if (!panelId) {
+        console.error('No panel ID provided in params or state');
         return;
       }
 
-      console.log('Fetching panel data for ID:', id);
+      console.log('Fetching panel data for ID:', panelId);
       
       const { data, error } = await supabase
         .from('panels')
         .select('*')
-        .eq('id', id)
+        .eq('id', panelId)
         .single();
 
       if (error) {
@@ -35,7 +45,7 @@ const SeniorPanel = () => {
     };
 
     fetchPanelData();
-  }, [id]);
+  }, [id, location.state]);
 
   // Log panel data for debugging
   console.log('Current panel data:', panelData);
@@ -69,11 +79,10 @@ const SeniorPanel = () => {
           style={{
             backgroundSize: '200% 200%',
             animation: 'gradient 15s ease infinite',
-            zIndex: 1,
           }}
         />
         
-        <div className="relative z-10 min-h-screen">
+        <div className="relative z-20"> {/* Zwiększony z-index dla kontentu */}
           <div className="container mx-auto px-4 h-[calc(100vh-2rem)] flex items-center">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full">
               <div className="text-center md:text-left order-2 md:order-1">
@@ -94,7 +103,7 @@ const SeniorPanel = () => {
                 </h1>
               </div>
 
-              <div className="animate-fade-in order-1 md:order-2" style={{ animationDelay: '0.2s' }}>
+              <div className="animate-fade-in order-1 md:order-2 relative z-20" style={{ animationDelay: '0.2s' }}>
                 <elevenlabs-convai 
                   agent-id="xUPvftKCr58LTe0Ffz5m"
                   style={{ width: '100%', height: '600px' }}
