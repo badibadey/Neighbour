@@ -1,52 +1,95 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { SetupData, FamilyMember, Medication, Event } from '@/types/setup';
 
-interface SetupData {
-  basic: {
-    name: string;
-    welcomeMessage: string;
-    assistantPrompt: string;
-    voiceType: string;
-  };
-  familyMembers: {
-    name: string;
-    birthDate: string;
-  }[];
-  drugs: {
-    name: string;
-    dosage: string;
-    schedule: string;
-  }[];
-  events: {
-    title: string;
-    date: string;
-    description: string;
-  }[];
-}
+const WELCOME_MESSAGES = [
+  "Hi! I'm here to help you with your daily tasks.",
+  "Welcome! How can I assist you today?",
+  "Hello! I'm your personal assistant.",
+  "Good day! I'm here to make your day easier.",
+  "Welcome back! What can I do for you today?"
+];
+
+const MEDICATIONS_DATABASE = [
+  { id: '1', name: 'Aspirin', defaultDosage: '100mg' },
+  { id: '2', name: 'Ibuprofen', defaultDosage: '400mg' },
+  { id: '3', name: 'Paracetamol', defaultDosage: '500mg' },
+  // ... więcej leków
+];
 
 const BotSettings = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [setupData, setSetupData] = useState<SetupData>({
     basic: {
-      name: 'New Senior Panel',
-      welcomeMessage: 'Hi! How can I help you today?',
-      assistantPrompt: 'You are an empathetic and patient assistant for seniors...',
-      voiceType: 'sarah'
+      name: 'My Neighbour',
+      welcomeMessage: WELCOME_MESSAGES[0]
     },
     familyMembers: [],
     drugs: [],
     events: []
   });
+
+  const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  const handleExit = () => {
+    setIsExitDialogOpen(true);
+  };
+
+  const confirmExit = () => {
+    navigate('/family');
+  };
+
+  const handleFileUpload = async (file: File, memberIndex: number) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `family-photos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('user-uploads')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('user-uploads')
+        .getPublicUrl(filePath);
+
+      const newMembers = [...setupData.familyMembers];
+      newMembers[memberIndex] = {
+        ...newMembers[memberIndex],
+        photoUrl: publicUrl
+      };
+
+      setSetupData({ ...setupData, familyMembers: newMembers });
+      toast.success('Photo uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Failed to upload photo');
+    }
+  };
 
   const steps = [
     {
@@ -54,59 +97,37 @@ const BotSettings = () => {
       component: (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium block">Assistant Name</label>
+            <label className="text-sm font-medium block">Neighbour Name</label>
             <Input 
               value={setupData.basic.name}
               onChange={(e) => setSetupData({
                 ...setupData,
                 basic: { ...setupData.basic, name: e.target.value }
               })}
-              placeholder="Senior Assistant"
+              placeholder="My Neighbour"
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium block">Welcome Message</label>
-            <Input 
-              value={setupData.basic.welcomeMessage}
-              onChange={(e) => setSetupData({
-                ...setupData,
-                basic: { ...setupData.basic, welcomeMessage: e.target.value }
-              })}
-              placeholder="Hi! How can I help you today?"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium block">Assistant Voice</label>
             <Select 
-              value={setupData.basic.voiceType}
+              value={setupData.basic.welcomeMessage}
               onValueChange={(value) => setSetupData({
                 ...setupData,
-                basic: { ...setupData.basic, voiceType: value }
+                basic: { ...setupData.basic, welcomeMessage: value }
               })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select voice" />
+                <SelectValue placeholder="Select welcome message" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="sarah">Sarah</SelectItem>
-                <SelectItem value="mike">Mike</SelectItem>
+                {WELCOME_MESSAGES.map((message, index) => (
+                  <SelectItem key={index} value={message}>
+                    {message}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium block">Assistant Prompt</label>
-            <Textarea 
-              value={setupData.basic.assistantPrompt}
-              onChange={(e) => setSetupData({
-                ...setupData,
-                basic: { ...setupData.basic, assistantPrompt: e.target.value }
-              })}
-              placeholder="You are an empathetic and patient assistant for seniors..."
-              className="min-h-[100px]"
-            />
           </div>
         </div>
       )
@@ -130,7 +151,39 @@ const BotSettings = () => {
                     Remove
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">Born: {member.birthDate}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Born: {member.birthDate}</p>
+                    {member.photoUrl && (
+                      <img 
+                        src={member.photoUrl} 
+                        alt={member.name} 
+                        className="mt-2 w-24 h-24 object-cover rounded-full"
+                      />
+                    )}
+                  </div>
+                  <div className="flex items-center">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      id={`photo-upload-${index}`}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          handleFileUpload(file, index);
+                        }
+                      }}
+                    />
+                    <Button
+                      variant="outline"
+                      onClick={() => document.getElementById(`photo-upload-${index}`)?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Photo
+                    </Button>
+                  </div>
+                </div>
               </div>
             </Card>
           ))}
@@ -147,7 +200,7 @@ const BotSettings = () => {
                         ...setupData,
                         familyMembers: [
                           ...setupData.familyMembers,
-                          { name: e.currentTarget.value, birthDate: '' }
+                          { name: e.currentTarget.value, birthDate: '', photoUrl: '' }
                         ]
                       });
                       e.currentTarget.value = '';
@@ -190,7 +243,9 @@ const BotSettings = () => {
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Dosage: {drug.dosage} | Schedule: {drug.schedule}
+                  Dosage: {drug.dosage}
+                  <br />
+                  Schedule: {drug.schedule.frequency} at {drug.schedule.time}
                 </p>
               </div>
             </Card>
@@ -199,42 +254,72 @@ const BotSettings = () => {
           <Card className="p-4">
             <div className="space-y-4">
               <h3 className="font-medium">Add New Medication</h3>
-              <div className="grid gap-4 md:grid-cols-3">
-                <Input
-                  placeholder="Medication name"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && e.currentTarget.value) {
-                      setSetupData({
-                        ...setupData,
-                        drugs: [
-                          ...setupData.drugs,
-                          { name: e.currentTarget.value, dosage: '', schedule: '' }
-                        ]
-                      });
-                      e.currentTarget.value = '';
-                    }
-                  }}
-                />
-                <Input
-                  placeholder="Dosage"
-                  onChange={(e) => {
-                    if (setupData.drugs.length > 0) {
-                      const newDrugs = [...setupData.drugs];
-                      newDrugs[newDrugs.length - 1].dosage = e.target.value;
-                      setSetupData({ ...setupData, drugs: newDrugs });
-                    }
-                  }}
-                />
-                <Input
-                  placeholder="Schedule"
-                  onChange={(e) => {
-                    if (setupData.drugs.length > 0) {
-                      const newDrugs = [...setupData.drugs];
-                      newDrugs[newDrugs.length - 1].schedule = e.target.value;
-                      setSetupData({ ...setupData, drugs: newDrugs });
-                    }
-                  }}
-                />
+              <div className="grid gap-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline">Select Medication</Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0" side="right" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search medications..." />
+                      <CommandEmpty>No medication found.</CommandEmpty>
+                      <CommandGroup>
+                        {MEDICATIONS_DATABASE.map((med) => (
+                          <CommandItem
+                            key={med.id}
+                            onSelect={() => {
+                              setSetupData({
+                                ...setupData,
+                                drugs: [
+                                  ...setupData.drugs,
+                                  {
+                                    id: med.id,
+                                    name: med.name,
+                                    dosage: med.defaultDosage,
+                                    schedule: { frequency: 'daily', time: '08:00' }
+                                  }
+                                ]
+                              });
+                            }}
+                          >
+                            {med.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                {setupData.drugs.length > 0 && (
+                  <>
+                    <Select 
+                      value={setupData.drugs[setupData.drugs.length - 1].schedule.frequency}
+                      onValueChange={(value: 'daily' | 'weekly' | 'monthly') => {
+                        const newDrugs = [...setupData.drugs];
+                        newDrugs[newDrugs.length - 1].schedule.frequency = value;
+                        setSetupData({ ...setupData, drugs: newDrugs });
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select frequency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Input
+                      type="time"
+                      onChange={(e) => {
+                        const newDrugs = [...setupData.drugs];
+                        newDrugs[newDrugs.length - 1].schedule.time = e.target.value;
+                        setSetupData({ ...setupData, drugs: newDrugs });
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </Card>
@@ -298,7 +383,7 @@ const BotSettings = () => {
                     }
                   }}
                 />
-                <Textarea
+                <Input
                   placeholder="Event description"
                   onChange={(e) => {
                     if (setupData.events.length > 0) {
@@ -332,9 +417,7 @@ const BotSettings = () => {
         .insert([{
           user_id: user.id,
           name: setupData.basic.name,
-          welcome_message: setupData.basic.welcomeMessage,
-          assistant_prompt: setupData.basic.assistantPrompt,
-          voice_type: setupData.basic.voiceType
+          welcome_message: setupData.basic.welcomeMessage
         }])
         .select()
         .single();
@@ -349,7 +432,8 @@ const BotSettings = () => {
             setupData.familyMembers.map(member => ({
               panel_id: panel.id,
               name: member.name,
-              birth_date: member.birthDate
+              birth_date: member.birthDate,
+              photo_url: member.photoUrl
             }))
           );
         if (familyError) throw familyError;
@@ -398,14 +482,30 @@ const BotSettings = () => {
       <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              className="text-primary flex items-center gap-2 hover:text-primary/80 hover:bg-primary/10"
-              onClick={() => navigate('/family')}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
+            <AlertDialog open={isExitDialogOpen} onOpenChange={setIsExitDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="text-primary flex items-center gap-2 hover:text-primary/80 hover:bg-primary/10"
+                  onClick={handleExit}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure you want to exit?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    All your changes will be lost and the new panel won't be created.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={confirmExit}>Exit</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </header>
