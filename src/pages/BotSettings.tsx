@@ -167,9 +167,26 @@ const BotSettings = () => {
       }
     };
 
-    setSetupData({
-      ...setupData,
-      drugs: [...setupData.drugs, newMedication]
+    setSetupData(prevData => ({
+      ...prevData,
+      drugs: [...prevData.drugs, newMedication]
+    }));
+  };
+
+  const updateMedicationSchedule = (index: number, frequency: 'daily' | 'weekly' | 'monthly', time: string) => {
+    setSetupData(prevData => {
+      const newDrugs = [...prevData.drugs];
+      newDrugs[index] = {
+        ...newDrugs[index],
+        schedule: {
+          frequency,
+          time
+        }
+      };
+      return {
+        ...prevData,
+        drugs: newDrugs
+      };
     });
   };
 
@@ -334,56 +351,16 @@ const BotSettings = () => {
                     Remove
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Dosage: {drug.dosage}
-                  <br />
-                  Schedule: {drug.schedule.frequency} at {drug.schedule.time}
-                </p>
-              </div>
-            </Card>
-          ))}
-          
-          <Card className="p-4">
-            <div className="space-y-4">
-              <h3 className="font-medium">Add New Medication</h3>
-              <div className="grid gap-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline">Select Medication</Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0" side="right" align="start">
-                    <Command>
-                      <CommandInput placeholder="Search medications..." />
-                      <CommandEmpty>No medication found.</CommandEmpty>
-                      <CommandGroup>
-                        {MEDICATIONS_DATABASE.map((med) => (
-                          <CommandItem
-                            key={med.id}
-                            onSelect={() => handleAddMedication(med)}
-                          >
-                            {med.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-
-                {setupData.drugs.length > 0 && (
-                  <>
+                <div className="grid gap-4">
+                  <p className="text-sm text-muted-foreground">
+                    Dosage: {drug.dosage}
+                  </p>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">Frequency</label>
                     <Select 
-                      value={setupData.drugs[setupData.drugs.length - 1].schedule.frequency}
+                      value={drug.schedule.frequency}
                       onValueChange={(value: 'daily' | 'weekly' | 'monthly') => {
-                        const newDrugs = [...setupData.drugs];
-                        const lastIndex = newDrugs.length - 1;
-                        newDrugs[lastIndex] = {
-                          ...newDrugs[lastIndex],
-                          schedule: {
-                            ...newDrugs[lastIndex].schedule,
-                            frequency: value
-                          }
-                        };
-                        setSetupData({ ...setupData, drugs: newDrugs });
+                        updateMedicationSchedule(index, value, drug.schedule.time);
                       }}
                     >
                       <SelectTrigger>
@@ -395,26 +372,57 @@ const BotSettings = () => {
                         <SelectItem value="monthly">Monthly</SelectItem>
                       </SelectContent>
                     </Select>
-
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-medium">Time</label>
                     <Input
                       type="time"
-                      value={setupData.drugs[setupData.drugs.length - 1].schedule.time}
+                      value={drug.schedule.time}
                       onChange={(e) => {
-                        const newDrugs = [...setupData.drugs];
-                        const lastIndex = newDrugs.length - 1;
-                        newDrugs[lastIndex] = {
-                          ...newDrugs[lastIndex],
-                          schedule: {
-                            ...newDrugs[lastIndex].schedule,
-                            time: e.target.value
-                          }
-                        };
-                        setSetupData({ ...setupData, drugs: newDrugs });
+                        updateMedicationSchedule(index, drug.schedule.frequency, e.target.value);
                       }}
                     />
-                  </>
-                )}
+                  </div>
+                </div>
               </div>
+            </Card>
+          ))}
+          
+          <Card className="p-4">
+            <div className="space-y-4">
+              <h3 className="font-medium">Add New Medication</h3>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {setupData.drugs.length === 0 ? "Select Medication" : "Add Another Medication"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0" side="right" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search medications..." />
+                    <CommandEmpty>No medication found.</CommandEmpty>
+                    <CommandGroup>
+                      {MEDICATIONS_DATABASE.map((med) => (
+                        <CommandItem
+                          key={med.id}
+                          value={med.name}
+                          onSelect={() => {
+                            handleAddMedication(med);
+                          }}
+                        >
+                          <div className="flex flex-col">
+                            <span>{med.name}</span>
+                            <span className="text-sm text-muted-foreground">
+                              Default dosage: {med.defaultDosage}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
           </Card>
         </div>
