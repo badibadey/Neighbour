@@ -42,19 +42,29 @@ const FamilyPanel = () => {
   const fetchPanels = async () => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
+      if (userError) {
+        console.error('User error:', userError);
+        throw userError;
+      }
 
       if (!user) {
+        console.log('No user found, redirecting to login');
         navigate('/');
         return;
       }
 
+      console.log('Fetching panels for user:', user.id);
       const { data: panels, error } = await supabase
         .from('panels')
         .select('*')
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Fetch panels error:', error);
+        throw error;
+      }
+      
+      console.log('Fetched panels:', panels);
       setPanels(panels || []);
     } catch (error) {
       console.error('Error fetching panels:', error);
@@ -67,35 +77,49 @@ const FamilyPanel = () => {
   const createSeniorPanel = async () => {
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
+      if (userError) {
+        console.error('User error:', userError);
+        throw userError;
+      }
 
       if (!user) {
+        console.log('No user found, redirecting to login');
         navigate('/');
         return;
       }
 
+      console.log('Creating panel for user:', user.id);
+      const newPanel = {
+        user_id: user.id,
+        name: 'New Senior Panel',
+        welcome_message: 'Hi! How can I help you today?',
+        assistant_prompt: 'You are an empathetic and patient assistant for seniors...',
+        voice_type: 'sarah'
+      };
+
+      console.log('Inserting new panel:', newPanel);
       const { data: panel, error } = await supabase
         .from('panels')
-        .insert([
-          {
-            user_id: user.id,
-            name: 'New Senior Panel',
-            welcome_message: 'Hi! How can I help you today?',
-            assistant_prompt: 'You are an empathetic and patient assistant for seniors...',
-            voice_type: 'sarah'
-          }
-        ])
+        .insert([newPanel])
         .select()
         .single();
 
-      if (error) throw error;
-      
+      if (error) {
+        console.error('Create panel error:', error);
+        throw error;
+      }
+
+      console.log('Created panel:', panel);
       setPanels([...panels, panel]);
-      navigate('/bot-settings');
       toast.success('Senior panel created successfully');
+      navigate('/bot-settings');
     } catch (error) {
       console.error('Error creating panel:', error);
-      toast.error('Failed to create panel');
+      if (error instanceof Error) {
+        toast.error(`Failed to create panel: ${error.message}`);
+      } else {
+        toast.error('Failed to create panel');
+      }
     }
   };
 
@@ -111,6 +135,12 @@ const FamilyPanel = () => {
       toast.error('Failed to log out');
     }
   };
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <p>Loading...</p>
+    </div>;
+  }
 
   return (
     <div className="min-h-screen bg-background flex">
