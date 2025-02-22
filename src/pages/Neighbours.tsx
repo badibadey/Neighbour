@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -151,8 +150,7 @@ const Neighbours = () => {
             <Card key={panel.id} className="p-6 flex flex-col min-h-[200px]">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-medium">{panel.name}</h3>
-                  <p className="text-sm text-muted-foreground">Neighbour for {panel.family_member}</p>
+                  <h3 className="text-xl font-medium">Neighbour for {panel.family_member}</h3>
                 </div>
                 <div className="flex gap-2">
                   <Button
