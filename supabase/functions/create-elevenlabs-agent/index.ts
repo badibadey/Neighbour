@@ -32,14 +32,15 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
 
     console.log('Creating agent with prompt:', prompt);
 
-    // Updated payload structure to match the API requirements
+    // Updated payload structure to include first_message
     const payload = {
       conversation_config: {
         agent: {
           prompt: {
-            llm: "gpt-4o", // Using the specified model
+            llm: "gpt-4o",
             prompt: prompt
-          }
+          },
+          first_message: welcomeMessage // Using welcome_message from panels table
         }
       },
       name: `Assistant for ${familyMember || 'Family'}`,
