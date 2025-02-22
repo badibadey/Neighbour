@@ -25,6 +25,7 @@ export interface SetupData {
   basic: {
     name: string;
     welcomeMessage: string;
+    familyMember?: string;
   };
   familyMembers: FamilyMember[];
   drugs: Medication[];

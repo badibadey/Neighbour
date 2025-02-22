@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Upload, Plus } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -25,40 +25,102 @@ const MEDICATIONS_DATABASE = [
   { id: '1', name: 'Aspirin', defaultDosage: '100mg' },
   { id: '2', name: 'Ibuprofen', defaultDosage: '400mg' },
   { id: '3', name: 'Paracetamol', defaultDosage: '500mg' },
-  // ... więcej leków
 ];
 
 const BotSettings = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const panelId = searchParams.get('panel');
   const [currentStep, setCurrentStep] = useState(0);
   const [setupData, setSetupData] = useState<SetupData>({
     basic: {
       name: 'My Neighbour',
-      welcomeMessage: WELCOME_MESSAGES[0]
+      welcomeMessage: WELCOME_MESSAGES[0],
+      familyMember: ''
     },
     familyMembers: [],
     drugs: [],
     events: []
   });
-
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const [newFamilyMember, setNewFamilyMember] = useState({ name: '', birthDate: '' });
+  const [newEvent, setNewEvent] = useState({ title: '', date: '', description: '' });
 
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = '';
-    };
+    if (panelId) {
+      fetchPanelData(panelId);
+    }
+  }, [panelId]);
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
+  const fetchPanelData = async (id: string) => {
+    try {
+      // Fetch panel basic data
+      const { data: panel, error: panelError } = await supabase
+        .from('panels')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-  const handleExit = () => {
-    setIsExitDialogOpen(true);
+      if (panelError) throw panelError;
+
+      // Fetch family members
+      const { data: familyMembers, error: familyError } = await supabase
+        .from('family_members')
+        .select('*')
+        .eq('panel_id', id);
+
+      if (familyError) throw familyError;
+
+      // Fetch medications
+      const { data: drugs, error: drugsError } = await supabase
+        .from('drugs')
+        .select('*')
+        .eq('panel_id', id);
+
+      if (drugsError) throw drugsError;
+
+      // Fetch events
+      const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select('*')
+        .eq('panel_id', id);
+
+      if (eventsError) throw eventsError;
+
+      setSetupData({
+        basic: {
+          name: panel.name,
+          welcomeMessage: panel.welcome_message,
+          familyMember: panel.family_member || ''
+        },
+        familyMembers: familyMembers || [],
+        drugs: drugs || [],
+        events: events || []
+      });
+    } catch (error) {
+      console.error('Error fetching panel data:', error);
+      toast.error('Failed to load panel data');
+    }
   };
 
-  const confirmExit = () => {
-    navigate('/family');
+  const handleAddFamilyMember = () => {
+    if (newFamilyMember.name && newFamilyMember.birthDate) {
+      setSetupData({
+        ...setupData,
+        familyMembers: [...setupData.familyMembers, { ...newFamilyMember, photoUrl: '' }]
+      });
+      setNewFamilyMember({ name: '', birthDate: '' });
+    }
+  };
+
+  const handleAddEvent = () => {
+    if (newEvent.title && newEvent.date) {
+      setSetupData({
+        ...setupData,
+        events: [...setupData.events, newEvent]
+      });
+      setNewEvent({ title: '', date: '', description: '' });
+    }
   };
 
   const handleFileUpload = async (file: File, memberIndex: number) => {
@@ -105,6 +167,18 @@ const BotSettings = () => {
                 basic: { ...setupData.basic, name: e.target.value }
               })}
               placeholder="My Neighbour"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium block">Family Member</label>
+            <Input 
+              value={setupData.basic.familyMember}
+              onChange={(e) => setSetupData({
+                ...setupData,
+                basic: { ...setupData.basic, familyMember: e.target.value }
+              })}
+              placeholder="Primary family member"
             />
           </div>
 
@@ -194,30 +268,28 @@ const BotSettings = () => {
               <div className="grid gap-4 md:grid-cols-2">
                 <Input
                   placeholder="Name"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && e.currentTarget.value) {
-                      setSetupData({
-                        ...setupData,
-                        familyMembers: [
-                          ...setupData.familyMembers,
-                          { name: e.currentTarget.value, birthDate: '', photoUrl: '' }
-                        ]
-                      });
-                      e.currentTarget.value = '';
-                    }
-                  }}
+                  value={newFamilyMember.name}
+                  onChange={(e) => setNewFamilyMember({
+                    ...newFamilyMember,
+                    name: e.target.value
+                  })}
                 />
                 <Input
                   type="date"
-                  onChange={(e) => {
-                    if (setupData.familyMembers.length > 0) {
-                      const newMembers = [...setupData.familyMembers];
-                      newMembers[newMembers.length - 1].birthDate = e.target.value;
-                      setSetupData({ ...setupData, familyMembers: newMembers });
-                    }
-                  }}
+                  value={newFamilyMember.birthDate}
+                  onChange={(e) => setNewFamilyMember({
+                    ...newFamilyMember,
+                    birthDate: e.target.value
+                  })}
                 />
               </div>
+              <Button 
+                onClick={handleAddFamilyMember}
+                disabled={!newFamilyMember.name || !newFamilyMember.birthDate}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Family Member
+              </Button>
             </div>
           </Card>
         </div>
@@ -360,39 +432,35 @@ const BotSettings = () => {
               <div className="grid gap-4">
                 <Input
                   placeholder="Event title"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && e.currentTarget.value) {
-                      setSetupData({
-                        ...setupData,
-                        events: [
-                          ...setupData.events,
-                          { title: e.currentTarget.value, date: '', description: '' }
-                        ]
-                      });
-                      e.currentTarget.value = '';
-                    }
-                  }}
+                  value={newEvent.title}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    title: e.target.value
+                  })}
                 />
                 <Input
                   type="datetime-local"
-                  onChange={(e) => {
-                    if (setupData.events.length > 0) {
-                      const newEvents = [...setupData.events];
-                      newEvents[newEvents.length - 1].date = e.target.value;
-                      setSetupData({ ...setupData, events: newEvents });
-                    }
-                  }}
+                  value={newEvent.date}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    date: e.target.value
+                  })}
                 />
                 <Input
                   placeholder="Event description"
-                  onChange={(e) => {
-                    if (setupData.events.length > 0) {
-                      const newEvents = [...setupData.events];
-                      newEvents[newEvents.length - 1].description = e.target.value;
-                      setSetupData({ ...setupData, events: newEvents });
-                    }
-                  }}
+                  value={newEvent.description}
+                  onChange={(e) => setNewEvent({
+                    ...newEvent,
+                    description: e.target.value
+                  })}
                 />
+                <Button 
+                  onClick={handleAddEvent}
+                  disabled={!newEvent.title || !newEvent.date}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Event
+                </Button>
               </div>
             </div>
           </Card>
@@ -411,69 +479,95 @@ const BotSettings = () => {
         return;
       }
 
-      // Create panel first
-      const { data: panel, error: panelError } = await supabase
-        .from('panels')
-        .insert([{
-          user_id: user.id,
-          name: setupData.basic.name,
-          welcome_message: setupData.basic.welcomeMessage
-        }])
-        .select()
-        .single();
+      if (panelId) {
+        // Update existing panel
+        const { error: panelError } = await supabase
+          .from('panels')
+          .update({
+            name: setupData.basic.name,
+            welcome_message: setupData.basic.welcomeMessage,
+            family_member: setupData.basic.familyMember
+          })
+          .eq('id', panelId);
 
-      if (panelError) throw panelError;
+        if (panelError) throw panelError;
 
-      // Add family members
-      if (setupData.familyMembers.length > 0) {
-        const { error: familyError } = await supabase
-          .from('family_members')
-          .insert(
-            setupData.familyMembers.map(member => ({
+        // Delete existing relations
+        await Promise.all([
+          supabase.from('family_members').delete().eq('panel_id', panelId),
+          supabase.from('drugs').delete().eq('panel_id', panelId),
+          supabase.from('events').delete().eq('panel_id', panelId)
+        ]);
+
+        // Add updated relations
+        await Promise.all([
+          setupData.familyMembers.length > 0 && supabase
+            .from('family_members')
+            .insert(setupData.familyMembers.map(member => ({
+              panel_id: panelId,
+              name: member.name,
+              birth_date: member.birthDate,
+              photo_url: member.photoUrl
+            }))),
+          setupData.drugs.length > 0 && supabase
+            .from('drugs')
+            .insert(setupData.drugs.map(drug => ({
+              panel_id: panelId,
+              ...drug
+            }))),
+          setupData.events.length > 0 && supabase
+            .from('events')
+            .insert(setupData.events.map(event => ({
+              panel_id: panelId,
+              ...event
+            })))
+        ]);
+
+      } else {
+        // Create new panel
+        const { data: panel, error: panelError } = await supabase
+          .from('panels')
+          .insert([{
+            user_id: user.id,
+            name: setupData.basic.name,
+            welcome_message: setupData.basic.welcomeMessage,
+            family_member: setupData.basic.familyMember
+          }])
+          .select()
+          .single();
+
+        if (panelError) throw panelError;
+
+        // Add relations for new panel
+        await Promise.all([
+          setupData.familyMembers.length > 0 && supabase
+            .from('family_members')
+            .insert(setupData.familyMembers.map(member => ({
               panel_id: panel.id,
               name: member.name,
               birth_date: member.birthDate,
               photo_url: member.photoUrl
-            }))
-          );
-        if (familyError) throw familyError;
-      }
-
-      // Add drugs
-      if (setupData.drugs.length > 0) {
-        const { error: drugsError } = await supabase
-          .from('drugs')
-          .insert(
-            setupData.drugs.map(drug => ({
+            }))),
+          setupData.drugs.length > 0 && supabase
+            .from('drugs')
+            .insert(setupData.drugs.map(drug => ({
               panel_id: panel.id,
-              name: drug.name,
-              dosage: drug.dosage,
-              schedule: drug.schedule
-            }))
-          );
-        if (drugsError) throw drugsError;
-      }
-
-      // Add events
-      if (setupData.events.length > 0) {
-        const { error: eventsError } = await supabase
-          .from('events')
-          .insert(
-            setupData.events.map(event => ({
+              ...drug
+            }))),
+          setupData.events.length > 0 && supabase
+            .from('events')
+            .insert(setupData.events.map(event => ({
               panel_id: panel.id,
-              title: event.title,
-              date: event.date,
-              description: event.description
-            }))
-          );
-        if (eventsError) throw eventsError;
+              ...event
+            })))
+        ]);
       }
 
-      toast.success('Setup completed successfully!');
+      toast.success(`Panel successfully ${panelId ? 'updated' : 'created'}!`);
       navigate('/family');
     } catch (error) {
       console.error('Error saving data:', error);
-      toast.error('Failed to save settings');
+      toast.error(`Failed to ${panelId ? 'update' : 'create'} panel`);
     }
   };
 
@@ -513,7 +607,7 @@ const BotSettings = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-center">
-            Setup Neighbour - Step {currentStep + 1} of {steps.length}
+            {panelId ? 'Edit' : 'Setup'} Neighbour - Step {currentStep + 1} of {steps.length}
           </h1>
           <p className="text-center text-muted-foreground mt-2">
             {steps[currentStep].title}
@@ -539,7 +633,7 @@ const BotSettings = () => {
               </Button>
             ) : (
               <Button onClick={saveToSupabase}>
-                Complete Setup
+                {panelId ? 'Update' : 'Complete Setup'}
               </Button>
             )}
           </div>
