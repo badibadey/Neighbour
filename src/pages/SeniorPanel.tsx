@@ -30,13 +30,13 @@ const SeniorPanel = () => {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   useEffect(() => {
-    if (document.querySelector('script[src="https://api.elevenlabs.io/v1/widgets.js"]')) {
+    if (document.querySelector('script[src="https://elevenlabs.io/js/widgets.v1.js"]')) {
       setIsScriptLoaded(true);
       return;
     }
 
     const script = document.createElement('script');
-    script.src = 'https://api.elevenlabs.io/v1/widgets.js';
+    script.src = 'https://elevenlabs.io/js/widgets.v1.js';
     script.async = true;
     
     script.onload = () => {
@@ -89,6 +89,20 @@ const SeniorPanel = () => {
   useEffect(() => {
     if (panelData?.agent_id && isScriptLoaded) {
       console.log('Ready to initialize widget with agent_id:', panelData.agent_id);
+      
+      // Dodaj małe opóźnienie, aby upewnić się, że skrypt jest w pełni zainicjalizowany
+      const timer = setTimeout(() => {
+        try {
+          const container = document.querySelector('elevenlabs-convai');
+          if (container) {
+            console.log('Widget container found and ready');
+          }
+        } catch (error) {
+          console.error('Error checking widget container:', error);
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
     }
   }, [panelData?.agent_id, isScriptLoaded]);
 
@@ -105,10 +119,10 @@ const SeniorPanel = () => {
 
     console.log('Rendering ElevenLabs widget component');
     return (
-      <div className="h-[600px] bg-white rounded-lg overflow-hidden shadow-lg">
+      <div className="h-[600px] bg-white rounded-lg overflow-hidden shadow-lg relative">
         <elevenlabs-convai 
           agent-id={panelData.agent_id}
-          className="w-full h-full"
+          className="w-full h-full absolute inset-0"
         ></elevenlabs-convai>
       </div>
     );
