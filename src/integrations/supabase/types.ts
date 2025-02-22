@@ -89,6 +89,7 @@ export type Database = {
           id: string
           name: string
           panel_id: string | null
+          photo_url: string | null
         }
         Insert: {
           birth_date?: string | null
@@ -96,6 +97,7 @@ export type Database = {
           id?: string
           name: string
           panel_id?: string | null
+          photo_url?: string | null
         }
         Update: {
           birth_date?: string | null
@@ -103,6 +105,7 @@ export type Database = {
           id?: string
           name?: string
           panel_id?: string | null
+          photo_url?: string | null
         }
         Relationships: [
           {
