@@ -116,6 +116,7 @@ export type Database = {
       }
       panels: {
         Row: {
+          agent_id: string | null
           assistant_prompt: string | null
           created_at: string | null
           family_member: string
@@ -126,6 +127,7 @@ export type Database = {
           welcome_message: string | null
         }
         Insert: {
+          agent_id?: string | null
           assistant_prompt?: string | null
           created_at?: string | null
           family_member?: string
@@ -136,6 +138,7 @@ export type Database = {
           welcome_message?: string | null
         }
         Update: {
+          agent_id?: string | null
           assistant_prompt?: string | null
           created_at?: string | null
           family_member?: string
