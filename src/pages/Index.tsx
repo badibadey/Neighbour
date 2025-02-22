@@ -12,7 +12,6 @@ const Index = () => {
   useEffect(() => {
     setIsVisible(true);
     
-    // Check if user is logged in and redirect to /family if they are
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -31,7 +30,10 @@ const Index = () => {
         <div className="absolute bottom-0 left-1/2 w-[800px] h-[800px] bg-gradient-to-t from-primary/5 to-secondary/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
         
         <div className="container mx-auto px-4 pt-24 pb-32 relative">
-          <nav className="absolute top-8 right-4 flex gap-4 z-10">
+          <nav className="absolute top-8 right-4 flex items-center gap-4 z-10">
+            <h2 className="text-3xl font-normal text-[#F97316] mr-4" style={{ fontFamily: 'kepler-std, serif' }}>
+              neighbour
+            </h2>
             <Button 
               variant="ghost" 
               onClick={() => navigate('/login')}
