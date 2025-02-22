@@ -1,11 +1,12 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SeniorPanel = () => {
   const navigate = useNavigate();
+  const widgetContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Add custom styles for the Convai widget
@@ -49,12 +50,45 @@ const SeniorPanel = () => {
       .convai-widget {
         position: relative !important;
         z-index: 10 !important;
+        display: block !important;
+        min-height: 200px !important;
+      }
+
+      #widget-container {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 400px !important;
       }
     `;
     document.head.appendChild(style);
 
+    // Dynamically load the script
+    const script = document.createElement('script');
+    script.src = 'https://elevenlabs.io/convai-widget/index.js';
+    script.async = true;
+    script.onload = () => {
+      // Create and mount the widget after script loads
+      if (widgetContainer.current) {
+        const widget = document.createElement('elevenlabs-convai');
+        widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
+        widget.className = 'convai-widget';
+        widgetContainer.current.appendChild(widget);
+      }
+    };
+    document.body.appendChild(script);
+
     return () => {
       document.head.removeChild(style);
+      const existingScript = document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+      if (widgetContainer.current) {
+        widgetContainer.current.innerHTML = '';
+      }
     };
   }, []);
 
@@ -75,11 +109,7 @@ const SeniorPanel = () => {
              background: "linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)"
            }}>
         <div className="flex flex-col items-center justify-center gap-4 relative z-10">
-          <elevenlabs-convai 
-            agent-id="xUPvftKCr58LTe0Ffz5m"
-            className="convai-widget"
-          ></elevenlabs-convai>
-          <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+          <div id="widget-container" ref={widgetContainer}></div>
         </div>
       </div>
     </main>
