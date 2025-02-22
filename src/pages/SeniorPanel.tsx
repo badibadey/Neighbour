@@ -1,21 +1,21 @@
 
 import React from 'react';
-import SeniorDashboard from "@/components/SeniorDashboard";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Volume2 } from "lucide-react";
 
 const SeniorPanel = () => {
-  const navigate = useNavigate();
-
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="senior-heading text-primary">Senior Panel</h1>
-          <Button variant="outline" onClick={() => navigate('/')}>Back</Button>
-        </div>
-      </header>
-      <SeniorDashboard />
+    <main className="min-h-screen bg-background flex items-center justify-center">
+      <Button
+        className="senior-button text-4xl w-48 h-48 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground 
+                   animate-pulse hover:animate-none transition-all duration-300 hover:scale-105"
+        onClick={() => {
+          // Talk button functionality will be implemented here
+        }}
+      >
+        <Volume2 className="w-12 h-12 mb-2" />
+        Talk
+      </Button>
     </main>
   );
 };
