@@ -43,7 +43,7 @@
 
   /* Card styles */
   .senior-card {
-    @apply rounded-xl border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md;
+    @apply rounded-xl border bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md;
   }
 
   /* Focus styles */
