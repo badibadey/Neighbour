@@ -41,43 +41,72 @@ When greeting the user, use this message: "${welcomeMessage}"
 In any urgent or concerning situation, promptly suggest that the user contact a family member or the appropriate emergency services.`
 
     console.log('ElevenLabs API Key:', Deno.env.get('ELEVENLABS_API_KEY') ? 'Present' : 'Missing');
-    console.log('Request body:', {
-      name: `Assistant for ${familyMember || 'Family'}`,
-      description: `Personal assistant configured for ${familyMember || 'the family'}`,
-      prompt_length: prompt.length,
-    });
-
-    const response = await fetch('https://api.elevenlabs.io/v1/assistants', {
+    
+    // First create a project
+    const projectResponse = await fetch('https://api.elevenlabs.io/v1/projects', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
       },
       body: JSON.stringify({
         name: `Assistant for ${familyMember || 'Family'}`,
         description: `Personal assistant configured for ${familyMember || 'the family'}`,
-        prompt,
+        default_character_id: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
+        from_url: null,
+        from_document: null,
+        model_id: "eleven_multilingual_v2",
       }),
-    })
+    });
 
-    console.log('ElevenLabs Response Status:', response.status);
-    const responseData = await response.text();
-    console.log('ElevenLabs Response Body:', responseData);
+    console.log('Project Response Status:', projectResponse.status);
+    const projectData = await projectResponse.text();
+    console.log('Project Response Body:', projectData);
 
-    if (!response.ok) {
+    if (!projectResponse.ok) {
       let errorDetail;
       try {
-        errorDetail = JSON.parse(responseData).detail;
+        errorDetail = JSON.parse(projectData).detail;
       } catch {
-        errorDetail = responseData;
+        errorDetail = projectData;
       }
-      throw new Error(`ElevenLabs API error: ${response.status} - ${errorDetail}`);
+      throw new Error(`ElevenLabs API error: ${projectResponse.status} - ${errorDetail}`);
     }
 
-    const data = JSON.parse(responseData);
+    const project = JSON.parse(projectData);
     
+    // Now add the character to the project
+    const characterResponse = await fetch(`https://api.elevenlabs.io/v1/projects/${project.project_id}/chapters`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
+      },
+      body: JSON.stringify({
+        name: "Assistant Configuration",
+        character_id: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
+        content: prompt
+      }),
+    });
+
+    console.log('Character Response Status:', characterResponse.status);
+    const characterData = await characterResponse.text();
+    console.log('Character Response Body:', characterData);
+
+    if (!characterResponse.ok) {
+      let errorDetail;
+      try {
+        errorDetail = JSON.parse(characterData).detail;
+      } catch {
+        errorDetail = characterData;
+      }
+      throw new Error(`ElevenLabs API error: ${characterResponse.status} - ${errorDetail}`);
+    }
+
     return new Response(
-      JSON.stringify({ agent_id: data.assistant_id }),
+      JSON.stringify({ agent_id: project.project_id }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
