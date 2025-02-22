@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -139,6 +138,13 @@ const BotSettings = () => {
     }
   };
 
+  const validateDate = (date: string): boolean => {
+    if (!date) return false;
+    const selectedDate = new Date(date);
+    const currentDate = new Date();
+    return selectedDate instanceof Date && !isNaN(selectedDate.getTime());
+  };
+
   const handleExit = useCallback(() => {
     setIsExitDialogOpen(true);
   }, []);
@@ -148,27 +154,49 @@ const BotSettings = () => {
   }, [navigate]);
 
   const handleAddFamilyMember = () => {
-    if (newFamilyMember.name && newFamilyMember.birthDate) {
-      console.log('Adding family member:', newFamilyMember);
-      setSetupData(prevData => ({
-        ...prevData,
-        familyMembers: [...prevData.familyMembers, { ...newFamilyMember }]
-      }));
-      setNewFamilyMember({ name: '', birthDate: '', photoUrl: '' });
-      toast.success("Family member added successfully!");
+    if (!newFamilyMember.name) {
+      toast.error("Please enter family member's name");
+      return;
     }
+    if (!newFamilyMember.birthDate) {
+      toast.error("Please select birth date");
+      return;
+    }
+    if (!validateDate(newFamilyMember.birthDate)) {
+      toast.error("Please enter a valid birth date");
+      return;
+    }
+
+    console.log('Adding family member:', newFamilyMember);
+    setSetupData(prevData => ({
+      ...prevData,
+      familyMembers: [...prevData.familyMembers, { ...newFamilyMember }]
+    }));
+    setNewFamilyMember({ name: '', birthDate: '', photoUrl: '' });
+    toast.success("Family member added successfully!");
   };
 
   const handleAddEvent = () => {
-    if (newEvent.title && newEvent.date) {
-      console.log('Adding event:', newEvent);
-      setSetupData(prevData => ({
-        ...prevData,
-        events: [...prevData.events, { ...newEvent }]
-      }));
-      setNewEvent({ title: '', date: '', description: '' });
-      toast.success("Event added successfully!");
+    if (!newEvent.title) {
+      toast.error("Please enter event title");
+      return;
     }
+    if (!newEvent.date) {
+      toast.error("Please select event date");
+      return;
+    }
+    if (!validateDate(newEvent.date)) {
+      toast.error("Please enter a valid event date");
+      return;
+    }
+
+    console.log('Adding event:', newEvent);
+    setSetupData(prevData => ({
+      ...prevData,
+      events: [...prevData.events, { ...newEvent }]
+    }));
+    setNewEvent({ title: '', date: '', description: '' });
+    toast.success("Event added successfully!");
   };
 
   const handleFileUpload = async (file: File, memberIndex: number) => {
@@ -436,7 +464,7 @@ const BotSettings = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Born: {member.birthDate}</p>
+                    <p className="text-sm text-muted-foreground">Born: {new Date(member.birthDate).toLocaleDateString()}</p>
                     {member.photoUrl && (
                       <img 
                         src={member.photoUrl} 
@@ -482,6 +510,7 @@ const BotSettings = () => {
                     ...newFamilyMember,
                     name: e.target.value
                   })}
+                  required
                 />
                 <Input
                   type="date"
@@ -490,6 +519,8 @@ const BotSettings = () => {
                     ...newFamilyMember,
                     birthDate: e.target.value
                   })}
+                  required
+                  max={new Date().toISOString().split('T')[0]}
                 />
               </div>
               <Button 
@@ -621,7 +652,7 @@ const BotSettings = () => {
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Date: {event.date}
+                  Date: {new Date(event.date).toLocaleDateString()}
                   {event.description && <br />}
                   {event.description}
                 </p>
@@ -640,6 +671,7 @@ const BotSettings = () => {
                     ...newEvent,
                     title: e.target.value
                   })}
+                  required
                 />
                 <Input
                   type="datetime-local"
@@ -648,9 +680,11 @@ const BotSettings = () => {
                     ...newEvent,
                     date: e.target.value
                   })}
+                  required
+                  min={new Date().toISOString().slice(0, 16)}
                 />
                 <Input
-                  placeholder="Event description"
+                  placeholder="Event description (optional)"
                   value={newEvent.description}
                   onChange={(e) => setNewEvent({
                     ...newEvent,
@@ -718,7 +752,9 @@ const BotSettings = () => {
                   )}
                   <div>
                     <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-muted-foreground">Born: {member.birthDate}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Born: {new Date(member.birthDate).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -741,7 +777,7 @@ const BotSettings = () => {
                   <div className="flex justify-between items-center">
                     <span className="font-medium">{event.title}</span>
                     <span className="text-sm text-muted-foreground">
-                      {new Date(event.date).toLocaleDateString()}
+                      {new Date(event.date).toLocaleString()}
                     </span>
                   </div>
                   {event.description && (
