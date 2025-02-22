@@ -16,19 +16,23 @@ const Home = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [
-        { count: panelsCount },
-        { count: eventsCount }
-      ] = await Promise.all([
-        supabase.from('panels').select('*', { count: 'exact' }),
-        supabase.from('events').select('*', { count: 'exact' })
-      ]);
+      try {
+        const [
+          { count: panelsCount },
+          { count: eventsCount }
+        ] = await Promise.all([
+          supabase.from('panels').select('*', { count: 'exact' }),
+          supabase.from('events').select('*', { count: 'exact' })
+        ]);
 
-      setStats({
-        totalNeighbours: panelsCount || 0,
-        totalEvents: eventsCount || 0,
-        totalNotifications: 0 // This would be implemented based on your notifications system
-      });
+        setStats({
+          totalNeighbours: panelsCount || 0,
+          totalEvents: eventsCount || 0,
+          totalNotifications: 0
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
     };
 
     fetchStats();
@@ -69,20 +73,22 @@ const Home = () => {
         </Card>
       </div>
 
-      <Card className="p-6">
-        <div className="flex flex-col items-center justify-center space-y-4 py-6">
-          <div className="rounded-full bg-primary/10 p-4">
-            <Plus className="h-12 w-12 text-primary" />
+      {stats.totalNeighbours === 0 && (
+        <Card className="p-6">
+          <div className="flex flex-col items-center justify-center space-y-4 py-6">
+            <div className="rounded-full bg-primary/10 p-4">
+              <Plus className="h-12 w-12 text-primary" />
+            </div>
+            <h3 className="text-xl font-medium">Create Your First Neighbour</h3>
+            <p className="text-center text-muted-foreground max-w-sm">
+              Get started by creating a new Neighbour interface for your loved ones. It only takes a few minutes.
+            </p>
+            <Button size="lg" onClick={() => navigate('/bot-settings')}>
+              <Plus className="mr-2 h-4 w-4" /> Create New Neighbour
+            </Button>
           </div>
-          <h3 className="text-xl font-medium">Create Your First Neighbour</h3>
-          <p className="text-center text-muted-foreground max-w-sm">
-            Get started by creating a new Neighbour interface for your loved ones. It only takes a few minutes.
-          </p>
-          <Button size="lg" onClick={() => navigate('/bot-settings')}>
-            <Plus className="mr-2 h-4 w-4" /> Create New Neighbour
-          </Button>
-        </div>
-      </Card>
+        </Card>
+      )}
     </div>
   );
 };
