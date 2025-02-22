@@ -48,11 +48,11 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
           bg_color: "#F97316", // Orange to match our theme
           text_color: "#ffffff", // White text for contrast
           btn_text_color: "#ffffff",
-          start_call_text: "Start rozmowy",
-          action_text: "Rozmawiaj",
-          end_call_text: "Zakończ rozmowę",
-          speaking_text: "Słucham...",
-          listening_text: "Mówię...",
+          start_call_text: "Start conversation",
+          action_text: "Chat with neighbor",
+          end_call_text: "End conversation",
+          speaking_text: "I'm listening...",
+          listening_text: "Speaking...",
           language_selector: true
         }
       },
