@@ -13,6 +13,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { AgentCreationModal } from "@/components/AgentCreationModal";
 import type { SetupData, FamilyMember, Medication, Event } from '@/types/setup';
 
+const createWelcomeMessage = (familyMember: string) => ([
+  `Hi ${familyMember}! I'm here to help you with your daily tasks.`,
+  `Welcome ${familyMember}! How can I assist you today?`,
+  `Hello ${familyMember}! I'm your personal assistant.`,
+  `Good day ${familyMember}! I'm here to make your day easier.`,
+  `Welcome back ${familyMember}! What can I do for you today?`
+]);
+
 const WELCOME_MESSAGES = [
   "Hi! I'm here to help you with your daily tasks.",
   "Welcome! How can I assist you today?",
@@ -35,17 +43,32 @@ const BotSettings = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const [isCreatingAgent, setIsCreatingAgent] = useState(false);
+  const [welcomeMessages, setWelcomeMessages] = useState<string[]>([]);
 
   const [setupData, setSetupData] = useState<SetupData>({
     basic: {
       name: 'My Neighbour',
-      welcomeMessage: WELCOME_MESSAGES[0],
+      welcomeMessage: '',
       familyMember: ''
     },
     familyMembers: [],
     drugs: [],
     events: []
   });
+
+  useEffect(() => {
+    const messages = createWelcomeMessage(setupData.basic.familyMember || 'there');
+    setWelcomeMessages(messages);
+    if (!setupData.basic.welcomeMessage || !messages.includes(setupData.basic.welcomeMessage)) {
+      setSetupData(prev => ({
+        ...prev,
+        basic: {
+          ...prev.basic,
+          welcomeMessage: messages[0]
+        }
+      }));
+    }
+  }, [setupData.basic.familyMember]);
 
   const [newFamilyMember, setNewFamilyMember] = useState<FamilyMember>({ 
     name: '', 
@@ -474,7 +497,7 @@ const BotSettings = () => {
                 <SelectValue placeholder="Select welcome message" />
               </SelectTrigger>
               <SelectContent>
-                {WELCOME_MESSAGES.map((message, index) => (
+                {welcomeMessages.map((message, index) => (
                   <SelectItem key={index} value={message}>
                     {message}
                   </SelectItem>
