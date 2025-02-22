@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -45,14 +46,6 @@ const BotSettings = () => {
   const [newFamilyMember, setNewFamilyMember] = useState({ name: '', birthDate: '' });
   const [newEvent, setNewEvent] = useState({ title: '', date: '', description: '' });
 
-  const handleExit = useCallback(() => {
-    setIsExitDialogOpen(true);
-  }, []);
-
-  const confirmExit = useCallback(() => {
-    navigate('/family');
-  }, [navigate]);
-
   useEffect(() => {
     if (panelId) {
       fetchPanelData(panelId);
@@ -61,34 +54,50 @@ const BotSettings = () => {
 
   const fetchPanelData = async (id: string) => {
     try {
+      console.log('Fetching panel data...');
+      
       const { data: panel, error: panelError } = await supabase
         .from('panels')
         .select('*')
         .eq('id', id)
         .single();
 
-      if (panelError) throw panelError;
+      if (panelError) {
+        console.error('Error fetching panel:', panelError);
+        throw panelError;
+      }
 
       const { data: familyMembers, error: familyError } = await supabase
         .from('family_members')
         .select('*')
         .eq('panel_id', id);
 
-      if (familyError) throw familyError;
+      if (familyError) {
+        console.error('Error fetching family members:', familyError);
+        throw familyError;
+      }
 
       const { data: drugs, error: drugsError } = await supabase
         .from('drugs')
         .select('*')
         .eq('panel_id', id);
 
-      if (drugsError) throw drugsError;
+      if (drugsError) {
+        console.error('Error fetching drugs:', drugsError);
+        throw drugsError;
+      }
 
       const { data: events, error: eventsError } = await supabase
         .from('events')
         .select('*')
         .eq('panel_id', id);
 
-      if (eventsError) throw eventsError;
+      if (eventsError) {
+        console.error('Error fetching events:', eventsError);
+        throw eventsError;
+      }
+
+      console.log('Fetched data:', { panel, familyMembers, drugs, events });
 
       setSetupData({
         basic: {
@@ -121,6 +130,14 @@ const BotSettings = () => {
       toast.error('Failed to load panel data');
     }
   };
+
+  const handleExit = useCallback(() => {
+    setIsExitDialogOpen(true);
+  }, []);
+
+  const confirmExit = useCallback(() => {
+    navigate('/family');
+  }, [navigate]);
 
   const handleAddFamilyMember = () => {
     if (newFamilyMember.name && newFamilyMember.birthDate) {
@@ -204,6 +221,133 @@ const BotSettings = () => {
         drugs: newDrugs
       };
     });
+  };
+
+  const saveToSupabase = async () => {
+    try {
+      console.log('Starting to save data to Supabase...');
+      
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      if (!user) {
+        navigate('/');
+        return;
+      }
+
+      const panelData = {
+        user_id: user.id,
+        name: setupData.basic.name,
+        welcome_message: setupData.basic.welcomeMessage,
+        family_member: setupData.basic.familyMember,
+        assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
+        voice_type: 'sarah'
+      };
+
+      console.log('Panel data to save:', panelData);
+
+      let currentPanelId = panelId;
+
+      if (panelId) {
+        console.log('Updating existing panel...');
+        const { error: updateError } = await supabase
+          .from('panels')
+          .update(panelData)
+          .eq('id', panelId);
+
+        if (updateError) throw updateError;
+
+        // Usuwanie starych danych
+        console.log('Deleting old related data...');
+        const deletePromises = [
+          supabase.from('family_members').delete().eq('panel_id', panelId),
+          supabase.from('drugs').delete().eq('panel_id', panelId),
+          supabase.from('events').delete().eq('panel_id', panelId)
+        ];
+
+        await Promise.all(deletePromises);
+      } else {
+        console.log('Creating new panel...');
+        const { data: newPanel, error: insertError } = await supabase
+          .from('panels')
+          .insert([panelData])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        if (!newPanel) throw new Error('No panel data returned');
+        
+        currentPanelId = newPanel.id;
+      }
+
+      // Zapisywanie członków rodziny
+      if (setupData.familyMembers.length > 0) {
+        console.log('Saving family members:', setupData.familyMembers);
+        const familyMembersToInsert = setupData.familyMembers.map(member => ({
+          panel_id: currentPanelId,
+          name: member.name,
+          birth_date: member.birthDate,
+          photo_url: member.photoUrl || null
+        }));
+
+        const { error: familyError } = await supabase
+          .from('family_members')
+          .insert(familyMembersToInsert);
+
+        if (familyError) {
+          console.error('Error saving family members:', familyError);
+          throw familyError;
+        }
+      }
+
+      // Zapisywanie leków
+      if (setupData.drugs.length > 0) {
+        console.log('Saving medications:', setupData.drugs);
+        const drugsToInsert = setupData.drugs.map(drug => ({
+          panel_id: currentPanelId,
+          name: drug.name,
+          dosage: drug.dosage,
+          frequency: drug.schedule.frequency,
+          time: drug.schedule.time
+        }));
+
+        const { error: drugsError } = await supabase
+          .from('drugs')
+          .insert(drugsToInsert);
+
+        if (drugsError) {
+          console.error('Error saving drugs:', drugsError);
+          throw drugsError;
+        }
+      }
+
+      // Zapisywanie wydarzeń
+      if (setupData.events.length > 0) {
+        console.log('Saving events:', setupData.events);
+        const eventsToInsert = setupData.events.map(event => ({
+          panel_id: currentPanelId,
+          title: event.title,
+          date: new Date(event.date).toISOString(),
+          description: event.description || ''
+        }));
+
+        const { error: eventsError } = await supabase
+          .from('events')
+          .insert(eventsToInsert);
+
+        if (eventsError) {
+          console.error('Error saving events:', eventsError);
+          throw eventsError;
+        }
+      }
+
+      console.log('All data saved successfully!');
+      toast.success(`Panel został pomyślnie ${panelId ? 'zaktualizowany' : 'utworzony'}!`);
+      navigate('/family');
+    } catch (error) {
+      console.error('Error saving data:', error);
+      toast.error(`Nie udało się ${panelId ? 'zaktualizować' : 'utworzyć'} panelu. Błąd: ${error.message}`);
+    }
   };
 
   const steps = [
@@ -515,122 +659,6 @@ const BotSettings = () => {
       )
     }
   ];
-
-  const saveToSupabase = async () => {
-    try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
-
-      if (!user) {
-        navigate('/');
-        return;
-      }
-
-      const panelData = {
-        user_id: user.id,
-        name: setupData.basic.name,
-        welcome_message: setupData.basic.welcomeMessage,
-        family_member: setupData.basic.familyMember,
-        assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
-        voice_type: 'sarah'
-      };
-
-      let currentPanelId = panelId;
-
-      if (panelId) {
-        const { error: updateError } = await supabase
-          .from('panels')
-          .update(panelData)
-          .eq('id', panelId);
-
-        if (updateError) throw updateError;
-
-        // Usuwanie starych danych
-        const deletePromises = [
-          supabase.from('family_members').delete().eq('panel_id', panelId),
-          supabase.from('drugs').delete().eq('panel_id', panelId),
-          supabase.from('events').delete().eq('panel_id', panelId)
-        ];
-
-        await Promise.all(deletePromises);
-      } else {
-        const { data: newPanel, error: insertError } = await supabase
-          .from('panels')
-          .insert([panelData])
-          .select()
-          .single();
-
-        if (insertError) throw insertError;
-        if (!newPanel) throw new Error('No panel data returned');
-        
-        currentPanelId = newPanel.id;
-      }
-
-      // Zapisywanie członków rodziny
-      if (setupData.familyMembers.length > 0) {
-        const familyMembersToInsert = setupData.familyMembers.map(member => ({
-          panel_id: currentPanelId,
-          name: member.name,
-          birth_date: member.birthDate,
-          photo_url: member.photoUrl || null
-        }));
-
-        const { error: familyError } = await supabase
-          .from('family_members')
-          .insert(familyMembersToInsert);
-
-        if (familyError) {
-          console.error('Error saving family members:', familyError);
-          throw familyError;
-        }
-      }
-
-      // Zapisywanie leków
-      if (setupData.drugs.length > 0) {
-        const drugsToInsert = setupData.drugs.map(drug => ({
-          panel_id: currentPanelId,
-          name: drug.name,
-          dosage: drug.dosage,
-          frequency: drug.schedule.frequency,
-          time: drug.schedule.time
-        }));
-
-        const { error: drugsError } = await supabase
-          .from('drugs')
-          .insert(drugsToInsert);
-
-        if (drugsError) {
-          console.error('Error saving drugs:', drugsError);
-          throw drugsError;
-        }
-      }
-
-      // Zapisywanie wydarzeń
-      if (setupData.events.length > 0) {
-        const eventsToInsert = setupData.events.map(event => ({
-          panel_id: currentPanelId,
-          title: event.title,
-          date: new Date(event.date).toISOString(),
-          description: event.description || ''
-        }));
-
-        const { error: eventsError } = await supabase
-          .from('events')
-          .insert(eventsToInsert);
-
-        if (eventsError) {
-          console.error('Error saving events:', eventsError);
-          throw eventsError;
-        }
-      }
-
-      toast.success(`Panel został pomyślnie ${panelId ? 'zaktualizowany' : 'utworzony'}!`);
-      navigate('/family');
-    } catch (error) {
-      console.error('Error saving data:', error);
-      toast.error(`Nie udało się ${panelId ? 'zaktualizować' : 'utworzyć'} panelu. Błąd: ${error.message}`);
-    }
-  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-secondary/20">
