@@ -10,11 +10,13 @@ import {
   LogOut,
   Home,
   Menu,
-  Trash2
+  Trash2,
+  Info
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
+import PanelSummaryDialog from '@/components/PanelSummaryDialog';
 import {
   Sheet,
   SheetContent,
@@ -40,6 +42,13 @@ interface Panel {
   welcome_message: string;
   assistant_prompt: string;
   voice_type: string;
+  family_member: string;
+}
+
+interface PanelWithDetails extends Panel {
+  events: any[];
+  drugs: any[];
+  family_members: any[];
 }
 
 const FamilyPanel = () => {
@@ -47,6 +56,8 @@ const FamilyPanel = () => {
   const [panels, setPanels] = useState<Panel[]>([]);
   const [loading, setLoading] = useState(true);
   const [panelToDelete, setPanelToDelete] = useState<string | null>(null);
+  const [selectedPanel, setSelectedPanel] = useState<PanelWithDetails | null>(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
 
   useEffect(() => {
     fetchPanels();
@@ -84,6 +95,31 @@ const FamilyPanel = () => {
       toast.error('Failed to load panels');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleViewDetails = async (panel: Panel) => {
+    try {
+      const [
+        { data: events },
+        { data: drugs },
+        { data: family_members }
+      ] = await Promise.all([
+        supabase.from('events').select('*').eq('panel_id', panel.id),
+        supabase.from('drugs').select('*').eq('panel_id', panel.id),
+        supabase.from('family_members').select('*').eq('panel_id', panel.id)
+      ]);
+
+      setSelectedPanel({
+        ...panel,
+        events: events || [],
+        drugs: drugs || [],
+        family_members: family_members || []
+      });
+      setSummaryOpen(true);
+    } catch (error) {
+      console.error('Error fetching panel details:', error);
+      toast.error('Failed to load panel details');
     }
   };
 
@@ -238,6 +274,13 @@ const FamilyPanel = () => {
                       <Button
                         variant="ghost"
                         size="icon"
+                        onClick={() => handleViewDetails(panel)}
+                      >
+                        <Info className="h-5 w-5 text-muted-foreground hover:text-accent" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => navigate(`/bot-settings?panel=${panel.id}`)}
                       >
                         <Settings2 className="h-5 w-5 text-muted-foreground hover:text-accent" />
@@ -301,6 +344,12 @@ const FamilyPanel = () => {
           </section>
         </div>
       </main>
+
+      <PanelSummaryDialog 
+        open={summaryOpen}
+        onOpenChange={setSummaryOpen}
+        panelData={selectedPanel}
+      />
     </div>
   );
 };
