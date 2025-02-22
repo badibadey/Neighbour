@@ -1,11 +1,59 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Mic, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SeniorPanel = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add custom styles for the Convai widget
+    const style = document.createElement('style');
+    style.textContent = `
+      .convai-chat-button {
+        width: 16rem !important;
+        height: 16rem !important;
+        border-radius: 50% !important;
+        background: white !important;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+        border: 8px solid rgba(255, 159, 107, 0.2) !important;
+        transition: all 500ms !important;
+      }
+      
+      .convai-chat-button:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+      }
+      
+      .convai-chat-button svg {
+        width: 4rem !important;
+        height: 4rem !important;
+        color: #FF9F6B !important;
+      }
+      
+      .convai-chat-button span {
+        font-size: 1.875rem !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.025em !important;
+        color: #FF9F6B !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Add the ElevenLabs script
+    const script = document.createElement('script');
+    script.src = 'https://elevenlabs.io/convai-widget/index.js';
+    script.async = true;
+    script.type = 'text/javascript';
+    document.body.appendChild(script);
+
+    return () => {
+      document.head.removeChild(style);
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
@@ -23,17 +71,9 @@ const SeniorPanel = () => {
            style={{
              background: "linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)"
            }}>
-        <Button
-          className="relative w-64 h-64 rounded-full shadow-lg flex flex-col items-center justify-center gap-4
-                     bg-white hover:bg-white/90 text-primary border-8 border-accent/20
-                     transition-all duration-500 hover:scale-105 hover:shadow-xl"
-          onClick={() => {
-            // Talk button functionality will be implemented here
-          }}
-        >
-          <Mic className="w-16 h-16 text-accent" strokeWidth={1.5} />
-          <span className="text-3xl font-medium tracking-wide">Talk</span>
-        </Button>
+        <div className="flex flex-col items-center justify-center gap-4">
+          <elevenlabs-convai agent-id="xUPvftKCr58LTe0Ffz5m"></elevenlabs-convai>
+        </div>
       </div>
     </main>
   );
