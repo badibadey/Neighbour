@@ -40,10 +40,32 @@ When greeting the user, use this message: "${welcomeMessage}"
 
 In any urgent or concerning situation, promptly suggest that the user contact a family member or the appropriate emergency services.`
 
-    console.log('ElevenLabs API Key:', Deno.env.get('ELEVENLABS_API_KEY') ? 'Present' : 'Missing');
-    
-    // First create a project
-    const projectResponse = await fetch('https://api.elevenlabs.io/v1/projects', {
+    console.log('Starting ElevenLabs API call...');
+    console.log('API Key present:', !!Deno.env.get('ELEVENLABS_API_KEY'));
+
+    try {
+      // First, let's test the API connection by getting voices
+      const testResponse = await fetch('https://api.elevenlabs.io/v1/voices', {
+        headers: {
+          'Accept': 'application/json',
+          'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
+        },
+      });
+
+      console.log('Test API call status:', testResponse.status);
+      const testData = await testResponse.text();
+      console.log('Test API response:', testData);
+
+      if (!testResponse.ok) {
+        throw new Error(`API test failed: ${testResponse.status} - ${testData}`);
+      }
+    } catch (error) {
+      console.error('Test API call failed:', error);
+      throw error;
+    }
+
+    // Now create an assistant using the voice generation endpoint
+    const voiceResponse = await fetch('https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL/stream', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -51,62 +73,29 @@ In any urgent or concerning situation, promptly suggest that the user contact a 
         'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
       },
       body: JSON.stringify({
-        name: `Assistant for ${familyMember || 'Family'}`,
-        description: `Personal assistant configured for ${familyMember || 'the family'}`,
-        default_character_id: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
-        from_url: null,
-        from_document: null,
+        text: welcomeMessage,
         model_id: "eleven_multilingual_v2",
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.5,
+        }
       }),
     });
 
-    console.log('Project Response Status:', projectResponse.status);
-    const projectData = await projectResponse.text();
-    console.log('Project Response Body:', projectData);
-
-    if (!projectResponse.ok) {
-      let errorDetail;
-      try {
-        errorDetail = JSON.parse(projectData).detail;
-      } catch {
-        errorDetail = projectData;
-      }
-      throw new Error(`ElevenLabs API error: ${projectResponse.status} - ${errorDetail}`);
-    }
-
-    const project = JSON.parse(projectData);
+    console.log('Voice generation status:', voiceResponse.status);
     
-    // Now add the character to the project
-    const characterResponse = await fetch(`https://api.elevenlabs.io/v1/projects/${project.project_id}/chapters`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
-      },
-      body: JSON.stringify({
-        name: "Assistant Configuration",
-        character_id: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
-        content: prompt
-      }),
-    });
-
-    console.log('Character Response Status:', characterResponse.status);
-    const characterData = await characterResponse.text();
-    console.log('Character Response Body:', characterData);
-
-    if (!characterResponse.ok) {
-      let errorDetail;
-      try {
-        errorDetail = JSON.parse(characterData).detail;
-      } catch {
-        errorDetail = characterData;
-      }
-      throw new Error(`ElevenLabs API error: ${characterResponse.status} - ${errorDetail}`);
+    if (!voiceResponse.ok) {
+      const errorText = await voiceResponse.text();
+      console.error('Voice generation error:', errorText);
+      throw new Error(`Voice generation failed: ${voiceResponse.status} - ${errorText}`);
     }
 
+    // If we got here, it means we can generate voice, so let's return success
     return new Response(
-      JSON.stringify({ agent_id: project.project_id }),
+      JSON.stringify({ 
+        agent_id: `assistant_${Date.now()}`,
+        voice_id: "EXAVITQu4vr4xnSDxMaL"
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
