@@ -272,13 +272,31 @@ const BotSettings = () => {
         return;
       }
 
+      // Create ElevenLabs agent
+      console.log('Creating ElevenLabs agent...');
+      const { data: agentData, error: agentError } = await supabase.functions.invoke('create-elevenlabs-agent', {
+        body: {
+          familyMember: setupData.basic.familyMember,
+          welcomeMessage: setupData.basic.welcomeMessage,
+          familyData: setupData.familyMembers,
+          medicationData: setupData.drugs,
+          eventData: setupData.events,
+        },
+      });
+
+      if (agentError) {
+        console.error('Error creating ElevenLabs agent:', agentError);
+        throw new Error('Failed to create assistant');
+      }
+
       const panelData = {
         user_id: user.id,
         name: setupData.basic.name,
         welcome_message: setupData.basic.welcomeMessage,
         family_member: setupData.basic.familyMember || '',
         assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
-        voice_type: 'sarah'
+        voice_type: 'sarah',
+        agent_id: agentData.agent_id
       };
 
       console.log('Panel data to save:', panelData);
