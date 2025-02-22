@@ -25,40 +25,34 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
 
-  /* Improved button styles for seniors */
-  .senior-button {
-    @apply relative flex items-center justify-center gap-3 rounded-lg px-6 py-4 text-lg font-medium transition-all duration-200
-           shadow-sm hover:shadow-md active:scale-95 disabled:pointer-events-none disabled:opacity-50;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  /* Large text utilities */
-  .senior-text {
-    @apply text-xl leading-relaxed tracking-wide;
-  }
-
-  .senior-heading {
-    @apply text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl;
-  }
-
-  /* Card styles */
-  .senior-card {
-    @apply rounded-xl border bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md;
-  }
-
-  /* Focus styles */
-  .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Animation utilities */
-@layer utilities {
-  .animate-in {
-    animation: fadeIn 0.5s ease-out;
-  }
-  
-  .slide-in-bottom {
-    animation: slideUp 0.5s ease-out;
-  }
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Staggered animations for cards */
+.grid > * {
+  animation-delay: calc(var(--index) * 100ms);
+}
+
+.grid > *:nth-child(1) { --index: 1; }
+.grid > *:nth-child(2) { --index: 2; }
+.grid > *:nth-child(3) { --index: 3; }
+.grid > *:nth-child(4) { --index: 4; }
+
+/* Button hover animations */
+.group:hover .group-hover\:translate-x-2 {
+  transform: translateX(0.5rem);
 }
