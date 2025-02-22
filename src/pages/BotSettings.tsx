@@ -1,10 +1,9 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight, Upload, Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload, Plus, Check } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
@@ -655,6 +654,101 @@ const BotSettings = () => {
               </div>
             </div>
           </Card>
+        </div>
+      )
+    },
+    {
+      title: 'Summary',
+      component: (
+        <div className="space-y-6">
+          <Card className="p-4">
+            <h3 className="font-medium text-lg mb-4">Basic Settings</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center py-2 border-b">
+                <span className="text-muted-foreground">Neighbour Name:</span>
+                <span className="font-medium">{setupData.basic.name}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b">
+                <span className="text-muted-foreground">Family Member:</span>
+                <span className="font-medium">{setupData.basic.familyMember || 'Not specified'}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b">
+                <span className="text-muted-foreground">Welcome Message:</span>
+                <span className="font-medium">{setupData.basic.welcomeMessage}</span>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <h3 className="font-medium text-lg mb-4">Family Members ({setupData.familyMembers.length})</h3>
+            <div className="space-y-4">
+              {setupData.familyMembers.map((member, index) => (
+                <div key={index} className="flex items-center gap-4 py-2 border-b last:border-0">
+                  {member.photoUrl && (
+                    <img 
+                      src={member.photoUrl} 
+                      alt={member.name} 
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  )}
+                  <div>
+                    <p className="font-medium">{member.name}</p>
+                    <p className="text-sm text-muted-foreground">Born: {member.birthDate}</p>
+                  </div>
+                </div>
+              ))}
+              {setupData.familyMembers.length === 0 && (
+                <p className="text-muted-foreground italic">No family members added</p>
+              )}
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <h3 className="font-medium text-lg mb-4">Medications ({setupData.drugs.length})</h3>
+            <div className="space-y-4">
+              {setupData.drugs.map((drug, index) => (
+                <div key={index} className="py-2 border-b last:border-0">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">{drug.name}</span>
+                    <span className="text-sm text-muted-foreground">{drug.dosage}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Schedule: {drug.schedule.frequency}, at {drug.schedule.time}
+                  </p>
+                </div>
+              ))}
+              {setupData.drugs.length === 0 && (
+                <p className="text-muted-foreground italic">No medications added</p>
+              )}
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <h3 className="font-medium text-lg mb-4">Events ({setupData.events.length})</h3>
+            <div className="space-y-4">
+              {setupData.events.map((event, index) => (
+                <div key={index} className="py-2 border-b last:border-0">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">{event.title}</span>
+                    <span className="text-sm text-muted-foreground">{event.date}</span>
+                  </div>
+                  {event.description && (
+                    <p className="text-sm text-muted-foreground mt-1">{event.description}</p>
+                  )}
+                </div>
+              ))}
+              {setupData.events.length === 0 && (
+                <p className="text-muted-foreground italic">No events added</p>
+              )}
+            </div>
+          </Card>
+
+          <div className="flex items-center justify-center p-4 bg-muted/20 rounded-lg">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Check className="w-5 h-5" />
+              <span>Ready to save your configuration</span>
+            </div>
+          </div>
         </div>
       )
     }
