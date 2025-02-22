@@ -45,16 +45,15 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
       platform_settings: {
         widget: {
           variant: "full",
-          bg_color: "#ffffff",
-          text_color: "#000000",
+          bg_color: "#F97316", // Orange to match our theme
+          text_color: "#ffffff", // White text for contrast
           btn_text_color: "#ffffff",
-          start_call_text: "",
-          action_text: "",
-          end_call_text: "",
-          speaking_text: "",
-          listening_text: "",
-          language_selector: true,
-          custom_avatar_path: ""
+          start_call_text: "Start rozmowy",
+          action_text: "Rozmawiaj",
+          end_call_text: "Zakończ rozmowę",
+          speaking_text: "Słucham...",
+          listening_text: "Mówię...",
+          language_selector: true
         }
       },
       name: `Assistant for ${familyMember || 'Family'}`,
