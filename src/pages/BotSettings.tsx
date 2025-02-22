@@ -509,104 +509,87 @@ const BotSettings = () => {
         voice_type: 'sarah'
       };
 
+      let currentPanelId = panelId;
+
       if (panelId) {
-        const { error: panelError } = await supabase
+        const { error: updateError } = await supabase
           .from('panels')
           .update(panelData)
           .eq('id', panelId);
 
-        if (panelError) throw panelError;
+        if (updateError) throw updateError;
 
-        await Promise.all([
+        const deletePromises = [
           supabase.from('family_members').delete().eq('panel_id', panelId),
           supabase.from('drugs').delete().eq('panel_id', panelId),
           supabase.from('events').delete().eq('panel_id', panelId)
-        ]);
+        ];
 
-        const familyMembersToInsert = setupData.familyMembers.map(member => ({
-          panel_id: panelId,
-          name: member.name,
-          birth_date: member.birthDate,
-          photo_url: member.photoUrl
-        }));
-
-        const drugsToInsert = setupData.drugs.map(drug => ({
-          panel_id: panelId,
-          name: drug.name,
-          dosage: drug.dosage,
-          frequency: drug.schedule.frequency,
-          time: drug.schedule.time
-        }));
-
-        const eventsToInsert = setupData.events.map(event => ({
-          panel_id: panelId,
-          title: event.title,
-          date: event.date,
-          description: event.description
-        }));
-
-        const promises = [];
-        if (familyMembersToInsert.length > 0) {
-          promises.push(supabase.from('family_members').insert(familyMembersToInsert));
-        }
-        if (drugsToInsert.length > 0) {
-          promises.push(supabase.from('drugs').insert(drugsToInsert));
-        }
-        if (eventsToInsert.length > 0) {
-          promises.push(supabase.from('events').insert(eventsToInsert));
-        }
-
-        await Promise.all(promises);
+        await Promise.all(deletePromises);
       } else {
-        const { data: panel, error: panelError } = await supabase
+        const { data: newPanel, error: insertError } = await supabase
           .from('panels')
           .insert([panelData])
           .select()
           .single();
 
-        if (panelError) throw panelError;
+        if (insertError) throw insertError;
+        if (!newPanel) throw new Error('No panel data returned');
+        
+        currentPanelId = newPanel.id;
+      }
 
+      if (setupData.familyMembers.length > 0) {
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
-          panel_id: panel.id,
+          panel_id: currentPanelId,
           name: member.name,
           birth_date: member.birthDate,
-          photo_url: member.photoUrl
+          photo_url: member.photoUrl || null
         }));
 
+        const { error: familyError } = await supabase
+          .from('family_members')
+          .insert(familyMembersToInsert);
+
+        if (familyError) throw familyError;
+      }
+
+      if (setupData.drugs.length > 0) {
         const drugsToInsert = setupData.drugs.map(drug => ({
-          panel_id: panel.id,
+          panel_id: currentPanelId,
           name: drug.name,
           dosage: drug.dosage,
           frequency: drug.schedule.frequency,
           time: drug.schedule.time
         }));
 
+        const { error: drugsError } = await supabase
+          .from('drugs')
+          .insert(drugsToInsert);
+
+        if (drugsError) throw drugsError;
+      }
+
+      if (setupData.events.length > 0) {
         const eventsToInsert = setupData.events.map(event => ({
-          panel_id: panel.id,
+          panel_id: currentPanelId,
           title: event.title,
           date: event.date,
-          description: event.description
+          description: event.description || ''
         }));
 
-        const promises = [];
-        if (familyMembersToInsert.length > 0) {
-          promises.push(supabase.from('family_members').insert(familyMembersToInsert));
-        }
-        if (drugsToInsert.length > 0) {
-          promises.push(supabase.from('drugs').insert(drugsToInsert));
-        }
-        if (eventsToInsert.length > 0) {
-          promises.push(supabase.from('events').insert(eventsToInsert));
-        }
+        const { error: eventsError } = await supabase
+          .from('events')
+          .insert(eventsToInsert);
 
-        await Promise.all(promises);
+        if (eventsError) throw eventsError;
       }
 
       toast.success(`Panel został pomyślnie ${panelId ? 'zaktualizowany' : 'utworzony'}!`);
       navigate('/family');
     } catch (error) {
       console.error('Error saving data:', error);
-      toast.error(`Nie udało się ${panelId ? 'zaktualizować' : 'utworzyć'} panelu`);
+      toast.error(`Nie udało się ${panelId ? 'zaktualizować' : 'utworzyć'} panelu. Błąd: ${error.message}`);
     }
   };
 
