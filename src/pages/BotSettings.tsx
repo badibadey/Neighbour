@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,11 +12,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Settings2, Calendar, LineChart, ArrowLeft } from "lucide-react";
+import { Settings2, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+interface TabConfig {
+  id: string;
+  label: string;
+  content?: string;
+}
 
 const BotSettings = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("podstawowe");
+  const [tabs, setTabs] = useState<TabConfig[]>([
+    { id: "rodzina", label: "Rodzina" },
+    { id: "leki", label: "Leki" },
+    { id: "wydarzenia", label: "Wydarzenia" }
+  ]);
+  const [newTabName, setNewTabName] = useState("");
+  const [showAddTab, setShowAddTab] = useState(false);
+
+  const handleAddTab = () => {
+    if (newTabName.trim()) {
+      const newTabId = newTabName.toLowerCase().replace(/\s+/g, '-');
+      if (tabs.some(tab => tab.id === newTabId)) {
+        toast.error("Zakładka o takiej nazwie już istnieje");
+        return;
+      }
+      setTabs([...tabs, { id: newTabId, label: newTabName.trim() }]);
+      setNewTabName("");
+      setShowAddTab(false);
+      toast.success("Dodano nową zakładkę");
+    }
+  };
+
+  const handleDeleteTab = (tabId: string) => {
+    setTabs(tabs.filter(tab => tab.id !== tabId));
+    if (activeTab === tabId) {
+      setActiveTab("podstawowe");
+    }
+    toast.success("Usunięto zakładkę");
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-secondary/20">
@@ -36,37 +73,56 @@ const BotSettings = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 flex justify-center">
-          <Tabs defaultValue="bot" className="w-full max-w-xl">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="bot" className="flex items-center gap-2">
-                <Settings2 className="w-4 h-4" />
-                Bot Builder
-              </TabsTrigger>
-              <TabsTrigger value="schedule" className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Harmonogram
-              </TabsTrigger>
-              <TabsTrigger value="monitoring" className="flex items-center gap-2">
-                <LineChart className="w-4 h-4" />
-                Monitoring
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-center flex items-center justify-center gap-2">
+            <Settings2 className="w-8 h-8" />
+            Ustawienia Asystenta
+          </h1>
         </div>
-
-        <h1 className="text-3xl font-bold mb-8 text-center">
-          Konfiguracja Asystenta
-        </h1>
         
         <Card className="p-6 shadow-lg border-primary/10">
-          <Tabs defaultValue="podstawowe" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 gap-4 bg-secondary/20 p-1">
-              <TabsTrigger value="podstawowe">Podstawowe</TabsTrigger>
-              <TabsTrigger value="rodzina">Rodzina</TabsTrigger>
-              <TabsTrigger value="leki">Leki</TabsTrigger>
-              <TabsTrigger value="wydarzenia">Wydarzenia</TabsTrigger>
-            </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="flex items-center gap-4 mb-4">
+              <TabsList className="grid flex-1 grid-cols-4 gap-4 bg-secondary/20 p-1">
+                <TabsTrigger value="podstawowe">Podstawowe</TabsTrigger>
+                {tabs.map(tab => (
+                  <TabsTrigger key={tab.id} value={tab.id} className="group relative">
+                    {tab.label}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTab(tab.id);
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowAddTab(true)}
+                className="shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {showAddTab && (
+              <div className="flex items-center gap-2 mb-4">
+                <Input
+                  placeholder="Nazwa nowej zakładki"
+                  value={newTabName}
+                  onChange={(e) => setNewTabName(e.target.value)}
+                />
+                <Button onClick={handleAddTab}>Dodaj</Button>
+                <Button variant="ghost" onClick={() => setShowAddTab(false)}>Anuluj</Button>
+              </div>
+            )}
 
             <TabsContent value="podstawowe" className="mt-6 space-y-6">
               <div className="space-y-4">
@@ -121,6 +177,7 @@ W sytuacjach nagłych lub niepokojących, sugeruj kontakt z rodziną lub odpowie
                   </Button>
                   <Button 
                     onClick={() => {
+                      toast.success("Zapisano zmiany");
                       navigate('/family');
                     }}
                     className="bg-primary hover:bg-primary/90"
@@ -131,23 +188,16 @@ W sytuacjach nagłych lub niepokojących, sugeruj kontakt z rodziną lub odpowie
               </div>
             </TabsContent>
             
-            <TabsContent value="rodzina">
-              <div className="min-h-[400px] flex items-center justify-center text-muted-foreground">
-                Ustawienia rodziny pojawią się wkrótce...
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="leki">
-              <div className="min-h-[400px] flex items-center justify-center text-muted-foreground">
-                Ustawienia leków pojawią się wkrótce...
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="wydarzenia">
-              <div className="min-h-[400px] flex items-center justify-center text-muted-foreground">
-                Ustawienia wydarzeń pojawią się wkrótce...
-              </div>
-            </TabsContent>
+            {tabs.map(tab => (
+              <TabsContent key={tab.id} value={tab.id}>
+                <div className="min-h-[400px] space-y-4">
+                  <div className="text-center text-muted-foreground">
+                    Konfiguracja sekcji {tab.label.toLowerCase()}
+                  </div>
+                  {/* Tu będzie formularz konfiguracji dla danej zakładki */}
+                </div>
+              </TabsContent>
+            ))}
           </Tabs>
         </Card>
       </div>
