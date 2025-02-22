@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar, Clock, Users, Pill } from "lucide-react";
+import { Calendar, Clock, Users, Pill, Bot } from "lucide-react";
 
 interface Event {
   title: string;
@@ -34,6 +34,7 @@ interface PanelData {
   events: Event[];
   drugs: Drug[];
   family_members: FamilyMember[];
+  agent_id?: string | null;
 }
 
 interface PanelSummaryDialogProps {
@@ -59,6 +60,17 @@ const PanelSummaryDialog = ({ open, onOpenChange, panelData }: PanelSummaryDialo
                 <p><span className="font-medium">Name:</span> {panelData.name}</p>
                 <p><span className="font-medium">Family Member:</span> {panelData.family_member}</p>
                 <p><span className="font-medium">Welcome Message:</span> {panelData.welcome_message}</p>
+                <div className="flex items-center gap-2 mt-2 p-2 bg-muted rounded-lg">
+                  <Bot className="h-4 w-4" />
+                  <p className="text-sm">
+                    <span className="font-medium">ElevenLabs Agent ID:</span>{' '}
+                    {panelData.agent_id ? (
+                      <span className="font-mono">{panelData.agent_id}</span>
+                    ) : (
+                      <span className="text-destructive">Not configured</span>
+                    )}
+                  </p>
+                </div>
               </div>
             </div>
 
