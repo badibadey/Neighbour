@@ -21,6 +21,7 @@ const SeniorPanel = () => {
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const [panelData, setPanelData] = useState<PanelData | null>(null);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     const fetchPanelData = async () => {
@@ -52,14 +53,33 @@ const SeniorPanel = () => {
   }, [id, location.state]);
 
   useEffect(() => {
+    // Check if script is already loaded
+    if (document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
+      setScriptLoaded(true);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://elevenlabs.io/convai-widget/index.js';
     script.async = true;
     script.type = 'text/javascript';
+    
+    script.onload = () => {
+      console.log('ElevenLabs script loaded successfully');
+      setScriptLoaded(true);
+    };
+
+    script.onerror = (error) => {
+      console.error('Error loading ElevenLabs script:', error);
+    };
+
     document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script);
+      const existingScript = document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
     };
   }, []);
 
@@ -97,7 +117,7 @@ const SeniorPanel = () => {
           </div>
 
           <div className="order-1 md:order-2 flex items-center justify-center">
-            {panelData?.agent_id && (
+            {scriptLoaded && panelData?.agent_id && (
               <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
             )}
           </div>
