@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -31,6 +32,7 @@ const BotSettings = () => {
   const [searchParams] = useSearchParams();
   const panelId = searchParams.get('panel');
   const [currentStep, setCurrentStep] = useState(0);
+  const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const [setupData, setSetupData] = useState<SetupData>({
     basic: {
       name: 'My Neighbour',
