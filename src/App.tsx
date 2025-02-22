@@ -10,7 +10,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
-import FamilyPanel from "./pages/FamilyPanel";
+import Neighbours from "./pages/Neighbours";
 import SeniorPanel from "./pages/SeniorPanel";
 import NotFound from "./pages/NotFound";
 import BotSettings from "./pages/BotSettings";
@@ -59,8 +59,8 @@ const App = () => {
             <Route path="/home" element={
               !isAuthenticated ? <Navigate to="/login" replace /> : <Home />
             } />
-            <Route path="/family" element={
-              !isAuthenticated ? <Navigate to="/login" replace /> : <FamilyPanel />
+            <Route path="/neighbours" element={
+              !isAuthenticated ? <Navigate to="/login" replace /> : <Neighbours />
             } />
             <Route path="/senior" element={
               !isAuthenticated ? <Navigate to="/login" replace /> : <SeniorPanel />
