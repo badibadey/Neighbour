@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -45,6 +44,14 @@ const BotSettings = () => {
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const [newFamilyMember, setNewFamilyMember] = useState({ name: '', birthDate: '' });
   const [newEvent, setNewEvent] = useState({ title: '', date: '', description: '' });
+
+  const handleExit = useCallback(() => {
+    setIsExitDialogOpen(true);
+  }, []);
+
+  const confirmExit = useCallback(() => {
+    navigate('/family');
+  }, [navigate]);
 
   useEffect(() => {
     if (panelId) {
