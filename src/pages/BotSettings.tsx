@@ -501,13 +501,18 @@ const BotSettings = () => {
         return;
       }
 
+      const panelData = {
+        user_id: user.id,
+        name: setupData.basic.name,
+        welcome_message: setupData.basic.welcomeMessage,
+        assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
+        voice_type: 'sarah'
+      };
+
       if (panelId) {
         const { error: panelError } = await supabase
           .from('panels')
-          .update({
-            name: setupData.basic.name,
-            welcome_message: setupData.basic.welcomeMessage
-          })
+          .update(panelData)
           .eq('id', panelId);
 
         if (panelError) throw panelError;
@@ -555,11 +560,7 @@ const BotSettings = () => {
       } else {
         const { data: panel, error: panelError } = await supabase
           .from('panels')
-          .insert([{
-            user_id: user.id,
-            name: setupData.basic.name,
-            welcome_message: setupData.basic.welcomeMessage
-          }])
+          .insert([panelData])
           .select()
           .single();
 
@@ -601,11 +602,11 @@ const BotSettings = () => {
         await Promise.all(promises);
       }
 
-      toast.success(`Panel successfully ${panelId ? 'updated' : 'created'}!`);
+      toast.success(`Panel został pomyślnie ${panelId ? 'zaktualizowany' : 'utworzony'}!`);
       navigate('/family');
     } catch (error) {
       console.error('Error saving data:', error);
-      toast.error(`Failed to ${panelId ? 'update' : 'create'} panel`);
+      toast.error(`Nie udało się ${panelId ? 'zaktualizować' : 'utworzyć'} panelu`);
     }
   };
 
