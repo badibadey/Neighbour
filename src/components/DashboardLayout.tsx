@@ -29,8 +29,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 border-r bg-card">
         <div className="p-6">
-          <h2 className="text-3xl font-bold text-[#F97316]" style={{ fontFamily: 'VAG Rounded' }}>
-            Neighbour
+          <h2 className="text-3xl font-bold text-[#F97316]" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica' }}>
+            neighbour
           </h2>
         </div>
         
