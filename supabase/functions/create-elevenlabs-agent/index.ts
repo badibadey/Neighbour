@@ -39,7 +39,8 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
             llm: "gpt-4o",
             prompt: prompt
           },
-          first_message: welcomeMessage
+          first_message: welcomeMessage,
+          language: "pl"
         }
       },
       platform_settings: {
@@ -54,7 +55,6 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
           speaking_text: "I'm listening...",
           listening_text: "Speaking...",
           language_selector: true,
-          language: "pl",
           custom_avatar_path: "https://media.istockphoto.com/id/1180453857/photo/blur-orange-texture-background.jpg?s=612x612&w=0&k=20&c=bpaBJRK2hep0m7JTCCs29MIHeo4jOFDgp9QH30cnRDk=",
           avatar: {
             type: "orb",
