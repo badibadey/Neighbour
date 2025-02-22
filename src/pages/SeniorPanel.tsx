@@ -12,8 +12,7 @@ const SeniorPanel = () => {
       <Button
         className="relative w-64 h-64 rounded-full shadow-lg flex flex-col items-center justify-center gap-4
                    bg-white hover:bg-white/90 text-primary border-8 border-accent/20
-                   transition-all duration-500 hover:scale-105 hover:shadow-xl
-                   animate-pulse hover:animate-none"
+                   transition-all duration-500 hover:scale-105 hover:shadow-xl"
         onClick={() => {
           // Talk button functionality will be implemented here
         }}
