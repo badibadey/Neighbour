@@ -185,7 +185,7 @@ const FamilyPanel = () => {
             onClick={() => navigate('/bot-settings')}
           >
             <Plus className="mr-2 h-4 w-4" />
-            Create Panel
+            Create New Neighbour
           </Button>
         </nav>
 
@@ -232,7 +232,7 @@ const FamilyPanel = () => {
               onClick={() => navigate('/bot-settings')}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Create Panel
+              Create New Neighbour
             </Button>
           </nav>
 
@@ -253,14 +253,14 @@ const FamilyPanel = () => {
       <main className="flex-1 p-8">
         <div className="container mx-auto space-y-8">
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Senior Panels</h2>
+            <h2 className="text-2xl font-semibold mb-4">Your Neighbours</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card 
                 className="p-6 flex flex-col items-center justify-center min-h-[200px] cursor-pointer hover:border-accent"
                 onClick={() => navigate('/bot-settings')}
               >
                 <Plus className="h-12 w-12 text-accent mb-4" />
-                <h3 className="text-xl font-medium">Create New Senior Panel</h3>
+                <h3 className="text-xl font-medium">Create New Neighbour</h3>
                 <p className="text-sm text-muted-foreground mt-2 text-center">
                   Create a new senior-friendly interface
                 </p>
@@ -297,10 +297,10 @@ const FamilyPanel = () => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure you want to delete this panel?</AlertDialogTitle>
+                            <AlertDialogTitle>Are you sure you want to delete this neighbour?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the panel
-                              and all its associated data.
+                              This action cannot be undone. This will permanently delete the neighbour
+                              and all their associated data.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -327,7 +327,7 @@ const FamilyPanel = () => {
                   </div>
                   <div className="flex gap-2">
                     <Button className="flex-1" onClick={() => navigate('/senior')}>
-                      Open Panel
+                      Open Interface
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </Button>
                     <Button 

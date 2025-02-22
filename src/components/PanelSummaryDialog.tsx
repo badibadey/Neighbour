@@ -49,14 +49,14 @@ const PanelSummaryDialog = ({ open, onOpenChange, panelData }: PanelSummaryDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Panel Summary: {panelData.name}</DialogTitle>
+          <DialogTitle>Neighbour Details: {panelData.name}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-[60vh] pr-4">
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold mb-2">Basic Information</h3>
               <div className="space-y-2">
-                <p><span className="font-medium">Panel Name:</span> {panelData.name}</p>
+                <p><span className="font-medium">Name:</span> {panelData.name}</p>
                 <p><span className="font-medium">Family Member:</span> {panelData.family_member}</p>
                 <p><span className="font-medium">Welcome Message:</span> {panelData.welcome_message}</p>
               </div>
