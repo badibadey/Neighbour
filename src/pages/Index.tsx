@@ -1,7 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
 import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -9,7 +11,17 @@ const Index = () => {
 
   useEffect(() => {
     setIsVisible(true);
-  }, []);
+    
+    // Check if user is logged in and redirect to /family if they are
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        navigate('/family');
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   return (
     <main className="min-h-screen bg-white overflow-hidden">
