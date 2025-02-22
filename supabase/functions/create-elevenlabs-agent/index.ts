@@ -32,7 +32,7 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
 
     console.log('Creating agent with prompt length:', prompt.length);
 
-    // Create the agent using the minimal required configuration
+    // Create the agent using the required configuration structure
     const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
       method: 'POST',
       headers: {
@@ -41,10 +41,22 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
         'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
       },
       body: JSON.stringify({
-        conversation_config: {},
+        conversation_config: {
+          agent: {
+            prompt: {
+              tools: [
+                {
+                  type: "system",
+                  name: "end_call",
+                  description: "End the current conversation"
+                }
+              ],
+              system_prompt: prompt
+            }
+          }
+        },
         name: `Assistant for ${familyMember || 'Family'}`,
-        description: `Personal assistant configured for ${familyMember || 'the family'}`,
-        system_prompt: prompt
+        description: `Personal assistant configured for ${familyMember || 'the family'}`
       }),
     });
 
