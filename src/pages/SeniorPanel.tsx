@@ -59,7 +59,7 @@ const SeniorPanel = () => {
       <div className="relative z-10 min-h-screen">
         <Button 
           variant="ghost" 
-          className="text-white flex items-center gap-2 m-4 hover:bg-white/10 absolute top-0 left-0"
+          className="text-white flex items-center gap-2 m-4 hover:bg-white/10 fixed top-0 left-0"
           onClick={() => navigate('/family')}
         >
           <ArrowLeft className="w-4 h-4" />
@@ -81,9 +81,9 @@ const SeniorPanel = () => {
                   animationFillMode: 'forwards'
                 }}
               >
-                Welcome my neighbor,
+                Welcome {primaryFamilyName},
                 <br />
-                <span className="text-orange-200">{primaryFamilyName}</span>
+                <span className="text-orange-200">I'm your neighbor</span>
               </h1>
             </div>
 
