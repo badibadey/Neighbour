@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -97,9 +96,25 @@ const BotSettings = () => {
           welcomeMessage: panel.welcome_message,
           familyMember: panel.family_member || ''
         },
-        familyMembers: familyMembers || [],
-        drugs: drugs || [],
-        events: events || []
+        familyMembers: familyMembers ? familyMembers.map(member => ({
+          name: member.name,
+          birthDate: member.birth_date,
+          photoUrl: member.photo_url
+        })) : [],
+        drugs: drugs ? drugs.map(drug => ({
+          id: drug.id,
+          name: drug.name,
+          dosage: drug.dosage,
+          schedule: {
+            frequency: drug.frequency as 'daily' | 'weekly' | 'monthly',
+            time: drug.time
+          }
+        })) : [],
+        events: events ? events.map(event => ({
+          title: event.title,
+          date: event.date,
+          description: event.description || ''
+        })) : []
       });
     } catch (error) {
       console.error('Error fetching panel data:', error);
@@ -515,6 +530,7 @@ const BotSettings = () => {
         user_id: user.id,
         name: setupData.basic.name,
         welcome_message: setupData.basic.welcomeMessage,
+        family_member: setupData.basic.familyMember,
         assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
         voice_type: 'sarah'
       };
@@ -563,10 +579,13 @@ const BotSettings = () => {
           .from('family_members')
           .insert(familyMembersToInsert);
 
-        if (familyError) throw familyError;
+        if (familyError) {
+          console.error('Error saving family members:', familyError);
+          throw familyError;
+        }
       }
 
-      // Zapisywanie leków - dostosowane do nowej struktury
+      // Zapisywanie leków
       if (setupData.drugs.length > 0) {
         const drugsToInsert = setupData.drugs.map(drug => ({
           panel_id: currentPanelId,
@@ -580,7 +599,10 @@ const BotSettings = () => {
           .from('drugs')
           .insert(drugsToInsert);
 
-        if (drugsError) throw drugsError;
+        if (drugsError) {
+          console.error('Error saving drugs:', drugsError);
+          throw drugsError;
+        }
       }
 
       // Zapisywanie wydarzeń
@@ -588,7 +610,7 @@ const BotSettings = () => {
         const eventsToInsert = setupData.events.map(event => ({
           panel_id: currentPanelId,
           title: event.title,
-          date: event.date,
+          date: new Date(event.date).toISOString(),
           description: event.description || ''
         }));
 
@@ -596,7 +618,10 @@ const BotSettings = () => {
           .from('events')
           .insert(eventsToInsert);
 
-        if (eventsError) throw eventsError;
+        if (eventsError) {
+          console.error('Error saving events:', eventsError);
+          throw eventsError;
+        }
       }
 
       toast.success(`Panel został pomyślnie ${panelId ? 'zaktualizowany' : 'utworzony'}!`);
