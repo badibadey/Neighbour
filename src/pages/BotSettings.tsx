@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { AgentCreationModal } from "@/components/AgentCreationModal";
 import type { SetupData, FamilyMember, Medication, Event } from '@/types/setup';
 
 const WELCOME_MESSAGES = [
@@ -33,6 +34,7 @@ const BotSettings = () => {
   const panelId = searchParams.get('panel');
   const [currentStep, setCurrentStep] = useState(0);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+  const [isCreatingAgent, setIsCreatingAgent] = useState(false);
 
   const [setupData, setSetupData] = useState<SetupData>({
     basic: {
@@ -274,6 +276,7 @@ const BotSettings = () => {
 
   const saveToSupabase = async () => {
     try {
+      setIsCreatingAgent(true);
       console.log('Starting to save data to Supabase...', setupData);
       
       const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -412,6 +415,8 @@ const BotSettings = () => {
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error('Failed to save panel');
+    } finally {
+      setIsCreatingAgent(false);
     }
   };
 
@@ -847,6 +852,11 @@ const BotSettings = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-secondary/20">
+      <AgentCreationModal 
+        isOpen={isCreatingAgent} 
+        familyMember={setupData.basic.familyMember} 
+      />
+      
       <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-2">
