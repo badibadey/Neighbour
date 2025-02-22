@@ -29,7 +29,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 border-r bg-card">
         <div className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Neighbour</h2>
+          <h2 className="text-3xl font-serif italic tracking-wide bg-gradient-to-r from-orange-500 to-orange-700 bg-clip-text text-transparent">
+            Neighbour
+          </h2>
         </div>
         
         <nav className="flex-1 px-4 space-y-2">
