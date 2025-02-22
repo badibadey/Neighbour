@@ -22,83 +22,70 @@ const Index = () => {
   }, [navigate]);
 
   return (
-    <main className="min-h-screen bg-white overflow-hidden">
-      <div className="relative">
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-r from-primary/20 to-secondary/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-l from-primary/10 to-secondary/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 animate-pulse [animation-delay:2s]" />
-        <div className="absolute bottom-0 left-1/2 w-[800px] h-[800px] bg-gradient-to-t from-primary/5 to-secondary/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
-        
-        <div className="container mx-auto px-4 pt-24 pb-32 relative">
-          <nav className="absolute top-8 left-4 right-4 flex justify-between items-center z-10">
-            <h2 className="text-3xl font-semibold text-[#F97316] -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
-              neighbour
-            </h2>
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/login')}
-                className="text-primary hover:text-primary/80 hover:bg-primary/10 animate-fade-in"
-              >
-                Log in
-              </Button>
-              <Button 
-                onClick={() => navigate('/signup')}
-                className="bg-primary text-white hover:bg-primary/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Get Started
-              </Button>
-            </div>
-          </nav>
+    <main className="min-h-screen bg-white">
+      <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412] overflow-hidden">
+        <nav className="absolute top-8 left-4 right-4 flex justify-between items-center z-10">
+          <h2 className="text-3xl font-semibold text-white -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
+            neighbour
+          </h2>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/login')}
+              className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in"
+            >
+              Log in
+            </Button>
+            <Button 
+              onClick={() => navigate('/signup')}
+              className="bg-white text-primary hover:bg-white/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Get Started
+            </Button>
+          </div>
+        </nav>
 
-          <div className="max-w-5xl mx-auto text-center space-y-8">
-            <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-foreground tracking-tight leading-tight mb-6">
-                Welcome to
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary block">Neighbour</span>
+        <div className="container mx-auto px-4 min-h-screen">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-screen">
+            <div className={`space-y-8 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+                Intelligent Care <br />for Your Family
               </h1>
-            </div>
-            
-            <p className={`text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              Experience the future of family care with our intelligent AI companion
-            </p>
-
-            <div className={`relative mt-16 transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              <div className="flex items-center justify-center mb-12">
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200" />
-                  <Button 
-                    className="relative px-8 py-6 bg-white rounded-xl border border-primary/20 hover:border-primary/40 transition-all duration-300 group"
-                    variant="outline"
-                  >
-                    <Bot className="w-6 h-6 mr-2 text-primary group-hover:scale-110 transition-transform duration-300" />
-                    <span className="text-lg">Hey! How can I help your family today?</span>
-                  </Button>
-                </div>
+              <p className="text-xl md:text-2xl text-white/80 max-w-lg">
+                Personalized AI companion that brings comfort and connection to your loved ones
+              </p>
+              <div className="flex gap-4">
+                <Button 
+                  onClick={() => navigate('/signup')}
+                  className="bg-white text-primary hover:bg-white/90 h-14 px-8 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/demo')}
+                  className="h-14 px-8 text-lg border-white text-white hover:bg-white/10"
+                >
+                  Watch Demo
+                </Button>
               </div>
             </div>
 
-            <div className={`flex justify-center gap-6 pt-8 transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              <Button 
-                onClick={() => navigate('/signup')}
-                className="bg-primary text-white hover:bg-primary/90 h-14 px-8 text-lg group shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Start for Free
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => navigate('/demo')}
-                className="h-14 px-8 text-lg border-primary/20 hover:border-primary/40 group"
-              >
-                Watch Demo
-                <MessageCircle className="ml-2 h-5 w-5 transition-transform group-hover:scale-110" />
-              </Button>
+            <div className={`relative h-[600px] transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="relative w-[400px] h-[400px]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5 rounded-full blur-2xl animate-pulse" />
+                  <div className="absolute inset-8 bg-gradient-to-br from-white/30 to-white/10 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
+                  <div className="absolute inset-16 bg-gradient-to-br from-white/40 to-white/20 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <section className="py-32 bg-gradient-to-b from-white to-secondary/20">
+      <section className="py-32 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {[
