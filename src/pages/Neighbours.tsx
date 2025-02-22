@@ -135,7 +135,10 @@ const Neighbours = () => {
           {panels.map((panel) => (
             <Card key={panel.id} className="p-6 flex flex-col min-h-[200px]">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-medium">{panel.name}</h3>
+                <div>
+                  <h3 className="text-xl font-medium">Adam</h3>
+                  <p className="text-sm text-muted-foreground">Neighbour for John</p>
+                </div>
                 <div className="flex gap-2">
                   <Button
                     variant="ghost"
@@ -183,9 +186,6 @@ const Neighbours = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Simple voice interface for daily use
-                </p>
                 <div className="flex items-center text-sm text-muted-foreground mb-4">
                   <Volume2 className="h-4 w-4 mr-2" />
                   Voice Assistant Active
