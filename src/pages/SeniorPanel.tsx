@@ -53,15 +53,6 @@ const SeniorPanel = () => {
     `;
     document.head.appendChild(style);
 
-    // Ensure the script is loaded only once
-    if (!document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://elevenlabs.io/convai-widget/index.js';
-      script.async = true;
-      script.type = 'text/javascript';
-      document.body.appendChild(script);
-    }
-
     return () => {
       document.head.removeChild(style);
     };
@@ -83,11 +74,12 @@ const SeniorPanel = () => {
            style={{
              background: "linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)"
            }}>
-        <div className="flex flex-col items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4 relative z-10">
           <elevenlabs-convai 
             agent-id="xUPvftKCr58LTe0Ffz5m"
             className="convai-widget"
           ></elevenlabs-convai>
+          <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
         </div>
       </div>
     </main>
