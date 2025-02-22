@@ -62,7 +62,7 @@ const App = () => {
             <Route path="/neighbours" element={
               !isAuthenticated ? <Navigate to="/login" replace /> : <Neighbours />
             } />
-            <Route path="/senior" element={
+            <Route path="/senior/:id" element={
               !isAuthenticated ? <Navigate to="/login" replace /> : <SeniorPanel />
             } />
             <Route path="/bot-settings" element={
