@@ -84,7 +84,7 @@ const SeniorPanel = () => {
     updateAgentConfig();
 
     const script = document.createElement('script');
-    script.src = 'https://api.us.elevenlabs.io/convai-widget/index.js';
+    script.src = 'https://elevenlabs.io/convai-widget/index.js';
     script.async = true;
     script.crossOrigin = 'anonymous';
     
@@ -95,9 +95,7 @@ const SeniorPanel = () => {
     script.onload = () => {
       try {
         if (widgetContainer.current) {
-          const widget = document.createElement('elevenlabs-convai');
-          widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
-          widgetContainer.current.appendChild(widget);
+          widgetContainer.current.innerHTML = '<elevenlabs-convai agent-id="xUPvftKCr58LTe0Ffz5m"></elevenlabs-convai>';
         }
       } catch (error) {
         console.error('Error initializing ElevenLabs widget:', error);
