@@ -381,7 +381,7 @@ const BotSettings = () => {
 
       console.log('All data saved successfully!');
       toast.success('Panel saved successfully!');
-      navigate('/family');
+      navigate('/neighbours');
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error('Failed to save panel');
@@ -393,7 +393,7 @@ const BotSettings = () => {
   }, []);
 
   const confirmExit = useCallback(() => {
-    navigate('/family');
+    navigate('/neighbours');
   }, [navigate]);
 
   const steps = [
@@ -515,27 +515,25 @@ const BotSettings = () => {
           <Card className="p-4">
             <div className="space-y-4">
               <h3 className="font-medium">Add New Family Member</h3>
-              <div className="grid gap-4 md:grid-cols-2">
-                <Input
-                  placeholder="Name"
-                  value={newFamilyMember.name}
-                  onChange={(e) => setNewFamilyMember({
-                    ...newFamilyMember,
-                    name: e.target.value
-                  })}
-                  required
-                />
-                <Input
-                  type="date"
-                  value={newFamilyMember.birthDate}
-                  onChange={(e) => setNewFamilyMember({
-                    ...newFamilyMember,
-                    birthDate: e.target.value
-                  })}
-                  required
-                  max={new Date().toISOString().split('T')[0]}
-                />
-              </div>
+              <Input
+                placeholder="Name"
+                value={newFamilyMember.name}
+                onChange={(e) => setNewFamilyMember({
+                  ...newFamilyMember,
+                  name: e.target.value
+                })}
+                required
+              />
+              <Input
+                type="date"
+                value={newFamilyMember.birthDate}
+                onChange={(e) => setNewFamilyMember({
+                  ...newFamilyMember,
+                  birthDate: e.target.value
+                })}
+                required
+                max={new Date().toISOString().split('T')[0]}
+              />
               <Button 
                 onClick={handleAddFamilyMember}
                 disabled={!newFamilyMember.name || !newFamilyMember.birthDate}
