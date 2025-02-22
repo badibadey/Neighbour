@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -528,6 +529,7 @@ const BotSettings = () => {
 
         if (updateError) throw updateError;
 
+        // Usuwanie starych danych
         const deletePromises = [
           supabase.from('family_members').delete().eq('panel_id', panelId),
           supabase.from('drugs').delete().eq('panel_id', panelId),
@@ -548,6 +550,7 @@ const BotSettings = () => {
         currentPanelId = newPanel.id;
       }
 
+      // Zapisywanie członków rodziny
       if (setupData.familyMembers.length > 0) {
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
           panel_id: currentPanelId,
@@ -563,13 +566,14 @@ const BotSettings = () => {
         if (familyError) throw familyError;
       }
 
+      // Zapisywanie leków - dostosowane do struktury tabeli
       if (setupData.drugs.length > 0) {
         const drugsToInsert = setupData.drugs.map(drug => ({
           panel_id: currentPanelId,
           name: drug.name,
           dosage: drug.dosage,
-          frequency: drug.schedule.frequency,
-          time: drug.schedule.time
+          frequency: drug.schedule.frequency,  // bezpośrednio używamy wartości frequency
+          time: drug.schedule.time           // bezpośrednio używamy wartości time
         }));
 
         const { error: drugsError } = await supabase
@@ -579,6 +583,7 @@ const BotSettings = () => {
         if (drugsError) throw drugsError;
       }
 
+      // Zapisywanie wydarzeń
       if (setupData.events.length > 0) {
         const eventsToInsert = setupData.events.map(event => ({
           panel_id: currentPanelId,
