@@ -26,7 +26,7 @@ const Index = () => {
     <main className="min-h-screen bg-white">
       <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412] overflow-hidden">
         <div className="container mx-auto px-4">
-          <nav className="flex justify-end pt-8">
+          <nav className="flex justify-end pt-8 md:pr-[20%]">
             <div className="flex items-center gap-4">
               <h2 className="text-3xl font-semibold text-white -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
                 neighbour
