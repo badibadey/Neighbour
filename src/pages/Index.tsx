@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
@@ -31,7 +30,7 @@ const Index = () => {
         
         <div className="container mx-auto px-4 pt-24 pb-32 relative">
           <nav className="absolute top-8 right-4 flex items-center gap-4 z-10">
-            <h2 className="text-3xl font-normal text-[#F97316] mr-4" style={{ fontFamily: 'kepler-std, serif' }}>
+            <h2 className="text-3xl font-semibold text-[#F97316] tracking-tight mr-4" style={{ fontFamily: 'Crimson Text, serif' }}>
               neighbour
             </h2>
             <Button 
