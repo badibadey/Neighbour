@@ -61,7 +61,6 @@ const BotSettings = () => {
 
   const fetchPanelData = async (id: string) => {
     try {
-      // Fetch panel basic data
       const { data: panel, error: panelError } = await supabase
         .from('panels')
         .select('*')
@@ -70,7 +69,6 @@ const BotSettings = () => {
 
       if (panelError) throw panelError;
 
-      // Fetch family members
       const { data: familyMembers, error: familyError } = await supabase
         .from('family_members')
         .select('*')
@@ -78,7 +76,6 @@ const BotSettings = () => {
 
       if (familyError) throw familyError;
 
-      // Fetch medications
       const { data: drugs, error: drugsError } = await supabase
         .from('drugs')
         .select('*')
@@ -86,7 +83,6 @@ const BotSettings = () => {
 
       if (drugsError) throw drugsError;
 
-      // Fetch events
       const { data: events, error: eventsError } = await supabase
         .from('events')
         .select('*')
@@ -158,6 +154,23 @@ const BotSettings = () => {
       console.error('Error uploading file:', error);
       toast.error('Failed to upload photo');
     }
+  };
+
+  const handleAddMedication = (med: typeof MEDICATIONS_DATABASE[0]) => {
+    const newMedication: Medication = {
+      id: med.id,
+      name: med.name,
+      dosage: med.defaultDosage,
+      schedule: {
+        frequency: 'daily',
+        time: '08:00'
+      }
+    };
+
+    setSetupData({
+      ...setupData,
+      drugs: [...setupData.drugs, newMedication]
+    });
   };
 
   const steps = [
@@ -346,20 +359,7 @@ const BotSettings = () => {
                         {MEDICATIONS_DATABASE.map((med) => (
                           <CommandItem
                             key={med.id}
-                            onSelect={() => {
-                              setSetupData({
-                                ...setupData,
-                                drugs: [
-                                  ...setupData.drugs,
-                                  {
-                                    id: med.id,
-                                    name: med.name,
-                                    dosage: med.defaultDosage,
-                                    schedule: { frequency: 'daily', time: '08:00' }
-                                  }
-                                ]
-                              });
-                            }}
+                            onSelect={() => handleAddMedication(med)}
                           >
                             {med.name}
                           </CommandItem>
@@ -375,7 +375,14 @@ const BotSettings = () => {
                       value={setupData.drugs[setupData.drugs.length - 1].schedule.frequency}
                       onValueChange={(value: 'daily' | 'weekly' | 'monthly') => {
                         const newDrugs = [...setupData.drugs];
-                        newDrugs[newDrugs.length - 1].schedule.frequency = value;
+                        const lastIndex = newDrugs.length - 1;
+                        newDrugs[lastIndex] = {
+                          ...newDrugs[lastIndex],
+                          schedule: {
+                            ...newDrugs[lastIndex].schedule,
+                            frequency: value
+                          }
+                        };
                         setSetupData({ ...setupData, drugs: newDrugs });
                       }}
                     >
@@ -391,9 +398,17 @@ const BotSettings = () => {
 
                     <Input
                       type="time"
+                      value={setupData.drugs[setupData.drugs.length - 1].schedule.time}
                       onChange={(e) => {
                         const newDrugs = [...setupData.drugs];
-                        newDrugs[newDrugs.length - 1].schedule.time = e.target.value;
+                        const lastIndex = newDrugs.length - 1;
+                        newDrugs[lastIndex] = {
+                          ...newDrugs[lastIndex],
+                          schedule: {
+                            ...newDrugs[lastIndex].schedule,
+                            time: e.target.value
+                          }
+                        };
                         setSetupData({ ...setupData, drugs: newDrugs });
                       }}
                     />
@@ -487,87 +502,121 @@ const BotSettings = () => {
       }
 
       if (panelId) {
-        // Update existing panel
         const { error: panelError } = await supabase
           .from('panels')
           .update({
             name: setupData.basic.name,
-            welcome_message: setupData.basic.welcomeMessage,
-            family_member: setupData.basic.familyMember
+            welcome_message: setupData.basic.welcomeMessage
           })
           .eq('id', panelId);
 
         if (panelError) throw panelError;
 
-        // Delete existing relations
         await Promise.all([
           supabase.from('family_members').delete().eq('panel_id', panelId),
           supabase.from('drugs').delete().eq('panel_id', panelId),
           supabase.from('events').delete().eq('panel_id', panelId)
         ]);
 
-        // Add updated relations
-        await Promise.all([
-          setupData.familyMembers.length > 0 && supabase
-            .from('family_members')
-            .insert(setupData.familyMembers.map(member => ({
-              panel_id: panelId,
-              name: member.name,
-              birth_date: member.birthDate,
-              photo_url: member.photoUrl
-            }))),
-          setupData.drugs.length > 0 && supabase
-            .from('drugs')
-            .insert(setupData.drugs.map(drug => ({
-              panel_id: panelId,
-              ...drug
-            }))),
-          setupData.events.length > 0 && supabase
-            .from('events')
-            .insert(setupData.events.map(event => ({
-              panel_id: panelId,
-              ...event
-            })))
-        ]);
+        const promises = [];
 
+        if (setupData.familyMembers.length > 0) {
+          promises.push(
+            supabase
+              .from('family_members')
+              .insert(setupData.familyMembers.map(member => ({
+                panel_id: panelId,
+                name: member.name,
+                birth_date: member.birthDate,
+                photo_url: member.photoUrl
+              }))
+          );
+        }
+
+        if (setupData.drugs.length > 0) {
+          promises.push(
+            supabase
+              .from('drugs')
+              .insert(setupData.drugs.map(drug => ({
+                panel_id: panelId,
+                name: drug.name,
+                dosage: drug.dosage,
+                frequency: drug.schedule.frequency,
+                time: drug.schedule.time
+              }))
+          );
+        }
+
+        if (setupData.events.length > 0) {
+          promises.push(
+            supabase
+              .from('events')
+              .insert(setupData.events.map(event => ({
+                panel_id: panelId,
+                title: event.title,
+                date: event.date,
+                description: event.description
+              }))
+          );
+        }
+
+        await Promise.all(promises);
       } else {
-        // Create new panel
         const { data: panel, error: panelError } = await supabase
           .from('panels')
           .insert([{
             user_id: user.id,
             name: setupData.basic.name,
-            welcome_message: setupData.basic.welcomeMessage,
-            family_member: setupData.basic.familyMember
+            welcome_message: setupData.basic.welcomeMessage
           }])
           .select()
           .single();
 
         if (panelError) throw panelError;
 
-        // Add relations for new panel
-        await Promise.all([
-          setupData.familyMembers.length > 0 && supabase
-            .from('family_members')
-            .insert(setupData.familyMembers.map(member => ({
-              panel_id: panel.id,
-              name: member.name,
-              birth_date: member.birthDate,
-              photo_url: member.photoUrl
-            }))),
-          setupData.drugs.length > 0 && supabase
-            .from('drugs')
-            .insert(setupData.drugs.map(drug => ({
-              panel_id: panel.id,
-              ...drug
-            }))),
-          setupData.events.length > 0 && supabase
-            .from('events')
-            .insert(setupData.events.map(event => ({
-              panel_id: panel.id,
-              ...event
-            })))
-        ]);
+        const promises = [];
+
+        if (setupData.familyMembers.length > 0) {
+          promises.push(
+            supabase
+              .from('family_members')
+              .insert(setupData.familyMembers.map(member => ({
+                panel_id: panel.id,
+                name: member.name,
+                birth_date: member.birthDate,
+                photo_url: member.photoUrl
+              }))
+          );
+        }
+
+        if (setupData.drugs.length > 0) {
+          promises.push(
+            supabase
+              .from('drugs')
+              .insert(setupData.drugs.map(drug => ({
+                panel_id: panel.id,
+                name: drug.name,
+                dosage: drug.dosage,
+                frequency: drug.schedule.frequency,
+                time: drug.schedule.time
+              }))
+          );
+        }
+
+        if (setupData.events.length > 0) {
+          promises.push(
+            supabase
+              .from('events')
+              .insert(setupData.events.map(event => ({
+                panel_id: panel.id,
+                title: event.title,
+                date: event.date,
+                description: event.description
+              }))
+          );
+        }
+
+        await Promise.all(promises);
       }
 
       toast.success(`Panel successfully ${panelId ? 'updated' : 'created'}!`);
