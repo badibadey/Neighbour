@@ -3,20 +3,20 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, CalendarDays, Pill, Users, ArrowLeft } from "lucide-react";
+import { Settings2, CalendarDays, Pill, Users, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const BotSettings = () => {
   const navigate = useNavigate();
 
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b">
+    <main className="min-h-screen bg-gradient-to-b from-white to-secondary/20">
+      <header className="border-b bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
-              className="text-primary flex items-center gap-2"
+              className="text-primary flex items-center gap-2 hover:text-primary/80 hover:bg-primary/10"
               onClick={() => navigate('/family')}
             >
               <ArrowLeft className="w-4 h-4" />
@@ -27,83 +27,106 @@ const BotSettings = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Konfiguracja Asystenta</h1>
+        <h1 className="text-3xl font-bold mb-8 text-primary animate-fade-in">
+          Bot Configuration
+        </h1>
         
-        <Card className="p-6">
+        <Card className="p-6 shadow-lg border-primary/10 animate-slide-up [animation-delay:200ms] opacity-0">
           <Tabs defaultValue="podstawowe" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 gap-4 bg-muted/20 p-1">
-              <TabsTrigger value="podstawowe" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Podstawowe
+            <TabsList className="grid w-full grid-cols-4 gap-4 bg-secondary/20 p-1">
+              <TabsTrigger 
+                value="podstawowe" 
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
+                <Settings2 className="h-4 w-4" />
+                Basic
               </TabsTrigger>
-              <TabsTrigger value="rodzina" className="flex items-center gap-2">
+              <TabsTrigger 
+                value="rodzina" 
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
                 <Users className="h-4 w-4" />
-                Rodzina
+                Family
               </TabsTrigger>
-              <TabsTrigger value="leki" className="flex items-center gap-2">
+              <TabsTrigger 
+                value="leki" 
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
                 <Pill className="h-4 w-4" />
-                Leki
+                Medications
               </TabsTrigger>
-              <TabsTrigger value="wydarzenia" className="flex items-center gap-2">
+              <TabsTrigger 
+                value="wydarzenia" 
+                className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
                 <CalendarDays className="h-4 w-4" />
-                Wydarzenia
+                Events
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="podstawowe" className="mt-6 space-y-6">
               <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Nazwa asystenta</label>
+                <div className="group animate-slide-up [animation-delay:400ms] opacity-0">
+                  <label className="text-sm font-medium block mb-2 text-gray-700">Assistant Name</label>
                   <input
                     type="text"
-                    className="w-full mt-1 p-2 rounded-md border"
-                    value="Asystent Seniora"
+                    className="w-full p-3 rounded-lg border border-primary/20 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all bg-white/50"
+                    placeholder="Senior Assistant"
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium">Wiadomość powitalna</label>
+
+                <div className="group animate-slide-up [animation-delay:600ms] opacity-0">
+                  <label className="text-sm font-medium block mb-2 text-gray-700">Welcome Message</label>
                   <input
                     type="text"
-                    className="w-full mt-1 p-2 rounded-md border"
-                    value="Cześć! Jak mogę ci dzisiaj pomóc?"
+                    className="w-full p-3 rounded-lg border border-primary/20 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all bg-white/50"
+                    placeholder="Hi! How can I help you today?"
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium">Główny prompt asystenta</label>
+
+                <div className="group animate-slide-up [animation-delay:800ms] opacity-0">
+                  <label className="text-sm font-medium block mb-2 text-gray-700">Assistant's Main Prompt</label>
                   <textarea
-                    className="w-full mt-1 p-2 rounded-md border min-h-[200px]"
-                    defaultValue={`Jesteś empatycznym i cierpliwym asystentem dla osób starszych. Twoim zadaniem jest:
-
-1. Pomagać w codziennych czynnościach
-2. Przypominać o lekach i wizytach lekarskich
-3. Utrzymywać kontakt z rodziną
-4. Odpowiadać na pytania dotyczące zdrowia
-5. Oferować wsparcie emocjonalne
-6. Pomagać w organizacji dnia
-
-Zawsze mów prostym, zrozumiałym językiem. Unikaj skomplikowanych terminów.
-Bądź cierpliwy i gotowy do powtórzenia informacji.
-W sytuacjach nagłych lub niepokojących, sugeruj kontakt z rodziną lub odpowiednimi służbami.`}
+                    className="w-full p-3 rounded-lg border border-primary/20 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 transition-all min-h-[200px] bg-white/50"
+                    placeholder="Configure how your assistant should behave..."
                   />
+                </div>
+
+                <div className="flex justify-end gap-4 pt-4 animate-slide-up [animation-delay:1000ms] opacity-0">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/family')}
+                    className="hover:bg-primary/10"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      navigate('/family');
+                    }}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Save Changes
+                  </Button>
                 </div>
               </div>
             </TabsContent>
             
             <TabsContent value="rodzina">
-              <div className="p-4 text-center text-muted-foreground">
-                Ustawienia rodziny
+              <div className="min-h-[400px] flex items-center justify-center text-muted-foreground">
+                Family settings coming soon...
               </div>
             </TabsContent>
             
             <TabsContent value="leki">
-              <div className="p-4 text-center text-muted-foreground">
-                Ustawienia leków
+              <div className="min-h-[400px] flex items-center justify-center text-muted-foreground">
+                Medication settings coming soon...
               </div>
             </TabsContent>
             
             <TabsContent value="wydarzenia">
-              <div className="p-4 text-center text-muted-foreground">
-                Ustawienia wydarzeń
+              <div className="min-h-[400px] flex items-center justify-center text-muted-foreground">
+                Event settings coming soon...
               </div>
             </TabsContent>
           </Tabs>
