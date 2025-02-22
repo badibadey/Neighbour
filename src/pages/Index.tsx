@@ -25,20 +25,22 @@ const Index = () => {
   return (
     <main className="min-h-screen bg-white">
       <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412] overflow-hidden">
-        <nav className="absolute top-8 left-4 right-4 flex justify-between items-center z-10">
-          <h2 className="text-3xl font-semibold text-white -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
-            neighbour
-          </h2>
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/login')}
-              className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in rounded-full"
-            >
-              Log in
-            </Button>
-          </div>
-        </nav>
+        <div className="container mx-auto px-4">
+          <nav className="flex justify-end pt-8">
+            <div className="flex items-center gap-4">
+              <h2 className="text-3xl font-semibold text-white -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
+                neighbour
+              </h2>
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/login')}
+                className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in rounded-full"
+              >
+                Log in
+              </Button>
+            </div>
+          </nav>
+        </div>
 
         <div className="container mx-auto px-4 min-h-screen">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-screen">
@@ -73,7 +75,7 @@ const Index = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/20 rounded-full blur-2xl animate-pulse" />
                   <div className="absolute inset-8 bg-gradient-to-br from-white/60 to-white/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
                   <div className="absolute inset-16 bg-gradient-to-br from-white/80 to-white/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
-                  <div className="absolute inset-0 flex items-center justify-center pl-20">
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <h2 className="text-2xl font-medium text-[#F97316]" style={{ fontFamily: 'Crimson Text, serif' }}>
                       Hi, neighbour
                     </h2>
