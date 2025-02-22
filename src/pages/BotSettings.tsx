@@ -579,7 +579,7 @@ const BotSettings = () => {
                         updateMedicationSchedule(index, value, drug.schedule.time);
                       }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white">
                         <SelectValue placeholder="Select frequency" />
                       </SelectTrigger>
                       <SelectContent>
@@ -614,7 +614,7 @@ const BotSettings = () => {
                     {setupData.drugs.length === 0 ? "Select Medication" : "Add Another Medication"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0">
+                <PopoverContent className="w-[300px] p-0" align="start">
                   <Command>
                     <CommandList>
                       <CommandInput placeholder="Search medications..." />
@@ -623,8 +623,10 @@ const BotSettings = () => {
                         {MEDICATIONS_DATABASE.map((med) => (
                           <CommandItem
                             key={med.id}
+                            value={med.name}
                             onSelect={() => {
                               handleAddMedication(med);
+                              document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
                             }}
                           >
                             <div className="flex flex-col">
