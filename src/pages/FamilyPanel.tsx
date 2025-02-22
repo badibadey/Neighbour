@@ -9,9 +9,6 @@ import {
   ExternalLink, 
   LogOut,
   Home,
-  Users,
-  Calendar,
-  PillIcon,
   Menu
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +34,6 @@ const FamilyPanel = () => {
   const navigate = useNavigate();
   const [panels, setPanels] = useState<Panel[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     fetchPanels();
@@ -45,6 +41,14 @@ const FamilyPanel = () => {
 
   const fetchPanels = async () => {
     try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      if (!user) {
+        navigate('/');
+        return;
+      }
+
       const { data: panels, error } = await supabase
         .from('panels')
         .select('*')
@@ -62,10 +66,19 @@ const FamilyPanel = () => {
 
   const createSeniorPanel = async () => {
     try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      if (!user) {
+        navigate('/');
+        return;
+      }
+
       const { data: panel, error } = await supabase
         .from('panels')
         .insert([
           {
+            user_id: user.id,
             name: 'New Senior Panel',
             welcome_message: 'Hi! How can I help you today?',
             assistant_prompt: 'You are an empathetic and patient assistant for seniors...',
