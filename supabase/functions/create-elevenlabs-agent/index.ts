@@ -13,7 +13,18 @@ serve(async (req) => {
 
   try {
     const { familyMember, welcomeMessage, familyData, medicationData, eventData } = await req.json()
-    console.log('Request data:', { familyMember, welcomeMessage });
+    console.log('Received request data:', {
+      familyMember,
+      welcomeMessage,
+      familyDataCount: familyData?.length,
+      medicationDataCount: medicationData?.length,
+      eventDataCount: eventData?.length
+    });
+
+    // Sprawdzamy, czy mamy wszystkie wymagane dane
+    if (!welcomeMessage) {
+      throw new Error('Welcome message is required');
+    }
 
     const prompt = `You are an empathetic and patient voice assistant designed specifically for ${familyMember || 'the user'}. Your role is to support and guide the user through their daily routine with dynamic, personalized information, while always maintaining a caring and supportive tone.
 
@@ -45,7 +56,7 @@ Responsibilities:
 
 Always use the dynamic data provided to tailor your responses accurately and ensure the user feels supported and well-informed.`
 
-    console.log('Creating agent with prompt:', prompt);
+    console.log('Generated prompt:', prompt);
 
     const payload = {
       conversation_config: {
@@ -82,14 +93,19 @@ Always use the dynamic data provided to tailor your responses accurately and ens
       description: `Personal assistant configured for ${familyMember || 'the family'}`
     };
 
-    console.log('Sending payload to ElevenLabs:', JSON.stringify(payload, null, 2));
+    console.log('Sending payload to ElevenLabs...');
+
+    const apiKey = Deno.env.get('ELEVENLABS_API_KEY');
+    if (!apiKey) {
+      throw new Error('ELEVENLABS_API_KEY is not set');
+    }
 
     const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
+        'xi-api-key': apiKey,
       },
       body: JSON.stringify(payload),
     });
@@ -103,11 +119,11 @@ Always use the dynamic data provided to tailor your responses accurately and ens
     }
 
     const agent = JSON.parse(responseText);
-    console.log('Parsed agent response:', agent);
+    console.log('Successfully created agent:', agent);
 
     return new Response(
       JSON.stringify({ 
-        agent_id: agent.agent_id || 'test_agent',
+        agent_id: agent.agent_id,
         status: 'success'
       }),
       {
