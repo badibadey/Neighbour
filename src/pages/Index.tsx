@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
@@ -32,13 +33,13 @@ const Index = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/login')}
-              className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in"
+              className="text-white hover:text-white/80 hover:bg-white/10 animate-fade-in rounded-full"
             >
               Log in
             </Button>
             <Button 
               onClick={() => navigate('/signup')}
-              className="bg-white text-primary hover:bg-white/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-white text-primary hover:bg-white/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300 rounded-full"
             >
               Get Started
             </Button>
@@ -57,15 +58,15 @@ const Index = () => {
               <div className="flex gap-4">
                 <Button 
                   onClick={() => navigate('/signup')}
-                  className="bg-white text-primary hover:bg-white/90 h-14 px-8 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-white text-primary hover:bg-white/90 h-14 px-8 text-lg shadow-lg hover:shadow-xl transition-all duration-300 rounded-full"
                 >
-                  Start Free Trial
+                  Try Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/demo')}
-                  className="h-14 px-8 text-lg border-white text-white hover:bg-white/10"
+                  className="h-14 px-8 text-lg border-2 border-white text-white hover:bg-white/10 rounded-full"
                 >
                   Watch Demo
                 </Button>
@@ -75,9 +76,9 @@ const Index = () => {
             <div className={`relative h-[600px] transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="relative w-[400px] h-[400px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5 rounded-full blur-2xl animate-pulse" />
-                  <div className="absolute inset-8 bg-gradient-to-br from-white/30 to-white/10 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
-                  <div className="absolute inset-16 bg-gradient-to-br from-white/40 to-white/20 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/20 rounded-full blur-2xl animate-pulse" />
+                  <div className="absolute inset-8 bg-gradient-to-br from-white/60 to-white/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
+                  <div className="absolute inset-16 bg-gradient-to-br from-white/80 to-white/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
                 </div>
               </div>
             </div>
