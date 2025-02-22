@@ -129,12 +129,6 @@ const SeniorPanel = () => {
           {scriptLoaded && panelData?.agent_id && (
             <elevenlabs-convai 
               agent-id={panelData.agent_id}
-              style={{
-                width: '100%',
-                height: '600px',
-                borderRadius: '12px',
-                overflow: 'hidden'
-              } as React.CSSProperties}
             ></elevenlabs-convai>
           )}
         </div>
