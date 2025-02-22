@@ -13,26 +13,29 @@ export type Database = {
         Row: {
           created_at: string | null
           dosage: string | null
+          frequency: string | null
           id: string
           name: string
           panel_id: string | null
-          schedule: string | null
+          time: string | null
         }
         Insert: {
           created_at?: string | null
           dosage?: string | null
+          frequency?: string | null
           id?: string
           name: string
           panel_id?: string | null
-          schedule?: string | null
+          time?: string | null
         }
         Update: {
           created_at?: string | null
           dosage?: string | null
+          frequency?: string | null
           id?: string
           name?: string
           panel_id?: string | null
-          schedule?: string | null
+          time?: string | null
         }
         Relationships: [
           {

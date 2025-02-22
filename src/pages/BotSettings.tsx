@@ -566,14 +566,14 @@ const BotSettings = () => {
         if (familyError) throw familyError;
       }
 
-      // Zapisywanie leków - dostosowane do struktury tabeli
+      // Zapisywanie leków - dostosowane do nowej struktury
       if (setupData.drugs.length > 0) {
         const drugsToInsert = setupData.drugs.map(drug => ({
           panel_id: currentPanelId,
           name: drug.name,
           dosage: drug.dosage,
-          frequency: drug.schedule.frequency,  // bezpośrednio używamy wartości frequency
-          time: drug.schedule.time           // bezpośrednio używamy wartości time
+          frequency: drug.schedule.frequency,
+          time: drug.schedule.time
         }));
 
         const { error: drugsError } = await supabase
