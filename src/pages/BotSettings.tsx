@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, ArrowRight, Upload, Plus, Check, AlertCircle } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -29,6 +29,7 @@ const MEDICATIONS_DATABASE = [
 const BotSettings = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { state } = useLocation();
   const panelId = searchParams.get('panel');
   const [currentStep, setCurrentStep] = useState(0);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
@@ -58,9 +59,20 @@ const BotSettings = () => {
 
   useEffect(() => {
     if (panelId) {
+      if (state?.panelData) {
+        const panel = state.panelData;
+        setSetupData(prevData => ({
+          ...prevData,
+          basic: {
+            name: panel.name,
+            welcomeMessage: panel.welcome_message,
+            familyMember: panel.family_member
+          }
+        }));
+      }
       fetchPanelData(panelId);
     }
-  }, [panelId]);
+  }, [panelId, state]);
 
   const fetchPanelData = async (id: string) => {
     try {
@@ -106,15 +118,15 @@ const BotSettings = () => {
         familyMembers: familyMembers ? familyMembers.map(member => ({
           name: member.name,
           birthDate: member.birth_date,
-          photoUrl: member.photo_url
+          photoUrl: member.photo_url || ''
         })) : [],
         drugs: drugs ? drugs.map(drug => ({
           id: drug.id,
           name: drug.name,
           dosage: drug.dosage,
           schedule: {
-            frequency: drug.frequency,
-            time: drug.time
+            frequency: drug.frequency || 'daily',
+            time: drug.time || '09:00'
           }
         })) : [],
         events: events ? events.map(event => ({
@@ -336,7 +348,8 @@ const BotSettings = () => {
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
           panel_id: currentPanelId,
           name: member.name,
-          birth_date: new Date(member.birthDate).toISOString().split('T')[0]
+          birth_date: new Date(member.birthDate).toISOString().split('T')[0],
+          photo_url: member.photoUrl
         }));
 
         const { error: familyError } = await supabase
@@ -352,17 +365,12 @@ const BotSettings = () => {
       // Save events
       if (setupData.events.length > 0) {
         console.log('Saving events:', setupData.events);
-        const eventsToInsert = setupData.events.map(event => {
-          const eventDate = new Date(event.date);
-          return {
-            panel_id: currentPanelId,
-            title: event.title,
-            date: eventDate.toISOString(),
-            description: event.description || ''
-          };
-        });
-
-        console.log('Events to insert:', eventsToInsert);
+        const eventsToInsert = setupData.events.map(event => ({
+          panel_id: currentPanelId,
+          title: event.title,
+          date: new Date(event.date).toISOString(),
+          description: event.description || ''
+        }));
 
         const { error: eventsError } = await supabase
           .from('events')
@@ -381,11 +389,9 @@ const BotSettings = () => {
           panel_id: currentPanelId,
           name: drug.name,
           dosage: drug.dosage,
-          frequency: drug.schedule.frequency || 'daily',
-          time: drug.schedule.time || '09:00'
+          frequency: drug.schedule.frequency,
+          time: drug.schedule.time
         }));
-
-        console.log('Drugs to insert:', drugsToInsert);
 
         const { error: drugsError } = await supabase
           .from('drugs')
