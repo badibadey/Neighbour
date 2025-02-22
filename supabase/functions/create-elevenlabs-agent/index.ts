@@ -39,9 +39,9 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
             llm: "gpt-4o",
             prompt: prompt
           },
-          first_message: welcomeMessage,
-          language: "pl"
-        }
+          first_message: welcomeMessage
+        },
+        language: "pl"
       },
       platform_settings: {
         widget: {
