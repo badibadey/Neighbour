@@ -18,7 +18,7 @@ const Login = () => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        navigate('/family');
+        navigate('/home');
       }
     };
 
@@ -39,7 +39,7 @@ const Login = () => {
         toast.error(error.message);
       } else {
         toast.success("Logged in successfully!");
-        navigate('/family');
+        navigate('/home');
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
