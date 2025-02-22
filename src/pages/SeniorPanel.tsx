@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -70,37 +69,27 @@ const SeniorPanel = () => {
     script.src = 'https://elevenlabs.io/convai-widget/index.js';
     script.async = true;
     script.onload = () => {
-      // Create and mount the widget after script loads
       if (widgetContainer.current) {
         const widget = document.createElement('elevenlabs-convai');
         widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
         widget.className = 'convai-widget';
         
-        // Customize widget appearance and behavior
-        const widgetConfig = {
-          variant: "full",
-          bg_color: "#FFFFFF",
-          text_color: "#2D3648", // using our app's text color
-          btn_color: "#FF9F6B", // using our primary color
-          btn_text_color: "#FFFFFF",
-          border_color: "#FFE4D6", // using our secondary color
-          border_radius: "16",
-          btn_radius: "50",
-          focus_color: "#FF9F6B",
-          start_call_text: "Porozmawiaj ze mną",
-          speaking_text: "Słucham...",
-          listening_text: "Słucham Cię...",
-          action_text: "Kliknij aby rozpocząć rozmowę",
-          end_call_text: "Do zobaczenia!",
-          avatar: {
-            type: "url"
-          }
-        };
-
-        // Apply configuration
-        Object.entries(widgetConfig).forEach(([key, value]) => {
-          widget.setAttribute(`data-${key}`, String(value));
-        });
+        // Podstawowa konfiguracja jako pojedyncze atrybuty
+        widget.setAttribute('data-variant', 'full');
+        widget.setAttribute('data-bg-color', '#FFFFFF');
+        widget.setAttribute('data-text-color', '#2D3648');
+        widget.setAttribute('data-btn-color', '#FF9F6B');
+        widget.setAttribute('data-btn-text-color', '#FFFFFF');
+        widget.setAttribute('data-border-color', '#FFE4D6');
+        widget.setAttribute('data-border-radius', '16');
+        widget.setAttribute('data-btn-radius', '50');
+        widget.setAttribute('data-focus-color', '#FF9F6B');
+        widget.setAttribute('data-start-call-text', 'Porozmawiaj ze mną');
+        widget.setAttribute('data-speaking-text', 'Słucham...');
+        widget.setAttribute('data-listening-text', 'Słucham Cię...');
+        widget.setAttribute('data-action-text', 'Kliknij aby rozpocząć rozmowę');
+        widget.setAttribute('data-end-call-text', 'Do zobaczenia!');
+        widget.setAttribute('data-avatar-type', 'orb');
 
         widgetContainer.current.appendChild(widget);
       }
