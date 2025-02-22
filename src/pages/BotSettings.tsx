@@ -32,6 +32,7 @@ const BotSettings = () => {
   const panelId = searchParams.get('panel');
   const [currentStep, setCurrentStep] = useState(0);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
+
   const [setupData, setSetupData] = useState<SetupData>({
     basic: {
       name: 'My Neighbour',
@@ -42,11 +43,13 @@ const BotSettings = () => {
     drugs: [],
     events: []
   });
+
   const [newFamilyMember, setNewFamilyMember] = useState<FamilyMember>({ 
     name: '', 
     birthDate: '', 
     photoUrl: '' 
   });
+
   const [newEvent, setNewEvent] = useState<Event>({ 
     title: '', 
     date: '', 
@@ -69,40 +72,28 @@ const BotSettings = () => {
         .eq('id', id)
         .single();
 
-      if (panelError) {
-        console.error('Error fetching panel:', panelError);
-        throw panelError;
-      }
+      if (panelError) throw panelError;
 
       const { data: familyMembers, error: familyError } = await supabase
         .from('family_members')
         .select('*')
         .eq('panel_id', id);
 
-      if (familyError) {
-        console.error('Error fetching family members:', familyError);
-        throw familyError;
-      }
+      if (familyError) throw familyError;
 
       const { data: drugs, error: drugsError } = await supabase
         .from('drugs')
         .select('*')
         .eq('panel_id', id);
 
-      if (drugsError) {
-        console.error('Error fetching drugs:', drugsError);
-        throw drugsError;
-      }
+      if (drugsError) throw drugsError;
 
       const { data: events, error: eventsError } = await supabase
         .from('events')
         .select('*')
         .eq('panel_id', id);
 
-      if (eventsError) {
-        console.error('Error fetching events:', eventsError);
-        throw eventsError;
-      }
+      if (eventsError) throw eventsError;
 
       console.log('Fetched data:', { panel, familyMembers, drugs, events });
 
@@ -122,7 +113,7 @@ const BotSettings = () => {
           name: drug.name,
           dosage: drug.dosage,
           schedule: {
-            frequency: drug.frequency as 'daily' | 'weekly' | 'monthly',
+            frequency: drug.frequency,
             time: drug.time
           }
         })) : [],
@@ -145,16 +136,8 @@ const BotSettings = () => {
     return selectedDate instanceof Date && !isNaN(selectedDate.getTime());
   };
 
-  const handleExit = useCallback(() => {
-    setIsExitDialogOpen(true);
-  }, []);
-
-  const confirmExit = useCallback(() => {
-    navigate('/family');
-  }, [navigate]);
-
   const handleAddFamilyMember = () => {
-    if (!newFamilyMember.name) {
+    if (!newFamilyMember.name.trim()) {
       toast.error("Please enter family member's name");
       return;
     }
@@ -168,16 +151,20 @@ const BotSettings = () => {
     }
 
     console.log('Adding family member:', newFamilyMember);
-    setSetupData(prevData => ({
-      ...prevData,
-      familyMembers: [...prevData.familyMembers, { ...newFamilyMember }]
-    }));
+    setSetupData(prevData => {
+      const updatedMembers = [...prevData.familyMembers, { ...newFamilyMember }];
+      console.log('Updated family members:', updatedMembers);
+      return {
+        ...prevData,
+        familyMembers: updatedMembers
+      };
+    });
     setNewFamilyMember({ name: '', birthDate: '', photoUrl: '' });
     toast.success("Family member added successfully!");
   };
 
   const handleAddEvent = () => {
-    if (!newEvent.title) {
+    if (!newEvent.title.trim()) {
       toast.error("Please enter event title");
       return;
     }
@@ -191,10 +178,14 @@ const BotSettings = () => {
     }
 
     console.log('Adding event:', newEvent);
-    setSetupData(prevData => ({
-      ...prevData,
-      events: [...prevData.events, { ...newEvent }]
-    }));
+    setSetupData(prevData => {
+      const updatedEvents = [...prevData.events, { ...newEvent }];
+      console.log('Updated events:', updatedEvents);
+      return {
+        ...prevData,
+        events: updatedEvents
+      };
+    });
     setNewEvent({ title: '', date: '', description: '' });
     toast.success("Event added successfully!");
   };
@@ -215,35 +206,22 @@ const BotSettings = () => {
         .from('user-uploads')
         .getPublicUrl(filePath);
 
-      const newMembers = [...setupData.familyMembers];
-      newMembers[memberIndex] = {
-        ...newMembers[memberIndex],
-        photoUrl: publicUrl
-      };
-
-      setSetupData({ ...setupData, familyMembers: newMembers });
+      setSetupData(prevData => {
+        const updatedMembers = [...prevData.familyMembers];
+        updatedMembers[memberIndex] = {
+          ...updatedMembers[memberIndex],
+          photoUrl: publicUrl
+        };
+        return {
+          ...prevData,
+          familyMembers: updatedMembers
+        };
+      });
       toast.success('Photo uploaded successfully');
     } catch (error) {
       console.error('Error uploading file:', error);
       toast.error('Failed to upload photo');
     }
-  };
-
-  const handleAddMedication = (med: typeof MEDICATIONS_DATABASE[0]) => {
-    const newMedication: Medication = {
-      id: med.id,
-      name: med.name,
-      dosage: med.defaultDosage,
-      schedule: {
-        frequency: 'daily',
-        time: '08:00'
-      }
-    };
-
-    setSetupData(prevData => ({
-      ...prevData,
-      drugs: [...prevData.drugs, newMedication]
-    }));
   };
 
   const updateMedicationSchedule = (index: number, frequency: 'daily' | 'weekly' | 'monthly', time: string) => {
@@ -265,7 +243,7 @@ const BotSettings = () => {
 
   const saveToSupabase = async () => {
     try {
-      console.log('Starting to save data to Supabase...');
+      console.log('Starting to save data to Supabase...', setupData);
       
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
@@ -279,7 +257,7 @@ const BotSettings = () => {
         user_id: user.id,
         name: setupData.basic.name,
         welcome_message: setupData.basic.welcomeMessage,
-        family_member: setupData.basic.familyMember || '', // Ensure it's never null
+        family_member: setupData.basic.familyMember || '',
         assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
         voice_type: 'sarah'
       };
@@ -289,7 +267,6 @@ const BotSettings = () => {
       let currentPanelId = panelId;
 
       if (panelId) {
-        console.log('Updating existing panel...');
         const { error: updateError } = await supabase
           .from('panels')
           .update(panelData)
@@ -297,17 +274,13 @@ const BotSettings = () => {
 
         if (updateError) throw updateError;
 
-        // Usuwanie starych danych
-        console.log('Deleting old related data...');
-        const deletePromises = [
+        // Delete old data
+        await Promise.all([
           supabase.from('family_members').delete().eq('panel_id', panelId),
           supabase.from('drugs').delete().eq('panel_id', panelId),
           supabase.from('events').delete().eq('panel_id', panelId)
-        ];
-
-        await Promise.all(deletePromises);
+        ]);
       } else {
-        console.log('Creating new panel...');
         const { data: newPanel, error: insertError } = await supabase
           .from('panels')
           .insert([panelData])
@@ -320,7 +293,7 @@ const BotSettings = () => {
         currentPanelId = newPanel.id;
       }
 
-      // Zapisywanie członków rodziny
+      // Save family members
       if (setupData.familyMembers.length > 0) {
         console.log('Saving family members:', setupData.familyMembers);
         const familyMembersToInsert = setupData.familyMembers.map(member => ({
@@ -334,34 +307,10 @@ const BotSettings = () => {
           .from('family_members')
           .insert(familyMembersToInsert);
 
-        if (familyError) {
-          console.error('Error saving family members:', familyError);
-          throw familyError;
-        }
+        if (familyError) throw familyError;
       }
 
-      // Zapisywanie leków
-      if (setupData.drugs.length > 0) {
-        console.log('Saving medications:', setupData.drugs);
-        const drugsToInsert = setupData.drugs.map(drug => ({
-          panel_id: currentPanelId,
-          name: drug.name,
-          dosage: drug.dosage,
-          frequency: drug.schedule.frequency,
-          time: drug.schedule.time
-        }));
-
-        const { error: drugsError } = await supabase
-          .from('drugs')
-          .insert(drugsToInsert);
-
-        if (drugsError) {
-          console.error('Error saving drugs:', drugsError);
-          throw drugsError;
-        }
-      }
-
-      // Zapisywanie wydarzeń
+      // Save events
       if (setupData.events.length > 0) {
         console.log('Saving events:', setupData.events);
         const eventsToInsert = setupData.events.map(event => ({
@@ -375,20 +324,42 @@ const BotSettings = () => {
           .from('events')
           .insert(eventsToInsert);
 
-        if (eventsError) {
-          console.error('Error saving events:', eventsError);
-          throw eventsError;
-        }
+        if (eventsError) throw eventsError;
+      }
+
+      // Save drugs
+      if (setupData.drugs.length > 0) {
+        const drugsToInsert = setupData.drugs.map(drug => ({
+          panel_id: currentPanelId,
+          name: drug.name,
+          dosage: drug.dosage,
+          frequency: drug.schedule.frequency,
+          time: drug.schedule.time
+        }));
+
+        const { error: drugsError } = await supabase
+          .from('drugs')
+          .insert(drugsToInsert);
+
+        if (drugsError) throw drugsError;
       }
 
       console.log('All data saved successfully!');
-      toast.success(`Panel został pomyślnie ${panelId ? 'zaktualizowany' : 'utworzony'}!`);
+      toast.success('Panel saved successfully!');
       navigate('/family');
     } catch (error) {
       console.error('Error saving data:', error);
-      toast.error(`Nie udało się ${panelId ? 'zaktualizować' : 'utworzyć'} panelu. Błąd: ${error.message}`);
+      toast.error('Failed to save panel');
     }
   };
+
+  const handleExit = useCallback(() => {
+    setIsExitDialogOpen(true);
+  }, []);
+
+  const confirmExit = useCallback(() => {
+    navigate('/family');
+  }, [navigate]);
 
   const steps = [
     {
