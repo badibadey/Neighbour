@@ -59,38 +59,20 @@ Always use the dynamic data provided to tailor your responses accurately and ens
     console.log('Generated prompt:', prompt);
 
     const payload = {
-      conversation_config: {
-        agent: {
-          prompt: {
-            llm: "gpt-4",
-            prompt: prompt
-          },
-          first_message: welcomeMessage
-        },
-        language: "pl"
-      },
-      platform_settings: {
-        widget: {
-          variant: "expandable",
-          bg_color: "#F97316",
-          text_color: "#ffffff",
-          btn_text_color: "#ffffff",
-          start_call_text: "Start conversation",
-          action_text: "Chat with neighbour",
-          end_call_text: "End conversation",
-          speaking_text: "I'm listening...",
-          listening_text: "Speaking...",
-          language_selector: true,
-          custom_avatar_path: "https://media.istockphoto.com/id/1180453857/photo/blur-orange-texture-background.jpg?s=612x612&w=0&k=20&c=bpaBJRK2hep0m7JTCCs29MIHeo4jOFDgp9QH30cnRDk=",
-          avatar: {
-            type: "orb",
-            color_1: "#F97316",
-            color_2: "#FEC6A1"
-          }
-        }
-      },
       name: `Assistant for ${familyMember || 'Family'}`,
-      description: `Personal assistant configured for ${familyMember || 'the family'}`
+      description: `Personal assistant configured for ${familyMember || 'the family'}`,
+      image: "https://media.istockphoto.com/id/1180453857/photo/blur-orange-texture-background.jpg?s=612x612&w=0&k=20&c=bpaBJRK2hep0m7JTCCs29MIHeo4jOFDgp9QH30cnRDk=",
+      llm: {
+        model_name: "gpt-4",
+        prompt: prompt,
+        temperature: 0.7,
+        max_tokens: 200
+      },
+      voice: {
+        voice_id: "EXAVITQu4vr4xnSDxMaL" // Sarah voice
+      },
+      initial_message: welcomeMessage,
+      languages: ["pl"]
     };
 
     console.log('Sending payload to ElevenLabs...');
@@ -100,7 +82,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
       throw new Error('ELEVENLABS_API_KEY is not set');
     }
 
-    const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
+    const agentResponse = await fetch('https://api.elevenlabs.io/v1/conversation-agents', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
