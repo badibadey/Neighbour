@@ -1,8 +1,8 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from '@/lib/supabase';
 
 const SeniorPanel = () => {
   const navigate = useNavigate();
@@ -11,8 +11,77 @@ const SeniorPanel = () => {
   const panelData = location.state?.panelData;
   const primaryFamilyMember = panelData?.family_member || 'there';
 
+  const updateAgentConfig = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const apiKey = session?.user?.user_metadata?.elevenlabs_api_key;
+
+      if (!apiKey) {
+        console.error('No ElevenLabs API key found');
+        return;
+      }
+
+      const response = await fetch('https://api.elevenlabs.io/v1/convai/agents/create?use_tool_ids=false', {
+        method: 'POST',
+        headers: {
+          'xi-api-key': apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          conversation_config: {
+            agent: {
+              prompt: {
+                llm: "gpt-4",
+                prompt: panelData?.assistant_prompt || "You are a helpful assistant."
+              }
+            }
+          },
+          platform_settings: {
+            widget: {
+              variant: "full",
+              feedback_mode: "during",
+              avatar: {
+                type: "url"
+              },
+              bg_color: "#FFFFFF",
+              text_color: "#2D3648",
+              btn_text_color: "#FFFFFF",
+              btn_color: "#FF9F6B",
+              border_color: "#FFE4D6",
+              border_radius: 16,
+              btn_radius: 50,
+              focus_color: "#FF9F6B",
+              start_call_text: `Hello ${primaryFamilyMember}! Click to start our conversation`,
+              speaking_text: "I'm listening...",
+              listening_text: "I hear you...",
+              action_text: "Click to start talking",
+              end_call_text: "Goodbye! Take care!",
+              expand_text: "",
+              shareable_page_text: "",
+              terms_text: "",
+              terms_html: "",
+              language_selector: false,
+              custom_avatar_path: ""
+            }
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update agent config: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Agent configuration updated:', data);
+
+    } catch (error) {
+      console.error('Error updating agent configuration:', error);
+    }
+  };
+
   useEffect(() => {
-    // Add custom styles for the Convai widget
+    updateAgentConfig();
+
     const style = document.createElement('style');
     style.textContent = `
       .convai-chat-button {
@@ -118,7 +187,7 @@ const SeniorPanel = () => {
         widgetContainer.current.innerHTML = '';
       }
     };
-  }, [primaryFamilyMember]);
+  }, [primaryFamilyMember, panelData]);
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
