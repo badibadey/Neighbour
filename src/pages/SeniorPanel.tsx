@@ -1,11 +1,15 @@
+
 import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const SeniorPanel = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const widgetContainer = useRef<HTMLDivElement>(null);
+  const panelData = location.state?.panelData;
+  const primaryFamilyMember = panelData?.family_member || 'there';
 
   useEffect(() => {
     // Add custom styles for the Convai widget
@@ -64,7 +68,6 @@ const SeniorPanel = () => {
     `;
     document.head.appendChild(style);
 
-    // Dynamically load the script
     const script = document.createElement('script');
     script.src = 'https://elevenlabs.io/convai-widget/index.js';
     script.async = true;
@@ -74,22 +77,31 @@ const SeniorPanel = () => {
         widget.setAttribute('agent-id', 'xUPvftKCr58LTe0Ffz5m');
         widget.className = 'convai-widget';
         
-        // Podstawowa konfiguracja jako pojedyncze atrybuty
+        // Widget configuration matching the curl example format
         widget.setAttribute('data-variant', 'full');
+        widget.setAttribute('data-feedback-mode', 'during');
+        widget.setAttribute('data-avatar-type', 'url');
         widget.setAttribute('data-bg-color', '#FFFFFF');
         widget.setAttribute('data-text-color', '#2D3648');
-        widget.setAttribute('data-btn-color', '#FF9F6B');
         widget.setAttribute('data-btn-text-color', '#FFFFFF');
+        widget.setAttribute('data-btn-color', '#FF9F6B');
         widget.setAttribute('data-border-color', '#FFE4D6');
         widget.setAttribute('data-border-radius', '16');
         widget.setAttribute('data-btn-radius', '50');
         widget.setAttribute('data-focus-color', '#FF9F6B');
-        widget.setAttribute('data-start-call-text', 'Porozmawiaj ze mną');
-        widget.setAttribute('data-speaking-text', 'Słucham...');
-        widget.setAttribute('data-listening-text', 'Słucham Cię...');
-        widget.setAttribute('data-action-text', 'Kliknij aby rozpocząć rozmowę');
-        widget.setAttribute('data-end-call-text', 'Do zobaczenia!');
-        widget.setAttribute('data-avatar-type', 'orb');
+        
+        // English messages with family member name integration
+        widget.setAttribute('data-start-call-text', `Hello ${primaryFamilyMember}! Click to start our conversation`);
+        widget.setAttribute('data-speaking-text', 'I\'m listening...');
+        widget.setAttribute('data-listening-text', 'I hear you...');
+        widget.setAttribute('data-action-text', 'Click to start talking');
+        widget.setAttribute('data-end-call-text', 'Goodbye! Take care!');
+        widget.setAttribute('data-expand-text', '');
+        widget.setAttribute('data-shareable-page-text', '');
+        widget.setAttribute('data-terms-text', '');
+        widget.setAttribute('data-terms-html', '');
+        widget.setAttribute('data-language-selector', 'false');
+        widget.setAttribute('data-custom-avatar-path', '');
 
         widgetContainer.current.appendChild(widget);
       }
@@ -106,7 +118,7 @@ const SeniorPanel = () => {
         widgetContainer.current.innerHTML = '';
       }
     };
-  }, []);
+  }, [primaryFamilyMember]);
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
