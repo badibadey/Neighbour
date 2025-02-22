@@ -29,23 +29,25 @@ const Index = () => {
         <div className="absolute bottom-0 left-1/2 w-[800px] h-[800px] bg-gradient-to-t from-primary/5 to-secondary/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
         
         <div className="container mx-auto px-4 pt-24 pb-32 relative">
-          <nav className="absolute top-8 right-4 flex items-center gap-4 z-10">
-            <h2 className="text-3xl font-semibold text-[#F97316] tracking-tight mr-4" style={{ fontFamily: 'Crimson Text, serif' }}>
+          <nav className="absolute top-8 left-4 right-4 flex justify-between items-center z-10">
+            <h2 className="text-3xl font-semibold text-[#F97316] -tracking-wide" style={{ fontFamily: 'Crimson Text, serif' }}>
               neighbour
             </h2>
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/login')}
-              className="text-primary hover:text-primary/80 hover:bg-primary/10 animate-fade-in"
-            >
-              Log in
-            </Button>
-            <Button 
-              onClick={() => navigate('/signup')}
-              className="bg-primary text-white hover:bg-primary/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Get Started
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/login')}
+                className="text-primary hover:text-primary/80 hover:bg-primary/10 animate-fade-in"
+              >
+                Log in
+              </Button>
+              <Button 
+                onClick={() => navigate('/signup')}
+                className="bg-primary text-white hover:bg-primary/90 animate-fade-in [animation-delay:200ms] shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Get Started
+              </Button>
+            </div>
           </nav>
 
           <div className="max-w-5xl mx-auto text-center space-y-8">
