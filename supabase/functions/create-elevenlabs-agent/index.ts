@@ -32,7 +32,6 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
 
     console.log('Creating agent with prompt:', prompt);
 
-    // Updated payload structure to include first_message
     const payload = {
       conversation_config: {
         agent: {
@@ -40,7 +39,22 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
             llm: "gpt-4o",
             prompt: prompt
           },
-          first_message: welcomeMessage // Using welcome_message from panels table
+          first_message: welcomeMessage
+        }
+      },
+      platform_settings: {
+        widget: {
+          variant: "full",
+          bg_color: "#ffffff",
+          text_color: "#000000",
+          btn_text_color: "#ffffff",
+          start_call_text: "",
+          action_text: "",
+          end_call_text: "",
+          speaking_text: "",
+          listening_text: "",
+          language_selector: true,
+          custom_avatar_path: ""
         }
       },
       name: `Assistant for ${familyMember || 'Family'}`,
