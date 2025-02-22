@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -44,7 +43,7 @@ Always be supportive and patient. If there's any emergency, suggest contacting f
       },
       platform_settings: {
         widget: {
-          variant: "compact",
+          variant: "expandable",
           bg_color: "#F97316",
           text_color: "#ffffff",
           btn_text_color: "#ffffff",

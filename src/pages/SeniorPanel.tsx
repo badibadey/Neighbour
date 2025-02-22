@@ -53,7 +53,6 @@ const SeniorPanel = () => {
   }, [id, location.state]);
 
   useEffect(() => {
-    // Check if script is already loaded
     if (document.querySelector('script[src="https://elevenlabs.io/convai-widget/index.js"]')) {
       setScriptLoaded(true);
       return;
@@ -118,7 +117,17 @@ const SeniorPanel = () => {
 
           <div className="order-1 md:order-2 flex items-center justify-center">
             {scriptLoaded && panelData?.agent_id && (
-              <elevenlabs-convai agent-id={panelData.agent_id}></elevenlabs-convai>
+              <div className="w-[500px] h-[500px]">
+                <elevenlabs-convai 
+                  agent-id={panelData.agent_id}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    '--convai-widget-height': '500px',
+                    '--convai-widget-width': '500px'
+                  } as React.CSSProperties}
+                ></elevenlabs-convai>
+              </div>
             )}
           </div>
         </div>
