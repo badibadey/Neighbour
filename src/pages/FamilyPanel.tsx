@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Settings, Volume2, ExternalLink } from "lucide-react";
+import { Plus, Settings, Volume2, ExternalLink, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
 
@@ -14,12 +14,20 @@ const FamilyPanel = () => {
     toast.success('Senior panel created successfully');
   };
 
+  const handleLogout = () => {
+    navigate('/');
+    toast.success('Logged out successfully');
+  };
+
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="senior-heading text-primary">Family Panel</h1>
-          <Button variant="outline" onClick={() => navigate('/')}>Back</Button>
+          <Button variant="outline" onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Log out
+          </Button>
         </div>
       </header>
       

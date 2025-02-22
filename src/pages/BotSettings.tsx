@@ -2,7 +2,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Volume2, Mic, MessageSquare, Settings2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, CalendarDays, Pill, Users, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const BotSettings = () => {
@@ -11,7 +12,7 @@ const BotSettings = () => {
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
@@ -21,81 +22,92 @@ const BotSettings = () => {
               <ArrowLeft className="w-4 h-4" />
               Back
             </Button>
-            <h1 className="text-2xl font-semibold">Bot Settings</h1>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 space-y-6 max-w-3xl">
-        <Card className="p-6 space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Settings2 className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">General Settings</h2>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-accent/10 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Volume2 className="h-5 w-5 text-primary" />
-                <div>
-                  <h3 className="font-medium">Voice Volume</h3>
-                  <p className="text-sm text-muted-foreground">Adjust the bot's speaking volume</p>
-                </div>
-              </div>
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                defaultValue="70"
-                className="w-32"
-              />
-            </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Konfiguracja Asystenta</h1>
+        
+        <Card className="p-6">
+          <Tabs defaultValue="podstawowe" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 gap-4 bg-muted/20 p-1">
+              <TabsTrigger value="podstawowe" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Podstawowe
+              </TabsTrigger>
+              <TabsTrigger value="rodzina" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Rodzina
+              </TabsTrigger>
+              <TabsTrigger value="leki" className="flex items-center gap-2">
+                <Pill className="h-4 w-4" />
+                Leki
+              </TabsTrigger>
+              <TabsTrigger value="wydarzenia" className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4" />
+                Wydarzenia
+              </TabsTrigger>
+            </TabsList>
 
-            <div className="flex items-center justify-between p-4 bg-accent/10 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Mic className="h-5 w-5 text-primary" />
+            <TabsContent value="podstawowe" className="mt-6 space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <h3 className="font-medium">Voice Recognition</h3>
-                  <p className="text-sm text-muted-foreground">Adjust microphone sensitivity</p>
+                  <label className="text-sm font-medium">Nazwa asystenta</label>
+                  <input
+                    type="text"
+                    className="w-full mt-1 p-2 rounded-md border"
+                    value="Asystent Seniora"
+                  />
                 </div>
-              </div>
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                defaultValue="80"
-                className="w-32"
-              />
-            </div>
+                <div>
+                  <label className="text-sm font-medium">Wiadomość powitalna</label>
+                  <input
+                    type="text"
+                    className="w-full mt-1 p-2 rounded-md border"
+                    value="Cześć! Jak mogę ci dzisiaj pomóc?"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Główny prompt asystenta</label>
+                  <textarea
+                    className="w-full mt-1 p-2 rounded-md border min-h-[200px]"
+                    defaultValue={`Jesteś empatycznym i cierpliwym asystentem dla osób starszych. Twoim zadaniem jest:
 
-            <div className="flex items-center justify-between p-4 bg-accent/10 rounded-lg">
-              <div className="flex items-center gap-3">
-                <MessageSquare className="h-5 w-5 text-primary" />
-                <div>
-                  <h3 className="font-medium">Voice Type</h3>
-                  <p className="text-sm text-muted-foreground">Select the bot's voice</p>
+1. Pomagać w codziennych czynnościach
+2. Przypominać o lekach i wizytach lekarskich
+3. Utrzymywać kontakt z rodziną
+4. Odpowiadać na pytania dotyczące zdrowia
+5. Oferować wsparcie emocjonalne
+6. Pomagać w organizacji dnia
+
+Zawsze mów prostym, zrozumiałym językiem. Unikaj skomplikowanych terminów.
+Bądź cierpliwy i gotowy do powtórzenia informacji.
+W sytuacjach nagłych lub niepokojących, sugeruj kontakt z rodziną lub odpowiednimi służbami.`}
+                  />
                 </div>
               </div>
-              <select className="px-3 py-2 rounded-md border bg-background">
-                <option>Female (Default)</option>
-                <option>Male</option>
-                <option>Child</option>
-              </select>
-            </div>
-          </div>
+            </TabsContent>
+            
+            <TabsContent value="rodzina">
+              <div className="p-4 text-center text-muted-foreground">
+                Ustawienia rodziny
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="leki">
+              <div className="p-4 text-center text-muted-foreground">
+                Ustawienia leków
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="wydarzenia">
+              <div className="p-4 text-center text-muted-foreground">
+                Ustawienia wydarzeń
+              </div>
+            </TabsContent>
+          </Tabs>
         </Card>
-
-        <div className="flex justify-end gap-4">
-          <Button variant="outline" onClick={() => navigate('/family')}>
-            Cancel
-          </Button>
-          <Button onClick={() => {
-            // Save settings logic here
-            navigate('/family');
-          }}>
-            Save Changes
-          </Button>
-        </div>
       </div>
     </main>
   );
