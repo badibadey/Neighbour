@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
@@ -14,15 +13,12 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-white overflow-hidden">
-      {/* Hero Section */}
       <div className="relative">
-        {/* Enhanced Gradient Orbs */}
         <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-r from-primary/20 to-secondary/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-l from-primary/10 to-secondary/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 animate-pulse [animation-delay:2s]" />
         <div className="absolute bottom-0 left-1/2 w-[800px] h-[800px] bg-gradient-to-t from-primary/5 to-secondary/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
         
         <div className="container mx-auto px-4 pt-24 pb-32 relative">
-          {/* Enhanced Navigation */}
           <nav className="absolute top-8 right-4 flex gap-4 z-10">
             <Button 
               variant="ghost" 
@@ -40,11 +36,10 @@ const Index = () => {
           </nav>
 
           <div className="max-w-5xl mx-auto text-center space-y-8">
-            {/* Enhanced Hero Content */}
             <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
               <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-foreground tracking-tight leading-tight mb-6">
-                AI Assistant for
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary block">Your Family</span>
+                Welcome to
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary block">Neighbour</span>
               </h1>
             </div>
             
@@ -52,7 +47,6 @@ const Index = () => {
               Experience the future of family care with our intelligent AI companion
             </p>
 
-            {/* Bot Preview Section */}
             <div className={`relative mt-16 transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
               <div className="flex items-center justify-center mb-12">
                 <div className="relative group">
@@ -68,7 +62,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Enhanced CTA */}
             <div className={`flex justify-center gap-6 pt-8 transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
               <Button 
                 onClick={() => navigate('/signup')}
@@ -90,7 +83,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Enhanced Features Section */}
       <section className="py-32 bg-gradient-to-b from-white to-secondary/20">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -127,7 +119,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Enhanced CTA Section */}
       <section className="py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 to-primary/5" />
         <div className="container mx-auto px-4 relative">
