@@ -10,8 +10,6 @@ const FamilyPanel = () => {
   const navigate = useNavigate();
 
   const createSeniorPanel = () => {
-    // In a real application, this would create a unique ID for each senior panel
-    // For now, we'll just navigate to the senior panel
     navigate('/senior');
     toast.success('Senior panel created successfully');
   };
@@ -38,11 +36,13 @@ const FamilyPanel = () => {
               </p>
             </Card>
 
-            {/* Example existing senior panel */}
             <Card className="senior-card p-6 flex flex-col min-h-[200px]">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-medium">Mom's Panel</h3>
-                <Settings className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-accent" />
+                <Settings 
+                  className="h-5 w-5 text-muted-foreground cursor-pointer hover:text-accent"
+                  onClick={() => navigate('/bot-settings')}
+                />
               </div>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground mb-4">
@@ -58,7 +58,11 @@ const FamilyPanel = () => {
                   Open Panel
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
-                <Button variant="outline" className="flex-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => navigate('/bot-settings')}
+                >
                   Settings
                 </Button>
               </div>
