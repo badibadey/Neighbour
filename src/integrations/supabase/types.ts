@@ -118,7 +118,7 @@ export type Database = {
         Row: {
           assistant_prompt: string | null
           created_at: string | null
-          family_member: string | null
+          family_member: string
           id: string
           name: string
           user_id: string | null
@@ -128,7 +128,7 @@ export type Database = {
         Insert: {
           assistant_prompt?: string | null
           created_at?: string | null
-          family_member?: string | null
+          family_member?: string
           id?: string
           name: string
           user_id?: string | null
@@ -138,7 +138,7 @@ export type Database = {
         Update: {
           assistant_prompt?: string | null
           created_at?: string | null
-          family_member?: string | null
+          family_member?: string
           id?: string
           name?: string
           user_id?: string | null

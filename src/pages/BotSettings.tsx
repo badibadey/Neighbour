@@ -239,7 +239,7 @@ const BotSettings = () => {
         user_id: user.id,
         name: setupData.basic.name,
         welcome_message: setupData.basic.welcomeMessage,
-        family_member: setupData.basic.familyMember,
+        family_member: setupData.basic.familyMember || '', // Ensure it's never null
         assistant_prompt: `You are a helpful assistant for ${setupData.basic.familyMember || 'the family'}. You should be empathetic, patient, and supportive.`,
         voice_type: 'sarah'
       };
