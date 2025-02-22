@@ -40,32 +40,11 @@ When greeting the user, use this message: "${welcomeMessage}"
 
 In any urgent or concerning situation, promptly suggest that the user contact a family member or the appropriate emergency services.`
 
-    console.log('Starting ElevenLabs API call...');
+    console.log('Starting ElevenLabs agent creation...');
     console.log('API Key present:', !!Deno.env.get('ELEVENLABS_API_KEY'));
 
-    try {
-      // First, let's test the API connection by getting voices
-      const testResponse = await fetch('https://api.elevenlabs.io/v1/voices', {
-        headers: {
-          'Accept': 'application/json',
-          'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
-        },
-      });
-
-      console.log('Test API call status:', testResponse.status);
-      const testData = await testResponse.text();
-      console.log('Test API response:', testData);
-
-      if (!testResponse.ok) {
-        throw new Error(`API test failed: ${testResponse.status} - ${testData}`);
-      }
-    } catch (error) {
-      console.error('Test API call failed:', error);
-      throw error;
-    }
-
-    // Now create an assistant using the voice generation endpoint
-    const voiceResponse = await fetch('https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL/stream', {
+    // Create the agent using the convai API
+    const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -73,27 +52,42 @@ In any urgent or concerning situation, promptly suggest that the user contact a 
         'xi-api-key': Deno.env.get('ELEVENLABS_API_KEY') || '',
       },
       body: JSON.stringify({
-        text: welcomeMessage,
-        model_id: "eleven_multilingual_v2",
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.5,
+        name: `Assistant for ${familyMember || 'Family'}`,
+        description: `Personal assistant configured for ${familyMember || 'the family'}`,
+        system_prompt: prompt,
+        conversation_config: {
+          model: {
+            provider: "openai",
+            model_id: "gpt-4",
+            temperature: 0.7,
+            max_tokens: 200
+          },
+          voice: {
+            voice_id: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
+            settings: {
+              stability: 0.5,
+              similarity_boost: 0.5,
+              style: 0.0,
+              use_speaker_boost: true
+            }
+          }
         }
       }),
     });
 
-    console.log('Voice generation status:', voiceResponse.status);
-    
-    if (!voiceResponse.ok) {
-      const errorText = await voiceResponse.text();
-      console.error('Voice generation error:', errorText);
-      throw new Error(`Voice generation failed: ${voiceResponse.status} - ${errorText}`);
+    console.log('Agent creation status:', agentResponse.status);
+    const responseData = await agentResponse.text();
+    console.log('Agent creation response:', responseData);
+
+    if (!agentResponse.ok) {
+      throw new Error(`Failed to create agent: ${agentResponse.status} - ${responseData}`);
     }
 
-    // If we got here, it means we can generate voice, so let's return success
+    const agent = JSON.parse(responseData);
+
     return new Response(
       JSON.stringify({ 
-        agent_id: `assistant_${Date.now()}`,
+        agent_id: agent.agent_id,
         voice_id: "EXAVITQu4vr4xnSDxMaL"
       }),
       {
