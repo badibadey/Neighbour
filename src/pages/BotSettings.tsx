@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { SetupData, FamilyMember, Medication, Event } from '@/types/setup';
 
@@ -398,28 +398,29 @@ const BotSettings = () => {
                     {setupData.drugs.length === 0 ? "Select Medication" : "Add Another Medication"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="p-0" side="right" align="start">
+                <PopoverContent className="w-[300px] p-0">
                   <Command>
-                    <CommandInput placeholder="Search medications..." />
-                    <CommandEmpty>No medication found.</CommandEmpty>
-                    <CommandGroup>
-                      {MEDICATIONS_DATABASE.map((med) => (
-                        <CommandItem
-                          key={med.id}
-                          value={med.name}
-                          onSelect={() => {
-                            handleAddMedication(med);
-                          }}
-                        >
-                          <div className="flex flex-col">
-                            <span>{med.name}</span>
-                            <span className="text-sm text-muted-foreground">
-                              Default dosage: {med.defaultDosage}
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    <CommandList>
+                      <CommandInput placeholder="Search medications..." />
+                      <CommandEmpty>No medication found.</CommandEmpty>
+                      <CommandGroup>
+                        {MEDICATIONS_DATABASE.map((med) => (
+                          <CommandItem
+                            key={med.id}
+                            onSelect={() => {
+                              handleAddMedication(med);
+                            }}
+                          >
+                            <div className="flex flex-col">
+                              <span>{med.name}</span>
+                              <span className="text-sm text-muted-foreground">
+                                Default dosage: {med.defaultDosage}
+                              </span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
                   </Command>
                 </PopoverContent>
               </Popover>
