@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import FamilyPanel from "./pages/FamilyPanel";
 import SeniorPanel from "./pages/SeniorPanel";
 import NotFound from "./pages/NotFound";
+import BotSettings from "./pages/BotSettings";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/family" element={<FamilyPanel />} />
           <Route path="/senior" element={<SeniorPanel />} />
+          <Route path="/bot-settings" element={<BotSettings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
