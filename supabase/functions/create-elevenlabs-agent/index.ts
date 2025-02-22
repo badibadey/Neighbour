@@ -40,6 +40,13 @@ When greeting the user, use this message: "${welcomeMessage}"
 
 In any urgent or concerning situation, promptly suggest that the user contact a family member or the appropriate emergency services.`
 
+    console.log('ElevenLabs API Key:', Deno.env.get('ELEVENLABS_API_KEY') ? 'Present' : 'Missing');
+    console.log('Request body:', {
+      name: `Assistant for ${familyMember || 'Family'}`,
+      description: `Personal assistant configured for ${familyMember || 'the family'}`,
+      prompt_length: prompt.length,
+    });
+
     const response = await fetch('https://api.elevenlabs.io/v1/assistants', {
       method: 'POST',
       headers: {
@@ -53,12 +60,21 @@ In any urgent or concerning situation, promptly suggest that the user contact a 
       }),
     })
 
+    console.log('ElevenLabs Response Status:', response.status);
+    const responseData = await response.text();
+    console.log('ElevenLabs Response Body:', responseData);
+
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || 'Failed to create ElevenLabs agent')
+      let errorDetail;
+      try {
+        errorDetail = JSON.parse(responseData).detail;
+      } catch {
+        errorDetail = responseData;
+      }
+      throw new Error(`ElevenLabs API error: ${response.status} - ${errorDetail}`);
     }
 
-    const data = await response.json()
+    const data = JSON.parse(responseData);
     
     return new Response(
       JSON.stringify({ agent_id: data.assistant_id }),
@@ -67,8 +83,12 @@ In any urgent or concerning situation, promptly suggest that the user contact a 
       },
     )
   } catch (error) {
+    console.error('Function error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        type: 'ElevenLabsError'
+      }),
       {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
