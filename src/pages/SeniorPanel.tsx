@@ -6,20 +6,24 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 
+interface PanelData {
+  id: string;
+  name: string;
+  welcome_message: string;
+  assistant_prompt: string;
+  voice_type: string;
+  family_member: string;
+  agent_id: string;
+}
+
 const SeniorPanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
-  const [panelData, setPanelData] = useState<any>(null);
-
-  // Debug logs
-  console.log('Route params:', useParams());
-  console.log('Location state:', location.state);
-  console.log('Panel ID:', id);
+  const [panelData, setPanelData] = useState<PanelData | null>(null);
 
   useEffect(() => {
     const fetchPanelData = async () => {
-      // Check both params and state for panel ID
       const panelId = id || location.state?.panelId;
       
       if (!panelId) {
@@ -47,30 +51,20 @@ const SeniorPanel = () => {
     fetchPanelData();
   }, [id, location.state]);
 
-  // Log panel data for debugging
-  console.log('Current panel data:', panelData);
-  
-  // Get family member name from panel data
   const familyMemberName = panelData?.family_member || 'there';
-  console.log('Family member name:', familyMemberName);
 
   return (
     <div className="relative min-h-screen">
-      {/* Back button - moved outside of other divs and increased z-index */}
       <Button 
         variant="ghost" 
         className="fixed top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10 pointer-events-auto"
         onClick={() => {
           console.log('Back button clicked');
-          navigate('/family');
-        }}
-        style={{
-          position: 'fixed',
-          zIndex: 99999,
+          navigate('/neighbours');
         }}
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Family Panel
+        Back to Neighbours
       </Button>
 
       <div className="min-h-screen relative overflow-hidden">
@@ -82,7 +76,7 @@ const SeniorPanel = () => {
           }}
         />
         
-        <div className="relative z-20"> {/* Zwiększony z-index dla kontentu */}
+        <div className="relative z-20">
           <div className="container mx-auto px-4 h-[calc(100vh-2rem)] flex items-center">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full">
               <div className="text-center md:text-left order-2 md:order-1">
@@ -104,10 +98,16 @@ const SeniorPanel = () => {
               </div>
 
               <div className="animate-fade-in order-1 md:order-2 relative z-20" style={{ animationDelay: '0.2s' }}>
-                <elevenlabs-convai 
-                  agent-id="xUPvftKCr58LTe0Ffz5m"
-                  style={{ width: '100%', height: '600px' }}
-                ></elevenlabs-convai>
+                {panelData?.agent_id ? (
+                  <elevenlabs-convai 
+                    agent-id={panelData.agent_id}
+                    style={{ width: '100%', height: '600px' }}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-[600px] bg-gray-100 rounded-lg">
+                    <p className="text-gray-500">Loading assistant...</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
