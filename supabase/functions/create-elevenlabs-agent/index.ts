@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -21,7 +20,6 @@ serve(async (req) => {
       eventDataCount: eventData?.length
     });
 
-    // Sprawdzamy, czy mamy wszystkie wymagane dane
     if (!welcomeMessage) {
       throw new Error('Welcome message is required');
     }
