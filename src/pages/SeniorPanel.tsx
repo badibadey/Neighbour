@@ -104,6 +104,8 @@ const SeniorPanel = () => {
         <div className="w-[120px]"></div>
       </div>
 
+      <div className="absolute top-0 right-0 w-[400px] h-screen bg-[#FEC6A1]/20 backdrop-blur-sm" />
+
       <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="order-1">
           <h1 
