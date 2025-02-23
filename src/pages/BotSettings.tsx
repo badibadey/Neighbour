@@ -459,7 +459,9 @@ const BotSettings = () => {
       component: (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium block">Neighbour Name</label>
+            <label className="text-sm font-medium block">
+              Neighbour Name <span className="text-red-500">*</span>
+            </label>
             <Input 
               value={setupData.basic.name}
               onChange={(e) => setSetupData({
@@ -467,12 +469,15 @@ const BotSettings = () => {
                 basic: { ...setupData.basic, name: e.target.value }
               })}
               placeholder="My Neighbour"
+              required
             />
             <p className="text-sm text-muted-foreground">This name will be used throughout the interface</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium block">Family Member</label>
+            <label className="text-sm font-medium block">
+              Family Member <span className="text-red-500">*</span>
+            </label>
             <Input 
               value={setupData.basic.familyMember}
               onChange={(e) => setSetupData({
@@ -480,6 +485,7 @@ const BotSettings = () => {
                 basic: { ...setupData.basic, familyMember: e.target.value }
               })}
               placeholder="Primary family member"
+              required
             />
             <p className="text-sm text-muted-foreground">The person who will be primarily using the assistant</p>
           </div>

@@ -13,7 +13,7 @@ const Home = () => {
       <div className="flex-1 space-y-8 p-8 pt-16 max-w-6xl mx-auto">
         <div className="relative z-10 text-center space-y-6 opacity-0 animate-[fadeIn_0.6s_ease-out_0.2s_forwards]">
           <h1 className="text-4xl tracking-tight" style={{ fontFamily: 'Crimson Text, serif' }}>
-            Welcome to <span className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">neighbour</span>
+            Welcome to <span className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">sąsiad</span>
           </h1>
           <p className="text-gray-600 text-xl max-w-2xl mx-auto leading-relaxed">
             Create personalized voice assistants for your loved ones.
@@ -28,7 +28,7 @@ const Home = () => {
               <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/50 rounded-full blur-xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.7s_forwards]" />
               <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/95 to-[#FEC6A1]/60 rounded-full blur-lg animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.8s_forwards]" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 animate-[fadeIn_0.6s_ease-out_0.9s_forwards]">
-                <span className="text-white text-xl lowercase z-10" style={{ fontFamily: 'Crimson Text, serif' }}>Hi, neighbour</span>
+                <span className="text-white text-xl z-10" style={{ fontFamily: 'Crimson Text, serif' }}>sąsiad</span>
               </div>
             </div>
           </div>
@@ -46,7 +46,7 @@ const Home = () => {
                 </div>
                 <Button 
                   onClick={() => navigate('/bot-settings')}
-                  className="group transition-all duration-300 hover:pr-8 bg-gray-900 hover:bg-gray-800"
+                  className="group transition-all duration-300 hover:pr-8 bg-gradient-to-r from-[#F97316] to-[#FEC6A1] hover:opacity-90"
                 >
                   Add Neighbour
                   <ArrowRight className="ml-2 h-4 w-4 transition-all duration-300 group-hover:translate-x-2" />
