@@ -21,23 +21,23 @@ const Home = () => {
           </p>
         </div>
         
-        <div className="min-h-[300px] relative flex items-center justify-center opacity-0 animate-[fadeIn_0.8s_ease-out_0.6s_forwards]">
+        <div className="min-h-[300px] relative flex items-center justify-center opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
           <div className="absolute">
             <div className="relative w-[300px] h-[300px]">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/40 to-[#FEC6A1]/20 rounded-full blur-2xl animate-pulse scale-0 animate-[scaleIn_1s_ease-out_0.8s_forwards]" />
-              <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/30 rounded-full blur-xl animate-pulse scale-0 animate-[scaleIn_1s_ease-out_1s_forwards] [animation-delay:1s]" />
-              <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/40 rounded-full blur-lg animate-pulse scale-0 animate-[scaleIn_1s_ease-out_1.2s_forwards] [animation-delay:2s]" />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 animate-[fadeIn_0.6s_ease-out_1.4s_forwards]">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/40 to-[#FEC6A1]/20 rounded-full blur-2xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.6s_forwards]" />
+              <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/30 rounded-full blur-xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.7s_forwards]" />
+              <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/40 rounded-full blur-lg animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.8s_forwards]" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 animate-[fadeIn_0.6s_ease-out_0.9s_forwards]">
                 <span className="text-white text-xl lowercase z-10" style={{ fontFamily: 'Crimson Text, serif' }}>hi, neighbour</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-6 opacity-0 animate-[fadeIn_0.6s_ease-out_1.6s_forwards]">
+        <div className="space-y-6 opacity-0 animate-[fadeIn_0.6s_ease-out_0.8s_forwards]">
           <h2 className="text-2xl font-semibold text-gray-900">Quick Setup</h2>
           
-          <Card className="border transform translate-y-4 opacity-0 animate-[slideUp_0.6s_ease-out_1.8s_forwards]">
+          <Card className="border transform translate-y-4 opacity-0 animate-[slideUp_0.6s_ease-out_1s_forwards]">
             <div className="p-6 space-y-6">
               <div className="flex items-center justify-between border-b pb-6">
                 <div className="space-y-1">
