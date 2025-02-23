@@ -53,6 +53,7 @@ serve(async (req) => {
     // Make sure we're using the exact IDs from the response
     const toolIds = toolsData.tools ? toolsData.tools.map((tool: any) => tool.id) : [];
     console.log('Exact Tool IDs being used:', JSON.stringify(toolIds, null, 2));
+    console.log('Raw tools response:', await toolsResponse.text());
 
     const prompt = `You are an empathetic and patient voice assistant designed specifically for ${familyMember || 'the user'}. Your role is to support and guide the user through their daily routine with dynamic, personalized information, while always maintaining a caring and supportive tone.
 
