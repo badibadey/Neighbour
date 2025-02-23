@@ -24,11 +24,11 @@ const Home = () => {
         <div className="min-h-[300px] relative flex items-center justify-center opacity-0 animate-[fadeIn_0.6s_ease-out_0.4s_forwards]">
           <div className="absolute">
             <div className="relative w-[300px] h-[300px]">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/40 to-[#FEC6A1]/20 rounded-full blur-2xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.6s_forwards]" />
-              <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/30 rounded-full blur-xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.7s_forwards]" />
-              <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/40 rounded-full blur-lg animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.8s_forwards]" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/40 rounded-full blur-2xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.6s_forwards]" />
+              <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/50 rounded-full blur-xl animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.7s_forwards]" />
+              <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/95 to-[#FEC6A1]/60 rounded-full blur-lg animate-pulse scale-0 animate-[scaleIn_0.8s_ease-out_0.8s_forwards]" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 animate-[fadeIn_0.6s_ease-out_0.9s_forwards]">
-                <span className="text-white text-xl lowercase z-10" style={{ fontFamily: 'Crimson Text, serif' }}>hi, neighbour</span>
+                <span className="text-white text-xl lowercase z-10" style={{ fontFamily: 'Crimson Text, serif' }}>Hi, neighbour</span>
               </div>
             </div>
           </div>
