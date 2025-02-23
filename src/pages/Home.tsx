@@ -13,7 +13,7 @@ const Home = () => {
       <div className="flex-1 space-y-8 p-8 pt-16 max-w-6xl mx-auto relative">
         {/* Animated glut with subtle movement */}
         <div 
-          className="absolute top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-gradient-to-b from-[#FEC6A1]/10 to-transparent backdrop-blur-[2px]"
+          className="fixed top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-gradient-to-b from-[#FEC6A1]/10 to-transparent backdrop-blur-[2px]"
           style={{
             animation: 'moveGlut 20s ease-in-out infinite',
           }}
