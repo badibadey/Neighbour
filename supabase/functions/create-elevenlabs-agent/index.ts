@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -90,7 +91,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
       conversation_config: {
         agent: {
           prompt: {
-            llm: "gpt-3.5-turbo",
+            llm: "gpt-3.5-turbo",  // Changed from gpt-4 to gpt-3.5-turbo
             prompt: prompt
           },
           first_message: welcomeMessage,
@@ -122,7 +123,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
       description: `Personal assistant configured for ${familyMember || 'the family'}`
     };
 
-    console.log('Sending payload to ElevenLabs...');
+    console.log('Sending payload to ElevenLabs:', JSON.stringify(payload, null, 2));
 
     const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create?use_tool_ids=true', {
       method: 'POST',
