@@ -11,18 +11,26 @@ const Home = () => {
   return (
     <DashboardLayout>
       <div className="flex-1 space-y-8 p-8 pt-6 max-w-6xl mx-auto">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight animate-fade-in text-gray-900">
+        <div className="relative z-10 text-center space-y-6 py-12">
+          <h1 className="text-6xl font-bold tracking-tight animate-fade-in bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">
             Welcome to Neighbour
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto animate-fade-in">
-            Create personalized voice assistants for your loved ones. Get started in minutes.
+          <p className="text-gray-600 text-xl max-w-2xl mx-auto animate-fade-in leading-relaxed">
+            Create personalized voice assistants for your loved ones.
+            <span className="block mt-2 font-medium">Get started in minutes.</span>
           </p>
+          <Button 
+            onClick={() => navigate('/bot-settings')}
+            className="mt-4 bg-[#F97316] hover:bg-[#F97316]/90 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Create Your Assistant
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
         
-        <div className="min-h-[400px] relative flex items-center justify-center animate-fade-in">
+        <div className="min-h-[400px] relative flex items-center justify-center animate-fade-in -mt-20">
           <div className="absolute">
-            <div className="relative w-[400px] h-[400px]">
+            <div className="relative w-[500px] h-[500px]">
               <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/40 to-[#FEC6A1]/20 rounded-full blur-2xl animate-pulse" />
               <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
               <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
