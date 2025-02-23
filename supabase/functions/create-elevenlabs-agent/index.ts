@@ -46,8 +46,12 @@ serve(async (req) => {
       throw new Error(`Failed to fetch tools: ${toolsResponse.status}`);
     }
 
-    const tools = await toolsResponse.json();
-    console.log('Available tools:', tools);
+    const toolsData = await toolsResponse.json();
+    console.log('Available tools:', toolsData);
+
+    // Make sure we're using the exact IDs from the response
+    const toolIds = toolsData.tools ? toolsData.tools.map((tool: any) => tool.id) : [];
+    console.log('Tool IDs to be used:', toolIds);
 
     const prompt = `You are an empathetic and patient voice assistant designed specifically for ${familyMember || 'the user'}. Your role is to support and guide the user through their daily routine with dynamic, personalized information, while always maintaining a caring and supportive tone.
 
@@ -89,7 +93,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
             prompt: prompt
           },
           first_message: welcomeMessage,
-          tool_ids: tools.tools.map((tool: any) => tool.id)
+          tool_ids: toolIds
         },
         language: "pl"
       },
