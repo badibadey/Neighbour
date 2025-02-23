@@ -69,7 +69,8 @@ Always use the dynamic data provided to tailor your responses accurately and ens
             llm: "gpt-3.5-turbo",
             prompt: prompt
           },
-          first_message: welcomeMessage
+          first_message: welcomeMessage,
+          tool_ids: ["9YrwLZ4afFXwu9fJLlrA"]
         },
         language: "pl"
       },
@@ -99,7 +100,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
 
     console.log('Sending payload to ElevenLabs:', JSON.stringify(payload, null, 2));
 
-    const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
+    const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create?use_tool_ids=true', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
