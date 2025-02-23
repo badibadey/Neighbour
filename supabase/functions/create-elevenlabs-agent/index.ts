@@ -91,7 +91,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
       conversation_config: {
         agent: {
           prompt: {
-            llm: "claude-instant-1",  // Updated to use Claude Instant which is supported by ElevenLabs
+            llm: "gpt-3.5-turbo",  // Przywrócono do gpt-3.5-turbo
             prompt: prompt
           },
           first_message: welcomeMessage,
