@@ -113,7 +113,7 @@ const SeniorPanel = () => {
       />
 
       <div className="container mx-auto h-screen flex items-center justify-center relative z-10">
-        <div className="max-w-3xl px-6 md:px-8">
+        <div className="max-w-3xl w-full text-center">
           <div className="space-y-6 md:space-y-8">
             <h1 
               className={cn(
