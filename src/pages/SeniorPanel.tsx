@@ -106,7 +106,7 @@ const SeniorPanel = () => {
 
       {/* Animated glut with subtle movement */}
       <div 
-        className="absolute top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-gradient-to-b from-[#FEC6A1]/30 to-[#FEC6A1]/10 backdrop-blur-sm"
+        className="absolute top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-gradient-to-b from-[#FEC6A1]/10 to-transparent backdrop-blur-[2px]"
         style={{
           animation: 'moveGlut 20s ease-in-out infinite',
         }}
@@ -126,7 +126,7 @@ const SeniorPanel = () => {
                 animationFillMode: 'forwards'
               }}
             >
-              Welcome {familyMemberName},
+              Hi {familyMemberName},
             </h1>
             <h2 
               className={cn(
@@ -139,7 +139,7 @@ const SeniorPanel = () => {
                 animationFillMode: 'forwards'
               }}
             >
-              I'm your neighbour
+              your neighbor is here for you
             </h2>
           </div>
 
