@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessagesSquare, Sparkles, Users, ArrowRight } from "lucide-react";
+import { Heart, Bell, Sparkles, Users, ArrowRight, Shield, Layout } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -87,64 +88,82 @@ const Index = () => {
 
       <section className="py-32 bg-gradient-to-b from-white via-[#FEC6A1]/5 to-white relative overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {[
               {
                 icon: <Heart className="h-8 w-8" />,
-                title: "Warm & Friendly",
-                description: "Hello Maria! I'm your friendly neighbor, here to lend a hand. How can I help you today?"
+                title: "Empathetic Voice Assistance",
+                description: "Your personal neighbor is always ready to help using natural, easy-to-understand language."
               },
               {
-                icon: <Users className="h-8 w-8" />,
-                title: "Supportive & Informative",
-                description: "Hi Maria! I'm your Neighbour assistant—ready to help with your daily tasks, reminders, or just to chat."
+                icon: <Bell className="h-8 w-8" />,
+                title: "Dynamic Daily Reminders",
+                description: "Get timely alerts for medication intake, doctor appointments, and daily check-ins—all personalized from your live data."
               },
               {
                 icon: <Sparkles className="h-8 w-8" />,
-                title: "Simple & Direct",
-                description: "Welcome, Maria! I'm here to support you with whatever you need today. Let's get started!"
+                title: "Real-Time Updates",
+                description: "Stay informed with up-to-date weather, news, and event notifications to help you plan your day."
               },
               {
-                icon: <MessagesSquare className="h-8 w-8" />,
-                title: "Caring & Personal",
-                description: "Hi Maria, welcome! I'm your Neighbour—always here to help you feel supported and connected."
+                icon: <Users className="h-8 w-8" />,
+                title: "Family Connectivity",
+                description: "Never miss a birthday or special moment. Receive reminders about family events and stay connected with your loved ones."
+              },
+              {
+                icon: <Shield className="h-8 w-8" />,
+                title: "Emergency Support",
+                description: "In urgent situations, your neighbor promptly suggests contacting family or emergency services for immediate assistance."
+              },
+              {
+                icon: <Layout className="h-8 w-8" />,
+                title: "User-Friendly Interface",
+                description: "Enjoy a modern, high-contrast design with large, accessible buttons, making navigation and interaction effortless."
               }
             ].map((feature, index) => (
               <div 
                 key={index}
-                className="relative p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-[#FEC6A1]/20 hover:border-[#F97316]/30 transition-all duration-500 group hover:-translate-y-1 hover:shadow-lg opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]"
-                style={{ animationDelay: `${600 + index * 200}ms` }}
+                className="relative p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-[#FEC6A1]/20 hover:border-[#F97316]/30 transition-all duration-500 group hover:-translate-y-1 hover:shadow-xl opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]"
+                style={{ 
+                  animationDelay: `${600 + index * 200}ms`,
+                  background: `linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(254,198,161,0.1) 100%)`
+                }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/5 via-transparent to-[#FEC6A1]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative">
-                  <div className="bg-gradient-to-br from-[#F97316] to-[#FEC6A1] rounded-xl p-4 w-fit mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    {React.cloneElement(feature.icon, {
-                      className: `h-8 w-8 text-white transition-transform duration-300 group-hover:rotate-12`
-                    })}
+                <div className="relative z-10">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#F97316] to-[#FEC6A1] rounded-xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
+                    <div className="bg-gradient-to-br from-[#F97316] to-[#FEC6A1] rounded-xl p-4 w-fit mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg relative">
+                      {React.cloneElement(feature.icon, {
+                        className: `h-8 w-8 text-white transition-all duration-300 group-hover:rotate-12 group-hover:scale-110`
+                      })}
+                    </div>
                   </div>
                   <h3 className="text-xl font-semibold mb-4 text-gray-900 group-hover:text-[#F97316] transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#F97316]/0 via-[#F97316]/20 to-[#F97316]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Luminous orbs background effect */}
+        {/* Enhanced luminous orbs background effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="absolute rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"
+              className="absolute rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"
               style={{
                 background: `radial-gradient(circle, ${i % 2 === 0 ? '#F97316' : '#FEC6A1'} 0%, transparent 70%)`,
-                width: `${300 + i * 100}px`,
-                height: `${300 + i * 100}px`,
-                top: `${20 + i * 30}%`,
-                left: `${20 + i * 25}%`,
-                animationDelay: `${i * 1}s`,
+                width: `${400 + i * 100}px`,
+                height: `${400 + i * 100}px`,
+                top: `${10 + i * 20}%`,
+                left: `${10 + i * 15}%`,
+                animationDelay: `${i * 1.5}s`,
+                animationDuration: `${8 + i * 2}s`,
               }}
             />
           ))}
