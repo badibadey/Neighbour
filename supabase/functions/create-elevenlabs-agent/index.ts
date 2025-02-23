@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -121,7 +122,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
 
     console.log('Sending payload to ElevenLabs...');
 
-    const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
+    const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create?use_tool_ids=true', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
