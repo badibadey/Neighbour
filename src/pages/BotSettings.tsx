@@ -482,7 +482,7 @@ const BotSettings = () => {
               placeholder="My Neighbour"
               required
             />
-            <p className="text-sm text-muted-foreground">This name will be used throughout the interface</p>
+            <p className="text-sm text-muted-foreground">This will be your neighbour's name that they'll use to introduce themselves</p>
           </div>
 
           <div className="space-y-2">
@@ -687,11 +687,11 @@ const BotSettings = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[300px] p-0" align="start">
-                  <Command>
-                    <CommandList>
-                      <CommandInput placeholder="Search medications..." />
+                  <Command className="bg-white rounded-lg border shadow-md">
+                    <CommandInput placeholder="Search medications..." className="bg-transparent" />
+                    <CommandList className="bg-white">
                       <CommandEmpty>No medication found.</CommandEmpty>
-                      <CommandGroup>
+                      <CommandGroup className="bg-white">
                         {MEDICATIONS_DATABASE.map((med) => (
                           <CommandItem
                             key={med.id}
@@ -700,6 +700,7 @@ const BotSettings = () => {
                               handleAddMedication(med);
                               document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
                             }}
+                            className="bg-white hover:bg-gray-100"
                           >
                             <div className="flex flex-col">
                               <span>{med.name}</span>
@@ -899,7 +900,7 @@ const BotSettings = () => {
       
       <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between">
             <AlertDialog open={isExitDialogOpen} onOpenChange={setIsExitDialogOpen}>
               <AlertDialogTrigger asChild>
                 <Button 
@@ -924,6 +925,10 @@ const BotSettings = () => {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+            <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Crimson Text, serif' }}>
+              neighbour
+            </h1>
+            <div className="w-[72px]"></div>
           </div>
         </div>
       </header>
@@ -936,9 +941,6 @@ const BotSettings = () => {
             </span>
             <span className="text-sm text-white/90">of {steps.length}</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2" style={{ fontFamily: 'Crimson Text, serif' }}>
-            neighbour
-          </h1>
           <p className="text-2xl font-medium text-white/90 mb-1">
             {steps[currentStep].title}
           </p>
