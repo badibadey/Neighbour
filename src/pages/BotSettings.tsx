@@ -855,6 +855,33 @@ const BotSettings = () => {
 
           <Card className="p-4">
             <div className="flex justify-between items-center mb-4">
+              <h3 className="font-medium text-lg">Medications ({setupData.drugs.length})</h3>
+              {setupData.drugs.length === 0 && (
+                <div className="flex items-center gap-2 text-yellow-600">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-sm">No medications added</span>
+                </div>
+              )}
+            </div>
+            <div className="space-y-4">
+              {setupData.drugs.map((drug, index) => (
+                <div key={index} className="py-2 border-b last:border-0">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{drug.name}</span>
+                      <span className="text-sm text-muted-foreground">{drug.dosage}</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Schedule: {drug.schedule.frequency}, at {drug.schedule.time}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex justify-between items-center mb-4">
               <h3 className="font-medium text-lg">Events ({setupData.events.length})</h3>
               {setupData.events.length === 0 && (
                 <div className="flex items-center gap-2 text-yellow-600">
