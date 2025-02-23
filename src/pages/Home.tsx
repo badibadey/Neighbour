@@ -27,6 +27,9 @@ const Home = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/40 to-[#FEC6A1]/20 rounded-full blur-2xl animate-pulse" />
               <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
               <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-white text-3xl font-semibold z-10">Hi, Neighbour</span>
+              </div>
             </div>
           </div>
         </div>
