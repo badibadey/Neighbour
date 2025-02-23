@@ -72,6 +72,21 @@
   }
 }
 
+@keyframes moveGlut {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(-20px) scale(1.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 0.2;
+  }
+}
+
 /* Staggered animations for cards */
 .grid > * {
   animation-delay: calc(var(--index) * 100ms);

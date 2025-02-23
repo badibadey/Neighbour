@@ -85,7 +85,7 @@ const SeniorPanel = () => {
   const familyMemberName = panelData?.family_member || 'there';
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412]">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412] overflow-hidden">
       <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-[99999]">
         <Button 
           variant="ghost" 
@@ -104,42 +104,52 @@ const SeniorPanel = () => {
         <div className="w-[120px]"></div>
       </div>
 
-      <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="order-1">
-          <h1 
-            className={cn(
-              "text-6xl md:text-8xl font-bold text-white mb-4",
-              "opacity-0 animate-fade-in"
-            )}
-            style={{ 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-              animationDelay: '0.4s',
-              animationFillMode: 'forwards'
-            }}
-          >
-            Welcome {familyMemberName},
-          </h1>
-          <h2 
-            className={cn(
-              "text-5xl md:text-7xl font-bold text-orange-200",
-              "opacity-0 animate-fade-in"
-            )}
-            style={{ 
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-              animationDelay: '0.6s',
-              animationFillMode: 'forwards'
-            }}
-          >
-            I'm your neighbour
-          </h2>
-        </div>
+      {/* Animated glut with subtle movement */}
+      <div 
+        className="absolute top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-gradient-to-b from-[#FEC6A1]/30 to-[#FEC6A1]/10 backdrop-blur-sm"
+        style={{
+          animation: 'moveGlut 20s ease-in-out infinite',
+        }}
+      />
 
-        <div className="order-2">
-          {scriptLoaded && panelData?.agent_id && (
-            <elevenlabs-convai 
-              agent-id={panelData.agent_id}
-            ></elevenlabs-convai>
-          )}
+      <div className="container mx-auto h-screen flex items-center justify-center relative z-10">
+        <div className="max-w-3xl px-6 md:px-8">
+          <div className="space-y-6 md:space-y-8">
+            <h1 
+              className={cn(
+                "text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white",
+                "opacity-0 animate-fade-in tracking-tight"
+              )}
+              style={{ 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                animationDelay: '0.4s',
+                animationFillMode: 'forwards'
+              }}
+            >
+              Welcome {familyMemberName},
+            </h1>
+            <h2 
+              className={cn(
+                "text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-orange-200",
+                "opacity-0 animate-fade-in tracking-tight"
+              )}
+              style={{ 
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                animationDelay: '0.6s',
+                animationFillMode: 'forwards'
+              }}
+            >
+              I'm your neighbour
+            </h2>
+          </div>
+
+          <div className="mt-12">
+            {scriptLoaded && panelData?.agent_id && (
+              <elevenlabs-convai 
+                agent-id={panelData.agent_id}
+              ></elevenlabs-convai>
+            )}
+          </div>
         </div>
       </div>
     </div>
