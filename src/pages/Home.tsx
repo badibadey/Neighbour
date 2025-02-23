@@ -10,10 +10,10 @@ const Home = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex-1 space-y-8 p-8 pt-6 max-w-6xl mx-auto">
+      <div className="flex-1 space-y-8 p-8 pt-16 max-w-6xl mx-auto">
         <div className="relative z-10 text-center space-y-6">
-          <h1 className="text-6xl font-bold tracking-tight animate-fade-in bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">
-            Welcome to Neighbour
+          <h1 className="text-4xl font-bold tracking-tight animate-fade-in">
+            Welcome to <span className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">Neighbour</span>
           </h1>
           <p className="text-gray-600 text-xl max-w-2xl mx-auto animate-fade-in leading-relaxed">
             Create personalized voice assistants for your loved ones.
