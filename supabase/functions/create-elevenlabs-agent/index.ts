@@ -26,6 +26,29 @@ serve(async (req) => {
       throw new Error('Welcome message is required');
     }
 
+    const apiKey = Deno.env.get('ELEVENLABS_API_KEY');
+    if (!apiKey) {
+      throw new Error('ELEVENLABS_API_KEY is not set');
+    }
+
+    // Fetch available tools
+    console.log('Fetching available tools...');
+    const toolsResponse = await fetch('https://api.elevenlabs.io/v1/convai/tools', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'xi-api-key': apiKey,
+      },
+    });
+
+    if (!toolsResponse.ok) {
+      throw new Error(`Failed to fetch tools: ${toolsResponse.status}`);
+    }
+
+    const tools = await toolsResponse.json();
+    console.log('Available tools:', tools);
+
     const prompt = `You are an empathetic and patient voice assistant designed specifically for ${familyMember || 'the user'}. Your role is to support and guide the user through their daily routine with dynamic, personalized information, while always maintaining a caring and supportive tone.
 
 Greeting:
@@ -65,7 +88,8 @@ Always use the dynamic data provided to tailor your responses accurately and ens
             llm: "gpt-3.5-turbo",
             prompt: prompt
           },
-          first_message: welcomeMessage
+          first_message: welcomeMessage,
+          tool_ids: tools.tools.map((tool: any) => tool.id)
         },
         language: "pl"
       },
@@ -94,11 +118,6 @@ Always use the dynamic data provided to tailor your responses accurately and ens
     };
 
     console.log('Sending payload to ElevenLabs...');
-
-    const apiKey = Deno.env.get('ELEVENLABS_API_KEY');
-    if (!apiKey) {
-      throw new Error('ELEVENLABS_API_KEY is not set');
-    }
 
     const agentResponse = await fetch('https://api.elevenlabs.io/v1/convai/agents/create', {
       method: 'POST',
