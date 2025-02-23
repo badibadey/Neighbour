@@ -62,7 +62,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
       conversation_config: {
         agent: {
           prompt: {
-            llm: "gpt-4",
+            llm: "gpt-3.5-turbo",
             prompt: prompt
           },
           first_message: welcomeMessage
