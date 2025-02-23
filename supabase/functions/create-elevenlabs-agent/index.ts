@@ -70,7 +70,7 @@ Always use the dynamic data provided to tailor your responses accurately and ens
             prompt: prompt
           },
           first_message: welcomeMessage,
-          tool_ids: ["9YrwLZ4afFXwu9fJLlrA"]
+          tool_ids: ["9YrwLZ4afFXwu9fJLlrA", "HjRm8bsnzlPeSCVrRxhK"]
         },
         language: "pl"
       },
