@@ -86,14 +86,23 @@ const SeniorPanel = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412]">
-      <Button 
-        variant="ghost" 
-        className="absolute top-4 left-4 z-[99999] text-white flex items-center gap-2 hover:bg-white/10"
-        onClick={() => navigate('/neighbours')}
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Neighbours
-      </Button>
+      <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-[99999]">
+        <Button 
+          variant="ghost" 
+          className="text-white flex items-center gap-2 hover:bg-white/10"
+          onClick={() => navigate('/neighbours')}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Neighbours
+        </Button>
+        <h1 
+          className="text-2xl font-bold text-white absolute left-1/2 transform -translate-x-1/2"
+          style={{ fontFamily: 'Crimson Text, serif' }}
+        >
+          neighbour
+        </h1>
+        <div className="w-[120px]"></div>
+      </div>
 
       <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div className="order-1">
