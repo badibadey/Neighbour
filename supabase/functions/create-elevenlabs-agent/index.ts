@@ -69,7 +69,17 @@ Always use the dynamic data provided to tailor your responses accurately and ens
             llm: "gpt-3.5-turbo",
             prompt: prompt
           },
-          first_message: welcomeMessage
+          first_message: welcomeMessage,
+          tools: [
+            {
+              "type": "webhook",
+              "api_schema": {
+                "url": "https://newsapi.org/v2/everything?q=Polska&apiKey=dfd107f1c562485ab5e9bdb3a4923e77"
+              },
+              "description": "he get_news function fetches the latest news from Poland using NewsAPI. It returns a JSON object containing a list of news articles. For each article, it includes the title, URL, source, and a description truncated to a maximum of two sentences, providing a concise summary of today's events in Poland",
+              "name": "get_news"
+            }
+          ]
         },
         language: "pl"
       },
