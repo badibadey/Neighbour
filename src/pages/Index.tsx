@@ -1,6 +1,7 @@
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessagesSquare, Sparkles, Users } from "lucide-react";
+import { Heart, MessagesSquare, Sparkles, Users, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
