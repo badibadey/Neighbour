@@ -12,7 +12,7 @@ const Home = () => {
     <DashboardLayout>
       <div className="flex-1 space-y-8 p-8 pt-16 max-w-6xl mx-auto">
         <div className="relative z-10 text-center space-y-6">
-          <h1 className="text-4xl font-bold tracking-tight animate-fade-in">
+          <h1 className="text-4xl tracking-tight animate-fade-in" style={{ fontFamily: 'Crimson Text, serif' }}>
             Welcome to <span className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">Neighbour</span>
           </h1>
           <p className="text-gray-600 text-xl max-w-2xl mx-auto animate-fade-in leading-relaxed">
@@ -28,7 +28,7 @@ const Home = () => {
               <div className="absolute inset-8 bg-gradient-to-br from-[#F97316]/60 to-[#FEC6A1]/30 rounded-full blur-xl animate-pulse [animation-delay:1s]" />
               <div className="absolute inset-16 bg-gradient-to-br from-[#F97316]/80 to-[#FEC6A1]/40 rounded-full blur-lg animate-pulse [animation-delay:2s]" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-white text-2xl z-10" style={{ fontFamily: 'Crimson Text, serif' }}>Hi, Neighbour</span>
+                <span className="text-white text-xl lowercase z-10" style={{ fontFamily: 'Crimson Text, serif' }}>hi, neighbour</span>
               </div>
             </div>
           </div>
