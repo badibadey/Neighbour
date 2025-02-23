@@ -85,7 +85,7 @@ const SeniorPanel = () => {
   const familyMemberName = panelData?.family_member || 'there';
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412]">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#9A3412] overflow-hidden">
       <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4 z-[99999]">
         <Button 
           variant="ghost" 
@@ -104,13 +104,14 @@ const SeniorPanel = () => {
         <div className="w-[120px]"></div>
       </div>
 
-      <div className="absolute top-0 right-0 w-[400px] h-screen bg-[#FEC6A1]/20 backdrop-blur-sm" />
+      {/* Responsive glut */}
+      <div className="absolute top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-[#FEC6A1]/20 backdrop-blur-sm" />
 
-      <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="order-1">
+      <div className="container mx-auto px-4 h-screen grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center relative z-10">
+        <div className="order-1 px-4">
           <h1 
             className={cn(
-              "text-6xl md:text-8xl font-bold text-white mb-4",
+              "text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-white mb-4",
               "opacity-0 animate-fade-in"
             )}
             style={{ 
@@ -123,7 +124,7 @@ const SeniorPanel = () => {
           </h1>
           <h2 
             className={cn(
-              "text-5xl md:text-7xl font-bold text-orange-200",
+              "text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-orange-200",
               "opacity-0 animate-fade-in"
             )}
             style={{ 
