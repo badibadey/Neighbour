@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, MessageCircle, ShieldCheck, Clock, Heart, Bot } from "lucide-react";
+import { ArrowRight, MessageCircle, Heart, Bot, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -86,34 +87,39 @@ const Index = () => {
 
       <section className="py-32 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {[
               {
-                icon: <ShieldCheck className="h-8 w-8 text-primary" />,
-                title: "Secure & Private",
-                description: "Enterprise-grade security protecting your family's data"
+                icon: <Heart className="h-8 w-8 text-[#F97316]" />,
+                title: "Warm & Friendly",
+                description: "Hello Maria! I'm your friendly neighbor, here to lend a hand. How can I help you today?"
               },
               {
-                icon: <Clock className="h-8 w-8 text-primary" />,
-                title: "24/7 Assistance",
-                description: "Round-the-clock AI support for your family's needs"
+                icon: <Bot className="h-8 w-8 text-[#F97316]" />,
+                title: "Supportive & Informative",
+                description: "Hi Maria! I'm your Neighbour assistant—ready to help with your daily tasks, reminders, or just to chat."
               },
               {
-                icon: <Heart className="h-8 w-8 text-primary" />,
-                title: "Family-First",
-                description: "Personalized care designed around your family"
+                icon: <Sparkles className="h-8 w-8 text-[#F97316]" />,
+                title: "Simple & Direct",
+                description: "Welcome, Maria! I'm here to support you with whatever you need today. Let's get started!"
+              },
+              {
+                icon: <MessageCircle className="h-8 w-8 text-[#F97316]" />,
+                title: "Caring & Personal",
+                description: "Hi Maria, welcome! I'm your Neighbour—always here to help you feel supported and connected."
               }
             ].map((feature, index) => (
               <div 
                 key={index}
-                className="p-8 rounded-2xl bg-white/50 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all duration-500 group hover:transform hover:-translate-y-1 hover:shadow-xl"
+                className="p-8 rounded-2xl bg-white border border-[#FEC6A1]/20 hover:border-[#F97316]/30 transition-all duration-500 group hover:-translate-y-1 hover:shadow-lg"
                 style={{ animationDelay: `${600 + index * 200}ms` }}
               >
-                <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl p-4 w-fit mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="bg-gradient-to-br from-[#FEC6A1]/10 to-[#F97316]/5 rounded-xl p-4 w-fit mb-6 group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}
                 </div>
-                <h3 className="text-2xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground text-lg">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-4 text-gray-900">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
