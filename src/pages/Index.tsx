@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, MessageCircle, Heart, Bot, Sparkles } from "lucide-react";
+import { Heart, MessagesSquare, Sparkles, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -85,67 +84,115 @@ const Index = () => {
         </div>
       </div>
 
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-gradient-to-b from-white via-[#FEC6A1]/5 to-white relative overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {[
               {
-                icon: <Heart className="h-8 w-8 text-[#F97316]" />,
+                icon: <Heart className="h-8 w-8" />,
                 title: "Warm & Friendly",
                 description: "Hello Maria! I'm your friendly neighbor, here to lend a hand. How can I help you today?"
               },
               {
-                icon: <Bot className="h-8 w-8 text-[#F97316]" />,
+                icon: <Users className="h-8 w-8" />,
                 title: "Supportive & Informative",
                 description: "Hi Maria! I'm your Neighbour assistant—ready to help with your daily tasks, reminders, or just to chat."
               },
               {
-                icon: <Sparkles className="h-8 w-8 text-[#F97316]" />,
+                icon: <Sparkles className="h-8 w-8" />,
                 title: "Simple & Direct",
                 description: "Welcome, Maria! I'm here to support you with whatever you need today. Let's get started!"
               },
               {
-                icon: <MessageCircle className="h-8 w-8 text-[#F97316]" />,
+                icon: <MessagesSquare className="h-8 w-8" />,
                 title: "Caring & Personal",
                 description: "Hi Maria, welcome! I'm your Neighbour—always here to help you feel supported and connected."
               }
             ].map((feature, index) => (
               <div 
                 key={index}
-                className="p-8 rounded-2xl bg-white border border-[#FEC6A1]/20 hover:border-[#F97316]/30 transition-all duration-500 group hover:-translate-y-1 hover:shadow-lg"
+                className="relative p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-[#FEC6A1]/20 hover:border-[#F97316]/30 transition-all duration-500 group hover:-translate-y-1 hover:shadow-lg opacity-0 animate-[fadeIn_0.6s_ease-out_forwards]"
                 style={{ animationDelay: `${600 + index * 200}ms` }}
               >
-                <div className="bg-gradient-to-br from-[#FEC6A1]/10 to-[#F97316]/5 rounded-xl p-4 w-fit mb-6 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#F97316]/5 via-transparent to-[#FEC6A1]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative">
+                  <div className="bg-gradient-to-br from-[#F97316] to-[#FEC6A1] rounded-xl p-4 w-fit mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    {React.cloneElement(feature.icon, {
+                      className: `h-8 w-8 text-white transition-transform duration-300 group-hover:rotate-12`
+                    })}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-900 group-hover:text-[#F97316] transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold mb-4 text-gray-900">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
-      </section>
 
-      <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 to-primary/5" />
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Ready to Transform Your Family Care?
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Join thousands of families experiencing the future of intelligent care assistance.
-            </p>
-            <Button 
-              onClick={() => navigate('/signup')}
-              className="bg-primary text-white hover:bg-primary/90 h-14 px-10 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
-            >
-              Get Started Now
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </div>
+        {/* Luminous orbs background effect */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"
+              style={{
+                background: `radial-gradient(circle, ${i % 2 === 0 ? '#F97316' : '#FEC6A1'} 0%, transparent 70%)`,
+                width: `${300 + i * 100}px`,
+                height: `${300 + i * 100}px`,
+                top: `${20 + i * 30}%`,
+                left: `${20 + i * 25}%`,
+                animationDelay: `${i * 1}s`,
+              }}
+            />
+          ))}
         </div>
       </section>
+
+      <footer className="bg-gradient-to-b from-[#FEC6A1]/5 to-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold text-[#F97316]" style={{ fontFamily: 'Crimson Text, serif' }}>
+                neighbour
+              </h2>
+              <p className="text-gray-600">
+                Bringing comfort and connection to your loved ones
+              </p>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900">Product</h3>
+              <ul className="space-y-2">
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Features</Button></li>
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Security</Button></li>
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">How it Works</Button></li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900">Company</h3>
+              <ul className="space-y-2">
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">About</Button></li>
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Blog</Button></li>
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Contact</Button></li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900">Legal</h3>
+              <ul className="space-y-2">
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Privacy</Button></li>
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Terms</Button></li>
+                <li><Button variant="link" className="text-gray-600 hover:text-[#F97316] p-0 h-auto">Cookies</Button></li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-16 pt-8 border-t border-gray-200">
+            <p className="text-center text-gray-600">
+              © {new Date().getFullYear()} neighbour. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 };
