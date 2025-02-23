@@ -10,7 +10,15 @@ const Home = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex-1 space-y-8 p-8 pt-16 max-w-6xl mx-auto">
+      <div className="flex-1 space-y-8 p-8 pt-16 max-w-6xl mx-auto relative">
+        {/* Animated glut with subtle movement */}
+        <div 
+          className="absolute top-0 right-0 w-[200px] sm:w-[250px] md:w-[300px] lg:w-[400px] h-screen bg-gradient-to-b from-[#FEC6A1]/10 to-transparent backdrop-blur-[2px]"
+          style={{
+            animation: 'moveGlut 20s ease-in-out infinite',
+          }}
+        />
+
         <div className="relative z-10 text-center space-y-6 opacity-0 animate-[fadeIn_0.6s_ease-out_0.2s_forwards]">
           <h1 className="text-4xl tracking-tight" style={{ fontFamily: 'Crimson Text, serif' }}>
             Welcome to <span className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] bg-clip-text text-transparent">neighbour</span>
