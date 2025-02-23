@@ -33,6 +33,17 @@ const MEDICATIONS_DATABASE = [
   { id: '1', name: 'Aspirin', defaultDosage: '100mg' },
   { id: '2', name: 'Ibuprofen', defaultDosage: '400mg' },
   { id: '3', name: 'Paracetamol', defaultDosage: '500mg' },
+  { id: '4', name: 'Metformin', defaultDosage: '500mg' },
+  { id: '5', name: 'Amlodipine', defaultDosage: '5mg' },
+  { id: '6', name: 'Omeprazole', defaultDosage: '20mg' },
+  { id: '7', name: 'Levothyroxine', defaultDosage: '50mcg' },
+  { id: '8', name: 'Ramipril', defaultDosage: '5mg' },
+  { id: '9', name: 'Atorvastatin', defaultDosage: '20mg' },
+  { id: '10', name: 'Bisoprolol', defaultDosage: '5mg' },
+  { id: '11', name: 'Simvastatin', defaultDosage: '20mg' },
+  { id: '12', name: 'Gabapentin', defaultDosage: '300mg' },
+  { id: '13', name: 'Sertraline', defaultDosage: '50mg' },
+  { id: '14', name: 'Amoxicillin', defaultDosage: '500mg' }
 ];
 
 const BotSettings = () => {
@@ -455,11 +466,13 @@ const BotSettings = () => {
     {
       title: 'Name & Greeting',
       subtitle: 'Personalize your virtual neighbour',
-      description: 'Choose how your assistant will be called and how they will greet your family member. This helps create a more personal and welcoming experience.',
+      description: 'Choose how your assistant will be called and how they will greet your family member.',
       component: (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium block">Neighbour Name</label>
+            <label className="text-sm font-medium block">
+              Neighbour Name <span className="text-red-500">*</span>
+            </label>
             <Input 
               value={setupData.basic.name}
               onChange={(e) => setSetupData({
@@ -467,12 +480,15 @@ const BotSettings = () => {
                 basic: { ...setupData.basic, name: e.target.value }
               })}
               placeholder="My Neighbour"
+              required
             />
             <p className="text-sm text-muted-foreground">This name will be used throughout the interface</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium block">Family Member</label>
+            <label className="text-sm font-medium block">
+              Family Member <span className="text-red-500">*</span>
+            </label>
             <Input 
               value={setupData.basic.familyMember}
               onChange={(e) => setSetupData({
@@ -480,6 +496,7 @@ const BotSettings = () => {
                 basic: { ...setupData.basic, familyMember: e.target.value }
               })}
               placeholder="Primary family member"
+              required
             />
             <p className="text-sm text-muted-foreground">The person who will be primarily using the assistant</p>
           </div>
@@ -874,7 +891,7 @@ const BotSettings = () => {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-secondary/20">
+    <main className="min-h-screen bg-gradient-to-b from-[#F97316] to-[#FEC6A1]/20">
       <AgentCreationModal 
         isOpen={isCreatingAgent} 
         familyMember={setupData.basic.familyMember} 
@@ -887,7 +904,7 @@ const BotSettings = () => {
               <AlertDialogTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  className="text-primary flex items-center gap-2 hover:text-primary/80 hover:bg-primary/10"
+                  className="text-white flex items-center gap-2 hover:text-white/80 hover:bg-white/10"
                   onClick={handleExit}
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -914,23 +931,23 @@ const BotSettings = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-900">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-sm font-medium text-gray-900">
               {currentStep + 1}
             </span>
-            <span className="text-sm text-muted-foreground">of {steps.length}</span>
+            <span className="text-sm text-white/90">of {steps.length}</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {steps[currentStep].title}
+          <h1 className="text-4xl font-bold text-white mb-2" style={{ fontFamily: 'Crimson Text, serif' }}>
+            neighbour
           </h1>
-          <p className="text-lg font-medium text-gray-600 mb-1">
-            {steps[currentStep].subtitle}
+          <p className="text-2xl font-medium text-white/90 mb-1">
+            {steps[currentStep].title}
           </p>
-          <p className="text-muted-foreground max-w-xl mx-auto">
+          <p className="text-white/80 max-w-xl mx-auto">
             {steps[currentStep].description}
           </p>
         </div>
         
-        <Card className="p-6 shadow-lg border-primary/10 max-w-2xl mx-auto">
+        <Card className="p-6 shadow-lg border-primary/10 max-w-2xl mx-auto bg-white/95">
           {steps[currentStep].component}
 
           <div className="flex justify-between mt-8">
@@ -938,17 +955,30 @@ const BotSettings = () => {
               variant="outline"
               onClick={() => currentStep > 0 && setCurrentStep(currentStep - 1)}
               disabled={currentStep === 0}
+              className="border-white/20 text-gray-700 hover:bg-gray-50"
             >
               Previous Step
             </Button>
 
             {currentStep < steps.length - 1 ? (
-              <Button onClick={() => setCurrentStep(currentStep + 1)}>
+              <Button 
+                onClick={() => {
+                  if (currentStep === 0 && (!setupData.basic.name.trim() || !setupData.basic.familyMember.trim())) {
+                    toast.error("Please fill in all required fields");
+                    return;
+                  }
+                  setCurrentStep(currentStep + 1);
+                }}
+                className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] hover:opacity-90"
+              >
                 Next Step
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             ) : (
-              <Button onClick={saveToSupabase}>
+              <Button 
+                onClick={saveToSupabase}
+                className="bg-gradient-to-r from-[#F97316] to-[#FEC6A1] hover:opacity-90"
+              >
                 {panelId ? 'Update' : 'Complete Setup'}
               </Button>
             )}
